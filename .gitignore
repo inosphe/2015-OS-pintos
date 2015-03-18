@@ -1,0 +1,4 @@
+*.o
+bochs-2.6
+*.log
+libc.a
