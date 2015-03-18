@@ -52,3 +52,9 @@
 * http://web.stanford.edu/class/cs140/projects/pintos/pintos_3.html#SEC44 - Argument Parsing
 * http://csl.skku.edu/SSE3044F12/Resources - 성균관대
 * http://egloos.zum.com/YSocks/v/504475
+
+# etc.
+
+## shortcut
+* inosphe@ubuntu:/mnt/hgfs/inosphe/documents/github/2015-OS-pintos/pintos/src/userprog$ make
+* inosphe@ubuntu:/mnt/hgfs/inosphe/documents/github/2015-OS-pintos/pintos/src/userprog$ pintos -p ../examples/echo -a echo -- -f run 'echo x'
