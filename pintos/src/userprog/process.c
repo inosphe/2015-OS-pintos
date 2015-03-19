@@ -18,18 +18,21 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+/* 8bit type 값을 stack에 push */
 #define push_stack_int8(addr, offset, val) \
   { \
     offset += 1; \
     *((int8_t*)(addr - offset)) = (int8_t)val; \
   } 
 
+/* 32bit type 값을 stack에 push */
 #define push_stack_int32(addr, offset, val) \
   { \
     offset += 4; \
     *((int32_t*)(addr - offset)) = (int32_t)val; \
   } 
 
+/* 연속된 문자열을 stack에 push */
 #define push_stack_string(addr, offset, val) \
   { \
     t = strlen(val) + 1;  \
@@ -37,6 +40,7 @@
     memcpy(addr - offset, val, t); \
   } 
 
+/* addr - offset의 값을 이용하여 esp세팅 */
 #define set_esp(addr, offset) \
   { \
     *esp = addr - offset; \
@@ -73,7 +77,7 @@ process_execute (const char *file_name_)
     goto ERROR_HANDLE;
   strlcpy (file_name, file_name_, PGSIZE-1);
 
-  file_name = strtok_r(file_name, " ", &lasts);
+  file_name = strtok_r(file_name, " ", &lasts); //set filename using first token of file_name.
   
   printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
 
@@ -87,6 +91,7 @@ process_execute (const char *file_name_)
 
   printf("tid : %x\n", tid);
   return tid;
+
 
 ERROR_HANDLE:
   if(fn_copy != NULL)
@@ -570,10 +575,10 @@ argument_stack(char **parse ,int count ,void **esp)
   int t;
   uint32_t data_size = 0;
 
-  void *addr0; //argv's contents
-  uint8_t offset0;
-  void *addr1 ; //argvs
-  uint8_t offset1;
+  void *addr0; //argv's contents start address
+  uint8_t offset0;  //argv's contents offset
+  void *addr1 ; //argvs start address
+  uint8_t offset1; //argvs offset
   void *argv;
 
   addr0 = *esp;
@@ -592,26 +597,26 @@ argument_stack(char **parse ,int count ,void **esp)
   printf("addr0 : %x\n", (uint32_t)addr0);
   printf("addr1 : %x\n", (uint32_t)addr1);
 
-  push_stack_int32(addr1, offset1, 0);                //argv[argc]; 
+  push_stack_int32(addr1, offset1, 0);                //push argv[argc]; 
 
   for(i=count-1; i>=0; --i)
   {
-    push_stack_string(addr0, offset0, parse[i]);  //argv[i][j] strings
-    push_stack_int32(addr1, offset1, addr0-offset0);       //argv[i]
+    push_stack_string(addr0, offset0, parse[i]);      //push argv[i][j](string)
+    push_stack_int32(addr1, offset1, addr0-offset0);  //push argv[i]
 
     printf("argv[%d] : %s | %x \n", i, parse[i], (uint32_t)(addr0-offset0));
   }
 
   while(addr0-offset0>addr1)
   {
-    push_stack_int8(addr0, offset0, 0);    //word-align
+    push_stack_int8(addr0, offset0, 0);    //push zero for word-align
   }
 
   argv = addr1-offset1;
 
-  push_stack_int32(addr1, offset1, argv);  //argv
-  push_stack_int32(addr1, offset1, count);  //argc
-  push_stack_int32(addr1, offset1, 0);      //return address
+  push_stack_int32(addr1, offset1, argv);   //push argv
+  push_stack_int32(addr1, offset1, count);  //push argc
+  push_stack_int32(addr1, offset1, 0);      //push fake address(zero) for return address
 
-  set_esp(addr1, offset1);
+  set_esp(addr1, offset1);                  //set esp value using addr1 - offset1
 }
