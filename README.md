@@ -53,6 +53,15 @@
 * http://csl.skku.edu/SSE3044F12/Resources - 성균관대
 * http://egloos.zum.com/YSocks/v/504475
 
+## IA-32 architecture
+* http://www.pmzone.org/chapter01.html
+
+
+## git
+
+* http://rogerdudler.github.io/git-guide/index.ko.html
+* http://git-scm.com/book/ko/v1/Git-브랜치-브랜치와-Merge의-기초
+
 # etc.
 
 ## shortcut
