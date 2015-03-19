@@ -52,56 +52,68 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 tid_t
 process_execute (const char *file_name_) 
 {
-  char *fn_copy;
+  char *fn_copy = NULL;
   char *lasts;
-  char *file_name;
+  char *file_name = NULL;
   tid_t tid;
 
-  
+  printf("*** process_execute ***\n");
+  printf("> file_name_ : %s, %d, %x\n", file_name_, sizeof(file_name_), (uint32_t)file_name_);
+
+  /* This page is owned & managed by 'start_process' */
+  fn_copy = palloc_get_page (0);
+  if(!fn_copy)
+    goto ERROR_HANDLE;
+  strlcpy (fn_copy, file_name_, PGSIZE-1);
 
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
-  fn_copy = palloc_get_page (0);
-  if (fn_copy == NULL)
-    return TID_ERROR;
+  file_name = palloc_get_page (0);
+  if(!file_name)
+    goto ERROR_HANDLE;
+  strlcpy (file_name, file_name_, PGSIZE-1);
 
-  strlcpy (fn_copy, file_name_, PGSIZE-1);
-  printf("fn_copy : %s, %x\n", fn_copy, fn_copy);
-
-  printf("> file_name_ : %s, %d, %x\n", file_name_, sizeof(file_name_), file_name_);
-
-  //It is copied in init_thread, dont need to allocate to keep this string;
-  file_name = strtok_r(file_name_, " ", &lasts);
-
-  printf("*** process_execute ***\n");
-  printf("> file_name_ : %s, %d, %x\n", file_name_, sizeof(file_name_), file_name_);
-  printf("> file_name : %s\n", file_name);
+  file_name = strtok_r(file_name, " ", &lasts);
+  
+  printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
-    palloc_free_page (fn_copy); 
+    goto ERROR_HANDLE;
+
+  /* This is copied in thread_create-thread_init*/
+  palloc_free_page(file_name);
 
   printf("tid : %x\n", tid);
   return tid;
+
+ERROR_HANDLE:
+  if(fn_copy != NULL)
+    palloc_free_page(fn_copy);
+
+  if(file_name != NULL)
+    palloc_free_page(file_name);
+  
+  return TID_ERROR;
 }
 
 /* A thread function that loads a user process and starts it
    running. */
 static void
-start_process (void *aux)
+start_process (void *file_name_)
 {
-  char *file_name_ = (const char*)aux;
   char *file_name;
   struct intr_frame if_;
   char *lasts;
   bool success;
   char **parse = palloc_get_page (PAL_USER);
   char count;
+  int i;
   char *parse_temp;
 
   printf("*** start_process ***\n");
-  printf("> file_name_ : %s, %d, %x\n", file_name_, sizeof(file_name_), file_name_);
+  printf("> file_name_ : %s, %d, %x\n", (const char*)file_name_, sizeof(file_name_), (uint32_t)file_name_);
 
   count = 0;
   for(parse_temp = strtok_r(file_name_, " ", &lasts);
@@ -124,24 +136,28 @@ start_process (void *aux)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
   
-  printf("> file_name : %s\n", file_name);
+  printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
 
   success = load (file_name, &if_.eip, &if_.esp);
   printf("success : %d\n", (int)success);
   
-  printf("if_.esp : %x\n", if_.esp);
+  printf("if_.esp : %x\n", (uint32_t)if_.esp);
   argument_stack(parse, count, &if_.esp);
-  printf("try to hex dump \n");
-  hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
-  printf("hex dump ended \n");
+  
+  /* free parse memories */
+  for (i = 0; i < count; ++i)
+  {
+    palloc_free_page(parse[i]);
+  }
+  palloc_free_page(parse);
+  parse = NULL;
 
+  hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
 
   /* If load failed, quit. */
-  palloc_free_page (file_name);
+  palloc_free_page (file_name_);
   if (!success) 
     thread_exit ();
-
-
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -545,13 +561,11 @@ void
 argument_stack(char **parse ,int count ,void **esp)
 {
   printf("*** argument_stack ***\n");
-  printf("> esp : %x\n", *esp);
+  printf("> esp : %x\n", (uint32_t)*esp);
 
-  int i, j, l;
+  int i;
   int t;
-  int margin;
-  const int MEM_ALIGN = 4;
-  int data_size = 0;
+  uint32_t data_size = 0;
 
   void *addr0; //argv's contents
   uint8_t offset0;
@@ -569,32 +583,26 @@ argument_stack(char **parse ,int count ,void **esp)
   }
 
   printf("data_size : %d\n", data_size);
-  addr1 = (uint32_t)(addr0 - data_size) & 0xfffffffc;     //for word-align(4Byte)
+  addr1 = (void*)(((uint32_t)addr0 - data_size) & 0xfffffffc);     //for word-align(4Byte)
   offset1 = 0;
 
-  printf("addr0 : %x\n", addr0);
-  printf("addr1 : %x\n", addr1);
+  printf("addr0 : %x\n", (uint32_t)addr0);
+  printf("addr1 : %x\n", (uint32_t)addr1);
 
   push_stack_int32(addr1, offset1, 0);                //argv[argc]; 
-
-  printf("case0 : %d, %d \n", offset0, offset1);
 
   for(i=count-1; i>=0; --i)
   {
     push_stack_string(addr0, offset0, parse[i]);  //argv[i][j] strings
     push_stack_int32(addr1, offset1, addr0-offset0);       //argv[i]
 
-    printf("argv[%d] : %x \n", i, addr0-offset0);
-
-    printf("case1 : %d, %d \n", offset0, offset1);
+    printf("argv[%d] : %s | %x \n", i, parse[i], (uint32_t)(addr0-offset0));
   }
 
   while(addr0-offset0>addr1)
   {
     push_stack_int8(addr0, offset0, 0);    //word-align
   }
-
-  printf("addr1 : %x %d \n", addr1-offset1, offset1);
 
   argv = addr1-offset1;
 
