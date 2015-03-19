@@ -48,7 +48,6 @@ strtok_r은 인자로 들어온 문자열을 변형시키며, 이를 예방하�
 * stack 삽입 시 memory의 4byte alignment를 위하여 `*esp & 0xfffffffc` 와 같은 형태의 연산을 통해 aligned memory address를 구하였다. 이로써 생긴 빈 영역에는 불필요하지만, 0으로 초기화 하므로써 빈 영역임을 명시적으로 표현하였다.
 * 실제 stack에 값을 push할 때에는 `push_stack_int32`, `push_stack_int8`, `push_stack_string` 의 이름을 갖는 macro를 정의하여 사용하였다. 간단한 동작이지만 반복하기에는 부담스럽고, 함수로 표현하자면 불필요한 jump과정이 생기는 것을 우려하여 함수가 아닌 macro를 이용하였다. 이 때 작업자의 실수를 막기 위해 macro는 {} code block으로 감쌌다. 매크로에는 char, int 형이 아닌 int8_t, int32_t형을 사용하므로써 자료형의 크기를 명시적으로 표현하였다. 함수가 아닌 매크로로 작성하므로써 두가지의 tradeoff가 있었는데 하나는 임시로 사용할 t 변수를 필요로 한다는 것이고, argv값을 push할 때, 매크로로 적절히 표현할 수 없어 `argv = addr1-offset1;` 으로 argv값을 별도의 변수에 저장한 후 사용하였다.
 * 마지막으로 매크로는 값 삽입에 esp값이 아닌 base address + offset을 이용하므로 `set_esp(addr1, offset1);` expression을 사용하여 stack의 esp값을 세팅하였다.
-* 
 
 #### 5. 프로젝트를 진행하며 작업해야 할 것들
 
