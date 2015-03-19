@@ -2,6 +2,11 @@
 
 # getting started
 
+## Use Git
+### How to checkout branch
+* $ git clone https://user@github.com/inosphe/2015-OS-pintos.git project1
+* $ git checkout -b assignment1 origin/assignment1
+
 ## Setup Boshs
 * bochs 폴더로 이동
 * $ ./configure --enable-gdb-stub --with-nogui
