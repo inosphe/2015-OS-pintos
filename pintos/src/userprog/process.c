@@ -121,7 +121,10 @@ start_process (void *file_name_)
     parse_temp = strtok_r(NULL, " ", &lasts))
   {
     parse[count] = palloc_get_page(PAL_USER);
-    strlcpy(parse[count], parse_temp, PGSIZE);
+    if(strlen(parse_temp) >= PGSIZE-1)
+      printf("@ %s | each argument length must be lower than %d.\n", parse_temp, PGSIZE-1);
+
+    strlcpy(parse[count], parse_temp, PGSIZE-1);
     ++count;
   }
 
