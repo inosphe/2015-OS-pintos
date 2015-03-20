@@ -18,21 +18,21 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
-/* 8bit type 값을 stack에 push */
+/* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
   { \
     offset += 1; \
     *((int8_t*)(addr - offset)) = (int8_t)val; \
   } 
 
-/* 32bit type 값을 stack에 push */
+/* push 32bit type value to stack */
 #define push_stack_int32(addr, offset, val) \
   { \
     offset += 4; \
     *((int32_t*)(addr - offset)) = (int32_t)val; \
   } 
 
-/* 연속된 문자열을 stack에 push */
+/* push continuous character string value to stack */
 #define push_stack_string(addr, offset, val) \
   { \
     t = strlen(val) + 1;  \
@@ -40,7 +40,7 @@
     memcpy(addr - offset, val, t); \
   } 
 
-/* addr - offset의 값을 이용하여 esp세팅 */
+/* set esp as addr - offset */
 #define set_esp(addr, offset) \
   { \
     *esp = addr - offset; \
