@@ -36,6 +36,10 @@ then
 		echo ' *** filesystem not found.'
 		init_filesystem=true;
 	fi
+
+	cd $root/pintos/src/userprog
+	make
+
 	if $init_filesystem
 	then
 		cd $root/pintos/src/threads
@@ -55,9 +59,6 @@ then
 
 		echo ' *** filesystem & examples initialized'
 	fi
-
-	cd $root/pintos/src/userprog
-	make
 
 	cd $root/pintos/src/userprog/build
 	$pintos –p ../../examples/echo –a echo -- -q
