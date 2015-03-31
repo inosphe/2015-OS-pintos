@@ -24,7 +24,7 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
-  int *arg = 0; /* 4 byte block */
+  int *arg = 0;
   void *esp = 0;
   int number;
   esp = f->esp;
