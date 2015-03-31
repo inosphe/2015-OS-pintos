@@ -1,5 +1,6 @@
 #include "userprog/syscall.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
@@ -8,6 +9,11 @@
 #include "filesys/filesys.h"
 
 static void syscall_handler (struct intr_frame *);
+void halt (void);
+void exit (int status);
+bool create (const char *file, unsigned initial_size);
+bool remove (const char *file);
+
 
 void
 syscall_init (void) 
@@ -18,41 +24,62 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
-  int *arg; /* 4 byte block */
-  void *esp = f->esp;
-  int number = *esp;
+  int *arg = 0; /* 4 byte block */
+  void *esp = 0;
+  int number;
+  esp = f->esp;
   printf ("system call!\n");
 
   check_address (esp);
+  number = *((int*)esp);
 
-  /* systemcall number is located in the top of esp */
+  printf ("esp: %x (%d)\n", (uint32_t)esp, *(uint32_t*)esp);
+  esp -= 4;
+  /* systemcall number is located in the top of user stack */
   switch (number)
   {
     case SYS_HALT:
+      printf ("SYS_HALT called.\n");
       halt ();
       break;
+
     case SYS_EXIT:
+      printf ("SYS_EXIT called.\n");
       arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
-      exit (arg[0]);
+      exit (*(int*)arg[0]);
       break;
+
     case SYS_CREATE:
+      printf ("SYS_CREATE called.\n");
       arg = (int*) malloc (sizeof(int)*2);
       get_argument (esp, arg, 2);
-      f->eax = create (arg[0], arg[1]);
-      break();
+      check_address ((void*)arg[0]);
+      f->eax = create ((const char*)*(uint32_t*)arg[0], *(unsigned*)arg[1]);
+      break;
+
     case SYS_REMOVE:
+      printf ("SYS_REMOVE called.\n");
       arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
-      f->eax = remove (arg[0]);
+      check_address ((void*)arg[0]);
+      f->eax = remove ((const char*)*(uint32_t*)arg[0]);
       break;
-  }
 
+/* SYS_WRITE IS NOT USED FOR ASSIGNMENT 2. ONLY FOR TEST!
+    case SYS_WRITE:
+      printf ("SYS_WRITE called.\n");
+      arg = (int*) malloc (sizeof(int)*3);
+      get_argument (esp, arg, 3);
+      printf (" %d, %s, %d\n", *(unsigned*)arg[0], (const char*)*(uint32_t*)arg[1], *(unsigned*)arg[2]);
+*/
+  }
   if (arg)
     free (arg);
 }
 
-void check_address (void *addr)
+void
+check_address (void *addr)
 {
   if ((uint32_t)addr < 0x8048000 || (uint32_t)addr > 0xc0000000)
   {
@@ -61,17 +88,18 @@ void check_address (void *addr)
   }
 }
 
-void get_argument (void *esp, int *arg, int count)
+void
+get_argument (void *esp, int *arg, int count)
 {
   int i;
-  --esp;
-
-  /* saving arguments in the user stack to the kernel */
-  for (i=0; i<cnt; ++i)
+  /* saving address value of arguments in the user stack to the kernel ("arg" array) */
+  for (i=0; i<count; ++i)
   {
+    printf ("esp: %x\n", (uint32_t)esp);
     check_address (esp);
-    arg[i] = *esp;
-    --esp;
+    arg[i] = (uint32_t)esp;
+    printf ("arg[%d]: %x\n", i, arg[i]);
+    esp -= 4;
   }
 }
 
@@ -110,3 +138,4 @@ remove (const char *file)
   else
     return false;
 }
+
