@@ -2,6 +2,7 @@
 #include <debug.h>
 #include "filesys/inode.h"
 #include "threads/malloc.h"
+#include "threads/synch.h"
 
 /* An open file. */
 struct file 
@@ -9,6 +10,7 @@ struct file
     struct inode *inode;        /* File's inode. */
     off_t pos;                  /* Current position. */
     bool deny_write;            /* Has file_deny_write() been called? */
+    struct lock lock;          /* Lock */
   };
 
 /* Opens a file for the given INODE, of which it takes ownership,
@@ -23,6 +25,7 @@ file_open (struct inode *inode)
       file->inode = inode;
       file->pos = 0;
       file->deny_write = false;
+      lock_init(&file->lock);
       return file;
     }
   else
@@ -165,4 +168,17 @@ file_tell (struct file *file)
 {
   ASSERT (file != NULL);
   return file->pos;
+}
+
+
+void
+file_lock(struct file *file)
+{
+  lock_acquire(&file->lock);
+}
+
+void
+file_unlock(struct file *file)
+{
+  lock_release(&file->lock); 
 }

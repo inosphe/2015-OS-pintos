@@ -23,7 +23,7 @@ done
 
 if test -d ./pintos
 then
-	#export PATH=$PATH:$root/pintos/src/utils;
+	export PATH=$PATH:$root/pintos/src/utils;
 
 	if $reset_filesystem
 	then

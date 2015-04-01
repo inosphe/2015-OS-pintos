@@ -98,6 +98,11 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+
+  // Initialize file_desc array by 0. 
+  // File descriptor can be released before exit thread.
+  memset(initial_thread->file_desc, 0, sizeof(struct file*) * MAX_FILE_DESC_COUNT);
+  initial_thread->file_desc_size = 0;
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.

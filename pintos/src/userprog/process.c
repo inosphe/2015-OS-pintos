@@ -17,6 +17,7 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "lib/user/syscall.h"
 
 /* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
@@ -214,7 +215,9 @@ process_exit (void)
       cur->pagedir = NULL;
       pagedir_activate (NULL);
       pagedir_destroy (pd);
-    }
+    } 
+
+    clear_opened_filedesc();
 }
 
 /* Sets up the CPU for running user code in the current
@@ -620,3 +623,59 @@ argument_stack(char **parse ,int count ,void **esp)
 
   set_esp(addr1, offset1);                  //set esp value using addr1 - offset1
 }
+
+
+void
+clear_opened_filedesc(void)
+{
+  int i;
+  struct thread *t = thread_current ();
+
+  for(i=3; i<t->file_desc_size; ++i)
+  {
+    close(t->file_desc[i]);
+  }
+}
+
+
+
+struct file*
+process_get_file(int fd)
+{
+  struct thread *t = thread_current ();
+  if(fd >= t->file_desc_size || fd==0)
+    return NULL;
+
+  return t->file_desc[fd];
+}
+
+int
+process_add_file (struct file *f)
+{
+  int fd = -1;
+  struct thread *t = thread_current ();
+  if(t->file_desc_size >= MAX_FILE_DESC_COUNT)
+  {
+    //File desc array is full.
+    return fd;
+  }
+
+  fd = t->file_desc_size++;
+
+  //Is it need to copy memory?
+  t->file_desc[fd] = f;
+  return fd;
+}
+
+void
+process_close_file (int fd)
+{
+  struct thread *t = thread_current ();
+  struct file *file = process_get_file(fd);
+  if(file != NULL)
+  {
+    file_close(file);
+    t->file_desc[fd] = NULL;
+  }
+}
+
