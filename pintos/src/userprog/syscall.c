@@ -31,7 +31,7 @@ syscall_handler (struct intr_frame *f)
   printf ("system call!\n");
 
   check_address (esp);
-  number = *((int*)esp);
+  number = *(int*)esp;
 
   printf ("esp: %x (%d)\n", (uint32_t)esp, *(uint32_t*)esp);
   esp -= 4;
@@ -47,7 +47,7 @@ syscall_handler (struct intr_frame *f)
       printf ("SYS_EXIT called.\n");
       arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
-      exit (*(int*)arg[0]);
+      exit (arg[0]);
       break;
 
     case SYS_CREATE:
@@ -55,7 +55,7 @@ syscall_handler (struct intr_frame *f)
       arg = (int*) malloc (sizeof(int)*2);
       get_argument (esp, arg, 2);
       check_address ((void*)arg[0]);
-      f->eax = create ((const char*)*(uint32_t*)arg[0], *(unsigned*)arg[1]);
+      f->eax = create ((const char*)arg[0], (unsigned)arg[1]);
       break;
 
     case SYS_REMOVE:
@@ -63,7 +63,7 @@ syscall_handler (struct intr_frame *f)
       arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
       check_address ((void*)arg[0]);
-      f->eax = remove ((const char*)*(uint32_t*)arg[0]);
+      f->eax = remove ((const char*)arg[0]);
       break;
 
 /* SYS_WRITE IS NOT USED FOR ASSIGNMENT 2. ONLY FOR TEST!
@@ -97,8 +97,8 @@ get_argument (void *esp, int *arg, int count)
   {
     printf ("esp: %x\n", (uint32_t)esp);
     check_address (esp);
-    arg[i] = (uint32_t)esp;
-    printf ("arg[%d]: %x\n", i, arg[i]);
+    arg[i] = *(int*)esp;
+    printf ("arg[%d]: %x\n", i, &arg[i]);
     esp -= 4;
   }
 }
