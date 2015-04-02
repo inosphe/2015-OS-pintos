@@ -182,7 +182,17 @@ thread_create (const char *name, int priority,
 
   /* Initialize thread. */
   init_thread (t, name, priority);
+  t->parent = thread_current ();
   tid = t->tid = allocate_tid ();
+
+  t->load_status = 0;
+  t->exit_status = 0;
+  sema_init (&t->load_program, 0);
+  sema_init (&t->exit_program, 0);
+  t->isExit = false;
+  t->isLoad = false;
+
+  list_push_back (&thread_current()->child_list, &t->elem);
 
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
@@ -288,6 +298,7 @@ thread_tid (void)
 void
 thread_exit (void) 
 {
+  struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
@@ -299,6 +310,8 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
+  t->isExit = true;
+  sema_up (&t->parent->exit_program);
   thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
@@ -470,6 +483,9 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
+
+  /* assignment2 */
+  list_init (&t->child_list);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

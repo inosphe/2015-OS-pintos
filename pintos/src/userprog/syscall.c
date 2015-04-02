@@ -4,6 +4,7 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "userprog/process.h"
 
 #include "devices/shutdown.h"
 #include "filesys/filesys.h"
@@ -13,7 +14,8 @@ void halt (void);
 void exit (int status);
 bool create (const char *file, unsigned initial_size);
 bool remove (const char *file);
-
+pid_t exec (const char *cmd_line);
+int wait (tid_t tid);
 
 void
 syscall_init (void) 
@@ -45,14 +47,12 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_EXIT:
       printf ("SYS_EXIT called.\n");
-      arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
       exit (arg[0]);
       break;
 
     case SYS_CREATE:
       printf ("SYS_CREATE called.\n");
-      arg = (int*) malloc (sizeof(int)*2);
       get_argument (esp, arg, 2);
       check_address ((void*)arg[0]);
       f->eax = create ((const char*)arg[0], (unsigned)arg[1]);
@@ -60,10 +60,22 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_REMOVE:
       printf ("SYS_REMOVE called.\n");
-      arg = (int*) malloc (sizeof(int)*1);
       get_argument (esp, arg, 1);
       check_address ((void*)arg[0]);
       f->eax = remove ((const char*)arg[0]);
+      break;
+
+    case SYS_EXEC:
+      printf ("SYS_EXEC called.\n");
+      get_argument (esp, arg, 1);
+      check_address ((void*)arg[0]);
+      f->eax = exec ((const char*)arg[0]);
+      break;
+
+    case SYS_WAIT:
+      printf ("SYS_WAIT called.\n");
+      get_argument (esp, arg, 1);
+      wait ((tid_t)arg[0]);
       break;
 
 /* SYS_WRITE IS NOT USED FOR ASSIGNMENT 2. ONLY FOR TEST!
@@ -92,6 +104,7 @@ void
 get_argument (void *esp, int *arg, int count)
 {
   int i;
+  arg = (int*) malloc (sizeof(int)*count);
   /* saving address value of arguments in the user stack to the kernel ("arg" array) */
   for (i=0; i<count; ++i)
   {
@@ -115,6 +128,7 @@ void
 exit (int status)
 {
   struct thread *t = thread_current ();
+  t->exit_status = status;
   printf ("%s: exit(%d)\n", t->name, status);
   thread_exit ();
 }
@@ -139,3 +153,36 @@ remove (const char *file)
     return false;
 }
 
+pid_t exec (const char *cmd_line)
+{
+  struct thread *t = thread_current ();
+  struct thread *child = 0;
+  struct list_elem *e = 0;
+  pid_t child_pid;
+  
+  child_pid = (pid_t) process_execute (cmd_line);
+  
+  if (child_pid == TID_ERROR)
+    return -1;
+ 
+  sema_down (&t->load_program);
+  
+  for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
+       e = list_next (e))
+  {
+    child = list_entry (e, struct thread, child_elem);
+    if (child->tid == child_pid)
+      break;
+  }
+
+  if (child->load_status == -1)
+    return -1;
+
+  return child_pid;
+}
+
+int wait (tid_t tid)
+{
+  process_wait(tid);
+  return 0;
+}
