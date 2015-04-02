@@ -11,6 +11,9 @@ void exit (int status);
 bool create (const char *file, unsigned initial_size);
 bool remove (const char *file);
 
+pid_t exec (const char *cmd_line);
+int wait (tid_t tid);
+
 int open(const char *file);
 int filesize (int fd);
 int read (int fd, void *buffer, unsigned size);

@@ -182,6 +182,8 @@ thread_create (const char *name, int priority,
 
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
+
+  printf("thread_create : %s %x \n", name, t);
   if (t == NULL)
     return TID_ERROR;
 
@@ -189,15 +191,9 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   t->parent = thread_current ();
   tid = t->tid = allocate_tid ();
+  
 
-  t->load_status = 0;
-  t->exit_status = 0;
-  sema_init (&t->load_program, 0);
-  sema_init (&t->exit_program, 0);
-  t->isExit = false;
-  t->isLoad = false;
-
-  list_push_back (&thread_current()->child_list, &t->elem);
+  list_push_back (&thread_current()->child_list, &t->child_elem);
 
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
@@ -306,18 +302,26 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
+  printf("thread_exit 0%x\n", t);
+
 #ifdef USERPROG
   process_exit ();
 #endif
+
+  printf("sema : %d\n", list_size(&t->exit_program.waiters));
+  printf("thread_exit 2\n");
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
+  t->status = THREAD_DYING;
   t->isExit = true;
+  if(t->parent != NULL)
+
+
   sema_up (&t->exit_program);
-  thread_current ()->status = THREAD_DYING;
   schedule ();
   NOT_REACHED ();
 }
@@ -487,6 +491,13 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->parent = NULL;
+  t->load_status = 0;
+  t->exit_status = 0;
+  sema_init (&t->load_program, 0);
+  sema_init (&t->exit_program, 0);
+  t->isExit = false;
+  t->isLoad = false;
   list_push_back (&all_list, &t->allelem);
 
   /* assignment2 */
@@ -553,17 +564,6 @@ thread_schedule_tail (struct thread *prev)
   /* Activate the new address space. */
   process_activate ();
 #endif
-
-  /* If the thread we switched from is dying, destroy its struct
-     thread.  This must happen late so that thread_exit() doesn't
-     pull out the rug under itself.  (We don't free
-     initial_thread because its memory was not obtained via
-     palloc().) */
-  if (prev != NULL && prev->status == THREAD_DYING && prev != initial_thread) 
-    {
-      ASSERT (prev != cur);
-      palloc_free_page (prev);
-    }
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and

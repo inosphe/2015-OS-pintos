@@ -176,7 +176,6 @@ remove (const char *file)
     return false;
 }
 
-<<<<<<< HEAD
 int
 open(const char *file_name)
 {

@@ -149,8 +149,9 @@ start_process (void *file_name_)
   printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
 
   success = load (file_name, &if_.eip, &if_.esp);
-  printf("success : %d\n", (int)success);
-  sema_up (&parent->load_program);
+  printf("success2 : %d\n", (int)success);
+
+  printf("s\n");
  
   printf("if_.esp : %x\n", (uint32_t)if_.esp);
   argument_stack(parse, count, &if_.esp);
@@ -200,14 +201,22 @@ process_wait (tid_t child_tid)
   struct thread *t = thread_current ();
   int ret = -1;
 
+  printf("process_wait : %x %d\n", t, t->tid);
+
   child = get_child_process (child_tid);
   if (child == NULL)
     return -1;
 
+  printf("exit 0\n");
+  printf("semadown : %x\n", child);
   sema_down (&child->exit_program);
+  printf("exit 1\n");
+
+  printf("child : %x\n", child);
 
   ret = child->exit_status;
   remove_child_process (child);
+  printf("process_wait end\n");
   return ret;
 }
 
@@ -707,6 +716,7 @@ struct thread *get_child_process (int pid)
        e = list_next (e))
   {
     child = list_entry (e, struct thread, child_elem);
+    printf("child : %x, %d\n", child, child->tid);
     if (child->tid == pid)
       return child;
   }
@@ -715,15 +725,18 @@ struct thread *get_child_process (int pid)
 
 void remove_child_process (struct thread *cp)
 {
+
   struct thread *t;
   struct thread *child;
   struct list_elem *e;
   t = thread_current();
+  printf("remove_child_process : %x, %x\n", t, cp);
 
   for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
        e = list_next (e))
   {
     child = list_entry (e, struct thread, child_elem);
+    printf("child : %x, %d\n", child, child->tid);
     if (child == cp)
     {
       e->prev->next = e->next;
