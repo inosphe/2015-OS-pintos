@@ -4,6 +4,8 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "threads/synch.h"
+
 
 #define MAX_FILE_DESC_COUNT 32
 
@@ -107,6 +109,17 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    /* for assignment2 */
+    struct thread *parent;
+    struct list child_list;
+    struct list_elem child_elem;
+    struct semaphore exit_program;
+    struct semaphore load_program; 
+    int load_status;
+    int exit_status;
+    bool isExit;
+    bool isLoad;
   };
 
 /* If false (default), use round-robin scheduler.

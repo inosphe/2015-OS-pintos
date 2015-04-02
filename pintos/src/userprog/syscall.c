@@ -10,16 +10,12 @@
 #include "filesys/filesys.h"
 #include "devices/input.h"
 #include "userprog/process.h"
-
-#define EOF 0
-
 #include "devices/shutdown.h"
 #include "filesys/filesys.h"
-
 #include "userprog/syscall.h"
 
+#define EOF 0
 static void syscall_handler (struct intr_frame *);
-
 
 void
 syscall_init (void) 
@@ -73,6 +69,19 @@ syscall_handler (struct intr_frame *f)
       get_argument (esp, &arg, 1);
       check_address ((void*)arg[0]);
       f->eax = remove (ARG_CONST_CHAR);
+      break;
+
+    case SYS_EXEC:
+      printf ("SYS_EXEC called.\n");
+      get_argument (esp, arg, 1);
+      check_address ((void*)arg[0]);
+      f->eax = exec ((const char*)arg[0]);
+      break;
+
+    case SYS_WAIT:
+      printf ("SYS_WAIT called.\n");
+      get_argument (esp, arg, 1);
+      wait ((tid_t)arg[0]);
       break;
 
     case SYS_WRITE:
@@ -142,6 +151,7 @@ void
 exit (int status)
 {
   struct thread *t = thread_current ();
+  t->exit_status = status;
   printf ("%s: exit(%d)\n", t->name, status);
   thread_exit ();
 }
@@ -166,6 +176,7 @@ remove (const char *file)
     return false;
 }
 
+<<<<<<< HEAD
 int
 open(const char *file_name)
 {
@@ -315,3 +326,36 @@ close (int fd)
 	file_unlock(file);
 }
 
+pid_t exec (const char *cmd_line)
+{
+  struct thread *t = thread_current ();
+  struct thread *child = 0;
+  struct list_elem *e = 0;
+  pid_t child_pid;
+  
+  child_pid = (pid_t) process_execute (cmd_line);
+  
+  if (child_pid == TID_ERROR)
+    return -1;
+ 
+  sema_down (&t->load_program);
+  
+  for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
+       e = list_next (e))
+  {
+    child = list_entry (e, struct thread, child_elem);
+    if (child->tid == child_pid)
+      break;
+  }
+
+  if (child->load_status == -1)
+    return -1;
+
+  return child_pid;
+}
+
+int wait (tid_t tid)
+{
+  process_wait(tid);
+  return 0;
+}
