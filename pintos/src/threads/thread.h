@@ -5,6 +5,10 @@
 #include <list.h>
 #include <stdint.h>
 
+#define MAX_FILE_DESC_COUNT 32
+
+struct file;
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -92,6 +96,9 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+
+    struct file* file_desc[MAX_FILE_DESC_COUNT];
+    int file_desc_size;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
