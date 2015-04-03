@@ -337,9 +337,11 @@ pid_t exec (const char *cmd_line)
   child_pid = (pid_t) process_execute (cmd_line);
   
   if (child_pid == TID_ERROR)
+  {
+    sema_down (&t->load_program);
     return -1;
+  }
  
-  sema_down (&t->load_program);
   
   for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
        e = list_next (e))
@@ -348,6 +350,8 @@ pid_t exec (const char *cmd_line)
     if (child->tid == child_pid)
       break;
   }
+  
+  sema_down (&t->load_program);
 
   if (child->load_status == -1)
     return -1;

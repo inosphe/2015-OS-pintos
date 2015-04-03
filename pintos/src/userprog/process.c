@@ -137,6 +137,7 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
 
   success = load (file_name, &if_.eip, &if_.esp);
+  printf("%s loaded : success\n", file_name_, success);
   argument_stack(parse, count, &if_.esp);
   
   /* free parse memories */
