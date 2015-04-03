@@ -228,11 +228,11 @@ read (int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    //printf("read : %x\n", file);
-		if(file == NULL)
-		{
-			return 0;
-		}
+    if(file == NULL)
+    {
+      return 0;
+    }
+    printf("read : %d %x %d\n", fd, file, size);
 		
 		file_lock(file);
 		ret = file_read(file, buffer, size);
@@ -267,7 +267,7 @@ write(int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    //printf("write : %x\n", file);
+    printf("write : %d %x %d\n", fd, file, size);
 		if(file == NULL)
 		{
 			return 0;
