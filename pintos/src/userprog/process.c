@@ -138,7 +138,6 @@ start_process (void *file_name_)
   
   success = load (file_name, &if_.eip, &if_.esp);
   argument_stack(parse, count, &if_.esp);
-  printf("esp : %x\n", if_.esp);
   
   /* free parse memories */
   for (i = 0; i < count; ++i)
@@ -576,8 +575,6 @@ install_page (void *upage, void *kpage, bool writable)
 void
 argument_stack(char **parse ,int count ,void **esp)
 {
-
-  printf("argument_stack\n");
 
   int i;
   int t;
