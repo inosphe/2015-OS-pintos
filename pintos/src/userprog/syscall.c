@@ -39,8 +39,14 @@ syscall_handler (struct intr_frame *f)
   int i = 0;
   struct intr_frame if_ = *f;
   void* PHYS_BASE = (void*)0xC0000000;
+  int arg0;
+  char* arg1;
+  unsigned arg2;
+
   esp = f->esp;
   check_address (esp);
+
+
 
   hex_dump(esp, esp, PHYS_BASE - esp, true);
 
@@ -83,11 +89,10 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_WRITE:
       get_argument (esp, &arg, 3);
-      printf("0 : %d\n", ARG_INT);
-      printf("1 : %s\n", ARG_CONST_CHAR);
-      printf("2 : %u\n", ARG_UNSIGNED);
-      i = 0;
-      f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
+      arg0 = ARG_INT;
+      arg1 = ARG_CONST_CHAR;
+      arg2 = ARG_UNSIGNED;
+      f->eax = write(arg0, arg1, arg2);
       break;
 
     case SYS_SEEK:
