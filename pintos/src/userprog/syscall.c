@@ -323,7 +323,7 @@ close (int fd)
 	}
 
 	file_lock(file);
-	file_close(file);
+	process_close_file(file);
 	file_unlock(file);
 }
 
