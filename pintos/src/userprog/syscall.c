@@ -75,6 +75,11 @@ syscall_handler (struct intr_frame *f)
       wait (ARG_INT);
       break;
 
+    case SYS_OPEN:
+      DECL_ARGS(1)
+      f->eax = open(ARG_INT);
+      break;
+
     case SYS_WRITE:
       DECL_ARGS(3)
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
