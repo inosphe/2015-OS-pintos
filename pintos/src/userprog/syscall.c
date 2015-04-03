@@ -35,6 +35,8 @@ syscall_handler (struct intr_frame *f)
 
   #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
 
+  printf("systemcall : %x\n", f);
+
   int *arg = 0;
   void *esp = 0;
   int number;
