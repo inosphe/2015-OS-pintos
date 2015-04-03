@@ -130,7 +130,7 @@ static get_argument (void *esp, int **arg, int count)
   /* saving address value of arguments in the user stack to the kernel ("arg" array) */
   for (i=0; i<count; ++i)
   {
-    arg[i] = *(int*)esp;
+    user_mem_read(esp, *arg+i, 4);
     esp += 4;
   }
 }
