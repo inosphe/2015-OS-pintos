@@ -671,7 +671,9 @@ void
 process_close_file (int fd)
 {
   struct thread *t = thread_current ();
+  printf("process_close_file, %x, %d \n", t, fd);
   struct file *file = process_get_file(fd);
+  printf("> %x\n", file);
   if(file != NULL)
   {
     file_close(file);
