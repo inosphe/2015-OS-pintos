@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include <debug.h>
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -81,6 +82,8 @@ kill (struct intr_frame *f)
      
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
+
+  backtrace();
   switch (f->cs)
     {
     case SEL_UCSEG:
