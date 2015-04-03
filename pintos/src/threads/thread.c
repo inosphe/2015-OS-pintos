@@ -493,7 +493,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->isExit = false;
   t->isLoad = false;
   memset(t->file_desc, 0, sizeof(struct file*) * MAX_FILE_DESC_COUNT);
-  t->file_desc_size = 0;
+  t->file_desc_size = 3;
   list_push_back (&all_list, &t->allelem);
 
   /* assignment2 */
