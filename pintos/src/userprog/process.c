@@ -633,13 +633,13 @@ clear_opened_filedesc(void)
 }
 
 
-
+// search and get file struct by file descriptor
 struct file*
 process_get_file(int fd)
 {
   struct thread *t = thread_current ();
   if(fd<0 || fd >= t->file_desc_size || t->file_desc[fd]==NULL)
-    return NULL;
+    return NULL; // not found
 
   //printf("process_get_file(%d) : %x\n", t->file_desc[fd]);
 
