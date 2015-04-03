@@ -83,6 +83,10 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_WRITE:
       get_argument (esp, &arg, 3);
+      printf("0 : %d\n", ARG_INT);
+      printf("1 : %s\n", ARG_CONST_CHAR);
+      printf("2 : %u\n", ARG_UNSIGNED);
+      i = 0;
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
