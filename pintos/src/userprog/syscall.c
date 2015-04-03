@@ -120,7 +120,6 @@ check_address (void *addr)
 {
   if ((uint32_t)addr < 0x8048000 || (uint32_t)addr > 0xc0000000)
   {
-    printf ("userprog/syscall.c/check_address(): address %x fault", (uint32_t)addr);
     exit (-1);
   }
 }
