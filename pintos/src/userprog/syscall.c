@@ -85,6 +85,11 @@ syscall_handler (struct intr_frame *f)
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
+    case SYS_READ:
+      DECL_ARGS(3)
+      f->eax = read(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
+      break;    
+
     case SYS_SEEK:
       DECL_ARGS(2)
       seek(ARG_INT, ARG_UNSIGNED);
