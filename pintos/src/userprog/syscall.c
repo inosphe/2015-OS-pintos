@@ -145,9 +145,15 @@ bool
 create (const char *file, unsigned initial_size)
 {
   if (filesys_create (file, initial_size))
+  {
+    printf("file create success\n");
     return true;
+  }
   else
+  {
+    printf("file create failed\n");
     return false;
+  }
 }
 
 /* remove file */
