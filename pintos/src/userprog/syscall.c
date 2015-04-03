@@ -146,6 +146,7 @@ void
 exit (int status)
 {
   struct thread *t = thread_current ();
+  printf("%x exit (%d)\n", t, status);
   t->exit_status = status;
   thread_exit ();
 }
