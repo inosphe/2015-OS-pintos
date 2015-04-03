@@ -305,19 +305,16 @@ thread_exit (void)
   process_exit ();
 #endif
 
-  printf("thread_exit - 2\n");
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  printf("thread_exit - 3\n");
   t->status = THREAD_DYING;
   t->isExit = true;
   sema_up (&t->exit_program);
 
-  printf("thread_exit - 4\n");
   schedule ();
   NOT_REACHED ();
 }
