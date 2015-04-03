@@ -301,6 +301,8 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
+  printf("%s: exit(%d)\n", t->name, t->exit_status);
+
 #ifdef USERPROG
   process_exit ();
 #endif
