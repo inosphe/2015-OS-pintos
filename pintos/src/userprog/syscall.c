@@ -28,24 +28,19 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
-  #define ARG_INT ((int*)arg)[i++]
-  #define ARG_UNSIGNED ((unsigned*)arg)[i++]
-  #define ARG_CONST_CHAR ((const char**)arg)[i++]
-  #define ARG_CUSTOM(_T_) ((T*)arg)[i++]
+  #define ARG_INT ((int*)arg)[i--]
+  #define ARG_UNSIGNED ((unsigned*)arg)[i--]
+  #define ARG_CONST_CHAR ((const char**)arg)[i--]
+  #define ARG_CUSTOM(_T_) ((T*)arg)[i--]
+
+  #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
 
   int *arg = 0;
   void *esp = 0;
   int number;
   int i = 0;
-  struct intr_frame if_ = *f;
-  void* PHYS_BASE = (void*)0xC0000000;
-  int arg0;
-  char* arg1;
-  unsigned arg2;
-
   esp = f->esp;
   check_address (esp);
-
   number = *(int*)esp;
   esp += 4;
   /* systemcall number is located in the top of user stack */
@@ -56,53 +51,50 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_EXIT:
-      get_argument (esp, &arg, 1);
+      DECL_ARGS(1)
       exit (ARG_INT);
       break;
 
     case SYS_CREATE:
-      get_argument (esp, &arg, 2);
+      DECL_ARGS(2)
       check_address ((void*)arg[0]);
       f->eax = create (ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
     case SYS_REMOVE:
-      get_argument (esp, &arg, 1);
+      DECL_ARGS(1)
       check_address ((void*)arg[0]);
       f->eax = remove (ARG_CONST_CHAR);
       break;
 
     case SYS_EXEC:
-      get_argument (esp, arg, 1);
+      DECL_ARGS(1)
       check_address ((void*)arg[0]);
-      f->eax = exec ((const char*)arg[0]);
+      f->eax = exec (ARG_CONST_CHAR);
       break;
 
     case SYS_WAIT:
-      get_argument (esp, arg, 1);
-      wait ((tid_t)arg[0]);
+      DECL_ARGS(1)
+      wait (ARG_INT);
       break;
 
     case SYS_WRITE:
-      get_argument (esp, &arg, 3);
-      arg0 = ARG_INT;
-      arg1 = ARG_CONST_CHAR;
-      arg2 = ARG_UNSIGNED;
-      f->eax = write(arg0, arg1, arg2);
+      DECL_ARGS(3)
+      f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
     case SYS_SEEK:
-      get_argument (esp, &arg, 2);
+      DECL_ARGS(2)
       seek(ARG_INT, ARG_UNSIGNED);
       break;
 
     case SYS_TELL:
-      get_argument (esp, &arg, 1);
+      DECL_ARGS(1)
       f->eax = tell (ARG_INT);
       break;
 
     case SYS_CLOSE:
-      get_argument (esp, &arg, 1);
+      DECL_ARGS(1)
       close (ARG_INT);
       break;
 
@@ -249,9 +241,9 @@ write(int fd, void *buffer, unsigned size)
 	/* 파일 디스크립터가 1이 아닐 경우 버퍼에 저장된 데이터를 크기
 	만큼 파일에 기록후 기록한 바이트 수를 리턴 */
 
-  printf("#%d\n", fd);
-  printf("#%s\n", buffer);
-  printf("#%u\n", size);
+  // printf("#%d\n", fd);
+  // printf("#%s\n", buffer);
+  // printf("#%u\n", size);
 
 
 	struct file *file;
