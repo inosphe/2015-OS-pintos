@@ -80,6 +80,11 @@ syscall_handler (struct intr_frame *f)
       f->eax = open(ARG_INT);
       break;
 
+    case SYS_FILESIZE:
+      DECL_ARGS(1);
+      f->eax = filesize(ARG_INT);
+      break;
+
     case SYS_WRITE:
       DECL_ARGS(3)
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
