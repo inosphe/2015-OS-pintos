@@ -136,8 +136,6 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
 
-  printf("if_ : %x\n", &if_);
-  
   success = load (file_name, &if_.eip, &if_.esp);
   argument_stack(parse, count, &if_.esp);
   
