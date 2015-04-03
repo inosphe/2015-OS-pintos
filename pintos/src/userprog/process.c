@@ -628,7 +628,7 @@ clear_opened_filedesc(void)
 
   for(i=3; i<t->file_desc_size; ++i)
   {
-    close(t->file_desc[i]);
+    close(i);
   }
 }
 
