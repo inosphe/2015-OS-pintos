@@ -83,7 +83,6 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
-  //debug_backtrace();
   switch (f->cs)
     {
     case SEL_UCSEG:
@@ -99,6 +98,7 @@ kill (struct intr_frame *f)
          may cause kernel exceptions--but they shouldn't arrive
          here.)  Panic the kernel to make the point.  */
       intr_dump_frame (f);
+      debug_backtrace();
       PANIC ("Kernel bug - unexpected interrupt in kernel"); 
 
     default:
