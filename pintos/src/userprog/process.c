@@ -663,7 +663,7 @@ process_add_file (struct file *f)
   //Is it need to copy memory?
   t->file_desc[fd] = f;
 
-  printf("fd : %d\n" fd);
+  printf("fd : %d\n", fd);
   return fd;
 }
 
