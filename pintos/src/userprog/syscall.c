@@ -315,6 +315,7 @@ tell (int fd)
 void
 close (int fd)
 {
+  printf("close : %d\n", fd);
 	process_close_file(fd);	
 }
 
