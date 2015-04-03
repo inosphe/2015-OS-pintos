@@ -638,8 +638,10 @@ struct file*
 process_get_file(int fd)
 {
   struct thread *t = thread_current ();
-  if(fd >= t->file_desc_size || fd==0)
+  if(fd >= t->file_desc_size || t->file_desc[fd]==NULL)
     return NULL;
+
+  printf("process_get_file(%d) : %x\n", t->file_desc[fd]);
 
   return t->file_desc[fd];
 }
@@ -649,6 +651,7 @@ process_add_file (struct file *f)
 {
   int fd = -1;
   struct thread *t = thread_current ();
+  printf("process_add_file %d, %d\n", t->file_desc_size, MAX_FILE_DESC_COUNT);
   if(t->file_desc_size >= MAX_FILE_DESC_COUNT)
   {
     //File desc array is full.
@@ -659,6 +662,8 @@ process_add_file (struct file *f)
 
   //Is it need to copy memory?
   t->file_desc[fd] = f;
+
+  printf("fd : %d\n" fd);
   return fd;
 }
 
