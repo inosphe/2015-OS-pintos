@@ -628,7 +628,7 @@ clear_opened_filedesc(void)
 
   for(i=3; i<t->file_desc_size; ++i)
   {
-    close(t->file_desc[i]);
+    close(i);
   }
 }
 
@@ -638,7 +638,7 @@ struct file*
 process_get_file(int fd)
 {
   struct thread *t = thread_current ();
-  if(fd >= t->file_desc_size || t->file_desc[fd]==NULL)
+  if(fd<0 || fd >= t->file_desc_size || t->file_desc[fd]==NULL)
     return NULL;
 
   //printf("process_get_file(%d) : %x\n", t->file_desc[fd]);
@@ -671,7 +671,9 @@ void
 process_close_file (int fd)
 {
   struct thread *t = thread_current ();
+  printf("process_close_file, %x, %d \n", t, fd);
   struct file *file = process_get_file(fd);
+  printf("> %x\n", file);
   if(file != NULL)
   {
     file_close(file);

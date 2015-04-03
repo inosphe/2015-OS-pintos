@@ -228,11 +228,11 @@ read (int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    //printf("read : %x\n", file);
-		if(file == NULL)
-		{
-			return 0;
-		}
+    if(file == NULL)
+    {
+      return 0;
+    }
+    printf("read : %d %x %d\n", fd, file, size);
 		
 		file_lock(file);
 		ret = file_read(file, buffer, size);
@@ -267,7 +267,8 @@ write(int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    //printf("write : %x\n", file);
+    printf("write : %d %x %d\n", fd, file, size);
+    printf("buf : %s\n", buffer);
 		if(file == NULL)
 		{
 			return 0;
@@ -275,6 +276,7 @@ write(int fd, void *buffer, unsigned size)
 
 		file_lock(file);
 		ret = file_write(file, buffer, size);
+    printf("ret : %d\n", ret);
 		file_unlock(file);
 
 		return ret;
@@ -315,16 +317,8 @@ tell (int fd)
 void
 close (int fd)
 {
-	struct file *file;
-	file = process_get_file(fd);
-	if(file == NULL)
-	{
-		return;
-	}
-
-	file_lock(file);
-	file_close(file);
-	file_unlock(file);
+  printf("close : %d\n", fd);
+	process_close_file(fd);	
 }
 
 pid_t exec (const char *cmd_line)
