@@ -84,6 +84,7 @@ kill (struct intr_frame *f)
      exception originated. */
 
   debug_backtrace();
+  printf("kill : %x\n", f);
   switch (f->cs)
     {
     case SEL_UCSEG:
