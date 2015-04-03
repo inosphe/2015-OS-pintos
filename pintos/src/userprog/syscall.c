@@ -72,7 +72,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_WAIT:
       DECL_ARGS(1)
-      wait (ARG_INT);
+      f->eax = wait (ARG_INT);
       break;
 
     case SYS_OPEN:
@@ -356,8 +356,7 @@ pid_t exec (const char *cmd_line)
 
 int wait (tid_t tid)
 {
-  process_wait(tid);
-  return 0;
+  return process_wait(tid);
 }
 
 bool
