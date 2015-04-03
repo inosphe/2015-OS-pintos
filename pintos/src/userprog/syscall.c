@@ -268,6 +268,7 @@ write(int fd, void *buffer, unsigned size)
 	{
 		file = process_get_file(fd);
     printf("write : %d %x %d\n", fd, file, size);
+    printf("buf : %s\n", buffer);
 		if(file == NULL)
 		{
 			return 0;
@@ -275,6 +276,7 @@ write(int fd, void *buffer, unsigned size)
 
 		file_lock(file);
 		ret = file_write(file, buffer, size);
+    printf("ret : %d\n", ret);
 		file_unlock(file);
 
 		return ret;
