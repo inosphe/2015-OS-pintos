@@ -251,6 +251,9 @@ write(int fd, void *buffer, unsigned size)
 	만큼 파일에 기록후 기록한 바이트 수를 리턴 */
 
   printf("write %d, %x, %u\n", fd, buffer, size);
+  printf("#%d\n", fd);
+  printf("#%s\n", buffer);
+  printf("#%u\n", size);
   printf("%s\n", buffer);
 
 
