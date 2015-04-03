@@ -221,7 +221,11 @@ process_exit (void)
       pagedir_destroy (pd);
     } 
 
+    printf("process_exit end - 2\n");
+
     clear_opened_filedesc();
+
+    printf("process_exit end\n");
 }
 
 /* Sets up the CPU for running user code in the current
