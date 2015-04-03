@@ -101,8 +101,6 @@ thread_init (void)
 
   // Initialize file_desc array by 0. 
   // File descriptor can be released before exit thread.
-  memset(initial_thread->file_desc, 0, sizeof(struct file*) * MAX_FILE_DESC_COUNT);
-  initial_thread->file_desc_size = 0;
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -494,6 +492,8 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init (&t->exit_program, 0);
   t->isExit = false;
   t->isLoad = false;
+  memset(t->file_desc, 0, sizeof(struct file*) * MAX_FILE_DESC_COUNT);
+  t->file_desc_size = 0;
   list_push_back (&all_list, &t->allelem);
 
   /* assignment2 */
