@@ -57,19 +57,16 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_CREATE:
       DECL_ARGS(2)
-      check_address ((void*)arg[0]);
       f->eax = create (ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
     case SYS_REMOVE:
       DECL_ARGS(1)
-      check_address ((void*)arg[0]);
       f->eax = remove (ARG_CONST_CHAR);
       break;
 
     case SYS_EXEC:
       DECL_ARGS(1)
-      check_address ((void*)arg[0]);
       f->eax = exec (ARG_CONST_CHAR);
       break;
 
@@ -167,6 +164,7 @@ int
 open(const char *file_name)
 {
 	struct file *file = filesys_open(file_name);
+  printf("open : %x\n", file);
 	int fd = -1;
 	if(file != NULL)
 	{
@@ -219,6 +217,7 @@ read (int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
+    printf("read : %x\n", file);
 		if(file == NULL)
 		{
 			return 0;
@@ -257,6 +256,7 @@ write(int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
+    printf("write : %x\n", file);
 		if(file == NULL)
 		{
 			return 0;
