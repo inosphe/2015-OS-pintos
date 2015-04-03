@@ -82,7 +82,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_WRITE:
-      get_argument (esp, &arg, 10);
+      get_argument (esp, &arg, 3);
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
