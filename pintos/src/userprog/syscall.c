@@ -46,10 +46,6 @@ syscall_handler (struct intr_frame *f)
   esp = f->esp;
   check_address (esp);
 
-
-
-  hex_dump(esp, esp, PHYS_BASE - esp, true);
-
   number = *(int*)esp;
   esp += 4;
   /* systemcall number is located in the top of user stack */
@@ -134,9 +130,7 @@ static get_argument (void *esp, int **arg, int count)
   /* saving address value of arguments in the user stack to the kernel ("arg" array) */
   for (i=0; i<count; ++i)
   {
-    user_mem_read(esp, *arg+i, 4);
-
-    printf("%x : arg[%i] : %x\n", esp, i, (*arg)[i]);
+    arg[i] = *(int*)esp;
     esp += 4;
   }
 }
@@ -255,11 +249,9 @@ write(int fd, void *buffer, unsigned size)
 	/* 파일 디스크립터가 1이 아닐 경우 버퍼에 저장된 데이터를 크기
 	만큼 파일에 기록후 기록한 바이트 수를 리턴 */
 
-  printf("write %d, %x, %u\n", fd, buffer, size);
   printf("#%d\n", fd);
   printf("#%s\n", buffer);
   printf("#%u\n", size);
-  printf("%s\n", buffer);
 
 
 	struct file *file;
@@ -267,7 +259,6 @@ write(int fd, void *buffer, unsigned size)
 	if(fd == 1)
 	{
 		putbuf((const char*)buffer, size);
-    printf("# %s\n", buffer);
     ret = size;
 		return ret;
 	}
