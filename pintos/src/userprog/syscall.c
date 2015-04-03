@@ -35,18 +35,14 @@ syscall_handler (struct intr_frame *f)
 
   #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
 
-  printf("systemcall : %x\n", f);
-
   int *arg = 0;
   void *esp = 0;
   int number;
   int i = 0;
   esp = f->esp;
   check_address (esp);
-  printf("esp : %x\n", esp);
   number = *(int*)esp;
   /* systemcall number is located in the top of user stack */
-  printf("syscall %x : %d\n", esp, number);
   esp += 4;
   switch (number)
   {
