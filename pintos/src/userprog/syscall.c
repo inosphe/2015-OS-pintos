@@ -16,6 +16,8 @@
 
 #define EOF 0
 static void syscall_handler (struct intr_frame *);
+bool user_mem_read(void *, void *, int);
+static int get_user(const uint8_t *);
 
 void
 syscall_init (void) 
@@ -35,75 +37,66 @@ syscall_handler (struct intr_frame *f)
   void *esp = 0;
   int number;
   int i = 0;
+  struct intr_frame if_ = *f;
+  void* PHYS_BASE = (void*)0xC0000000;
   esp = f->esp;
-  printf ("system call!\n");
-
   check_address (esp);
-  number = *(int*)esp;
 
-  printf ("esp: %x (%d)\n", (uint32_t)esp, *(uint32_t*)esp);
-  esp -= 4;
+  hex_dump(esp, esp, PHYS_BASE - esp, true);
+
+  number = *(int*)esp;
+  esp += 4;
   /* systemcall number is located in the top of user stack */
   switch (number)
   {
     case SYS_HALT:
-      printf ("SYS_HALT called.\n");
       halt ();
       break;
 
     case SYS_EXIT:
-      printf ("SYS_EXIT called.\n");
       get_argument (esp, &arg, 1);
       exit (ARG_INT);
       break;
 
     case SYS_CREATE:
-      printf ("SYS_CREATE called.\n");
       get_argument (esp, &arg, 2);
       check_address ((void*)arg[0]);
       f->eax = create (ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
     case SYS_REMOVE:
-      printf ("SYS_REMOVE called.\n");
       get_argument (esp, &arg, 1);
       check_address ((void*)arg[0]);
       f->eax = remove (ARG_CONST_CHAR);
       break;
 
     case SYS_EXEC:
-      printf ("SYS_EXEC called.\n");
       get_argument (esp, arg, 1);
       check_address ((void*)arg[0]);
       f->eax = exec ((const char*)arg[0]);
       break;
 
     case SYS_WAIT:
-      printf ("SYS_WAIT called.\n");
       get_argument (esp, arg, 1);
       wait ((tid_t)arg[0]);
       break;
 
     case SYS_WRITE:
-      printf ("SYS_WRITE called.\n");
-      get_argument (esp, &arg, 3);
+      get_argument (esp, &arg, 10);
       f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
       break;
 
     case SYS_SEEK:
-      printf ("SYS_SEEK called.\n");
       get_argument (esp, &arg, 2);
       seek(ARG_INT, ARG_UNSIGNED);
       break;
 
     case SYS_TELL:
-      printf ("SYS_TELL called.\n");
       get_argument (esp, &arg, 1);
       f->eax = tell (ARG_INT);
       break;
 
     case SYS_CLOSE:
-      printf ("SYS_CLOSE called.\n");
       get_argument (esp, &arg, 1);
       close (ARG_INT);
       break;
@@ -124,18 +117,18 @@ check_address (void *addr)
 }
 
 void
-get_argument (void *esp, int **arg, int count)
+static get_argument (void *esp, int **arg, int count)
 {
   int i;
+  //esp += 4*(1+count);
   *arg = (int*) malloc (sizeof(int)*count);
   /* saving address value of arguments in the user stack to the kernel ("arg" array) */
   for (i=0; i<count; ++i)
   {
-    printf ("esp: %x\n", (uint32_t)esp);
-    check_address (esp);
-    (*arg)[i] = *(int*)esp;
-    printf ("arg[%d]: %x\n", i, &(*arg)[i]);
-    esp -= 4;
+    user_mem_read(esp, *arg+i, 4);
+
+    printf("%x : arg[%i] : %x\n", esp, i, (*arg)[i]);
+    esp += 4;
   }
 }
 
@@ -152,7 +145,6 @@ exit (int status)
 {
   struct thread *t = thread_current ();
   t->exit_status = status;
-  printf ("%s: exit(%d)\n", t->name, status);
   thread_exit ();
 }
 
@@ -253,6 +245,8 @@ write(int fd, void *buffer, unsigned size)
 	/* 파일 디스크립터가 1일 경우 버퍼에 저장된 값을 화면에 출력후 버퍼의 크기 리턴 (putbuf() 이용) */
 	/* 파일 디스크립터가 1이 아닐 경우 버퍼에 저장된 데이터를 크기
 	만큼 파일에 기록후 기록한 바이트 수를 리턴 */
+
+  printf("write %d, %x, %u\n", fd, buffer, size);
 
 
 	struct file *file;
@@ -358,3 +352,32 @@ int wait (tid_t tid)
   process_wait(tid);
   return 0;
 }
+
+bool
+user_mem_read(void *src, void *des, int bytes)
+{
+  //printf("user_mem_read src(%x), des(%x), bytes(%d)\n", src, des, bytes);
+  int value, i;
+  for(i=0; i<bytes ; i++){
+    value = get_user(src+i);
+    //printf("value : %x\n", value);
+    if(value==-1)
+      return false;
+    *(char*)(des+i) = value&0xff;
+  }
+  // printf("des : %x\n", *(int*)des);
+  return true;
+}
+
+static int
+get_user (const uint8_t *uaddr)
+{
+  check_address (uaddr);
+
+  int result;
+  asm ("movl $1f, %0; movzbl %1, %0; 1:"
+          : "=&a" (result) : "m" (*uaddr));
+  return result;
+}
+
+

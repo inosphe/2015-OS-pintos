@@ -183,7 +183,6 @@ thread_create (const char *name, int priority,
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
 
-  printf("thread_create : %s %x \n", name, t);
   if (t == NULL)
     return TID_ERROR;
 
@@ -302,14 +301,9 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
-  printf("thread_exit 0%x\n", t);
-
 #ifdef USERPROG
   process_exit ();
 #endif
-
-  printf("sema : %d\n", list_size(&t->exit_program.waiters));
-  printf("thread_exit 2\n");
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
