@@ -331,6 +331,8 @@ pid_t exec (const char *cmd_line)
   struct thread *child = 0;
   struct list_elem *e = 0;
   pid_t child_pid;
+
+  printf("exec | %s\n", cmd_line);
   
   child_pid = (pid_t) process_execute (cmd_line);
   
@@ -355,6 +357,7 @@ pid_t exec (const char *cmd_line)
 
 int wait (tid_t tid)
 {
+  printf("wait : %d\n", tid);
   return process_wait(tid);
 }
 
