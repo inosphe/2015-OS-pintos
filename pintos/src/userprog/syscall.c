@@ -28,6 +28,13 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
+  #define ARG_INT ((int*)arg)[i--]
+  #define ARG_UNSIGNED ((unsigned*)arg)[i--]
+  #define ARG_CONST_CHAR ((const char**)arg)[i--]
+  #define ARG_CUSTOM(_T_) ((T*)arg)[i--]
+
+  #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
+
   int *arg = 0;
   void *esp = 0;
   int number;
@@ -376,10 +383,3 @@ get_user (const uint8_t *uaddr)
 }
 
 
-
-#define ARG_INT ((int*)arg)[i--]
-#define ARG_UNSIGNED ((unsigned*)arg)[i--]
-#define ARG_CONST_CHAR ((const char**)arg)[i--]
-#define ARG_CUSTOM(_T_) ((T*)arg)[i--]
-
-#define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
