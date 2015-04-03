@@ -98,6 +98,7 @@ kill (struct intr_frame *f)
          Kernel code shouldn't throw exceptions.  (Page faults
          may cause kernel exceptions--but they shouldn't arrive
          here.)  Panic the kernel to make the point.  */
+      exit(-1);
       intr_dump_frame (f);
       debug_backtrace();
       PANIC ("Kernel bug - unexpected interrupt in kernel"); 
@@ -110,7 +111,7 @@ kill (struct intr_frame *f)
              f->vec_no, intr_name (f->vec_no), f->cs);
       break;
     }
-    
+
     exit(-1);
 }
 

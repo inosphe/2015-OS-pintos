@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <syscall-nr.h>
@@ -43,6 +42,7 @@ syscall_handler (struct intr_frame *f)
   check_address (esp);
   number = *(int*)esp;
   /* systemcall number is located in the top of user stack */
+  printf("syscall %x : %d\n", esp, number);
   esp += 4;
   switch (number)
   {
