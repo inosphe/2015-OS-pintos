@@ -44,7 +44,6 @@ syscall_handler (struct intr_frame *f)
   number = *(int*)esp;
   esp += 4;
   /* systemcall number is located in the top of user stack */
-  printf("systemcall : %d\n", number);
   switch (number)
   {
     case SYS_HALT:
@@ -161,12 +160,10 @@ create (const char *file, unsigned initial_size)
 {
   if (filesys_create (file, initial_size))
   {
-    //printf("file create success\n");
     return true;
   }
   else
   {
-    //printf("file create failed\n");
     return false;
   }
 }
@@ -185,7 +182,6 @@ int
 open(const char *file_name)
 {
 	struct file *file = filesys_open(file_name);
-  //printf("open : %x\n", file);
 	int fd = -1;
 	if(file == NULL)
 	{
@@ -333,8 +329,6 @@ pid_t exec (const char *cmd_line)
   struct list_elem *e = 0;
   pid_t child_pid;
 
-  printf("exec | %s\n", cmd_line);
-  
   child_pid = (pid_t) process_execute (cmd_line);
   
   if (child_pid == TID_ERROR)
@@ -358,7 +352,6 @@ pid_t exec (const char *cmd_line)
 
 int wait (tid_t tid)
 {
-  printf("wait : %d\n", tid);
   return process_wait(tid);
 }
 
