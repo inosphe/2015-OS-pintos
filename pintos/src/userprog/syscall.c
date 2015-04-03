@@ -247,6 +247,7 @@ write(int fd, void *buffer, unsigned size)
 	만큼 파일에 기록후 기록한 바이트 수를 리턴 */
 
   printf("write %d, %x, %u\n", fd, buffer, size);
+  printf("%s\n", buffer);
 
 
 	struct file *file;
@@ -254,7 +255,8 @@ write(int fd, void *buffer, unsigned size)
 	if(fd == 1)
 	{
 		putbuf((const char*)buffer, size);
-		ret = size;
+    printf("# %s\n", buffer);
+    ret = size;
 		return ret;
 	}
 	else
