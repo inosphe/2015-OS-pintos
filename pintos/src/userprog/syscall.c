@@ -151,12 +151,12 @@ create (const char *file, unsigned initial_size)
 {
   if (filesys_create (file, initial_size))
   {
-    printf("file create success\n");
+    //printf("file create success\n");
     return true;
   }
   else
   {
-    printf("file create failed\n");
+    //printf("file create failed\n");
     return false;
   }
 }
@@ -175,9 +175,9 @@ int
 open(const char *file_name)
 {
 	struct file *file = filesys_open(file_name);
-  printf("open : %x\n", file);
+  //printf("open : %x\n", file);
 	int fd = -1;
-	if(file != NULL)
+	if(file == NULL)
 	{
 		return fd;
 	}
@@ -228,7 +228,7 @@ read (int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    printf("read : %x\n", file);
+    //printf("read : %x\n", file);
 		if(file == NULL)
 		{
 			return 0;
@@ -267,7 +267,7 @@ write(int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    printf("write : %x\n", file);
+    //printf("write : %x\n", file);
 		if(file == NULL)
 		{
 			return 0;
