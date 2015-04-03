@@ -24,9 +24,16 @@ syscall_init (void)
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
+/*
+  인터럽트로 프레임으로부터 인자를 파싱하여 적절한 핸들러를 호출한다.
+*/
+
 static void
 syscall_handler (struct intr_frame *f) 
 {
+  /*
+    매크로를 이용하여 코드 가독성을 높힌다.
+  */
   #define ARG_INT ((int*)arg)[i--]
   #define ARG_UNSIGNED ((unsigned*)arg)[i--]
   #define ARG_CONST_CHAR ((const char**)arg)[i--]
