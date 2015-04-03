@@ -122,7 +122,8 @@ check_address (void *addr)
     exit (-1);
   }
 
-  if(pagedir_get_page)
+  if(!pagedir_get_page(thread_current()->pagedir, addr))
+    exit(-1);
 }
 
 void
