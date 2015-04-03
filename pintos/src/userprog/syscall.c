@@ -315,16 +315,7 @@ tell (int fd)
 void
 close (int fd)
 {
-	struct file *file;
-	file = process_get_file(fd);
-	if(file == NULL)
-	{
-		return;
-	}
-
-	file_lock(file);
-	process_close_file(file);
-	file_unlock(file);
+	process_close_file(fd);	
 }
 
 pid_t exec (const char *cmd_line)
