@@ -42,8 +42,9 @@ syscall_handler (struct intr_frame *f)
   esp = f->esp;
   check_address (esp);
   number = *(int*)esp;
-  esp += 4;
   /* systemcall number is located in the top of user stack */
+  printf("syscall %x : %d\n", esp, number);
+  esp += 4;
   switch (number)
   {
     case SYS_HALT:
