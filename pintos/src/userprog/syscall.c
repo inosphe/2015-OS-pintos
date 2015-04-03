@@ -318,6 +318,7 @@ tell (int fd)
 	file_lock(file);
 	pos = file_tell(file);
 	file_unlock(file);
+  return pos;
 }
 
 void
