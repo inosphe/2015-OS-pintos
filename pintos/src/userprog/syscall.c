@@ -42,13 +42,12 @@ syscall_handler (struct intr_frame *f)
   #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
 
   int *arg = 0;
-  int *esp = 0;
+  void *esp = 0;
   int number;
   int i = 0;
   esp = f->esp;
   check_address (esp);
-  //number = *(int*)esp;
-  number = *esp;
+  number = *(int*)esp;
   /* systemcall number is located in the top of user stack */
   esp += 4;
   switch (number)
