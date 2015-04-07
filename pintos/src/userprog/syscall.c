@@ -46,7 +46,7 @@ syscall_handler (struct intr_frame *f)
   int number;
   int i = 0;
   esp = f->esp;
-  printf("test0\n");
+  printf("test0 %d\n", *esp);
   number = *esp;
   printf("test1\n");
   /* systemcall number is located in the top of user stack */
