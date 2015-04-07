@@ -43,7 +43,9 @@ syscall_handler (struct intr_frame *f)
   int i = 0;
   esp = f->esp;
   check_address (esp);
+  printf("test 0\n");
   number = *(int*)esp;
+  printf("test 1\n");
   /* systemcall number is located in the top of user stack */
   /* every systemcall is numbered in syscall_nr.h */
   /* return value of systemcall will saved to eax */
@@ -115,6 +117,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
   }
+  printf("test 2\n");
   if (arg)
     free (arg);
 }
@@ -362,6 +365,7 @@ int wait (tid_t tid)
 {
   return process_wait(tid);
 }
+
 
 bool
 user_mem_read(void *src, void *des, int bytes)
