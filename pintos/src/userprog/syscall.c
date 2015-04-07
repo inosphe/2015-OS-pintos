@@ -47,9 +47,12 @@ syscall_handler (struct intr_frame *f)
   int i = 0;
   esp = f->esp;
   check_address (esp);
+  printf("test0\n");
   number = *(int*)esp;
+  printf("test1\n");
   /* systemcall number is located in the top of user stack */
   esp += 4;
+  printf("test2\n");
   switch (number)
   {
     case SYS_HALT:
@@ -117,6 +120,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
   }
+  printf("test3\n");
   if (arg)
     free (arg);
 }
