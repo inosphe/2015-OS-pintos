@@ -680,7 +680,7 @@ cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
   const struct thread *a = list_entry (a_, struct thread, elem);
   const struct thread *b = list_entry (b_, struct thread, elem);
   
-  return a->value < b->value;
+  return a->tick_to_awake < b->tick_to_awake;
 }
 
 bool
@@ -690,7 +690,7 @@ cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
   const struct thread *a = list_entry (a_, struct thread, elem);
   const struct thread *b = list_entry (b_, struct thread, elem);
   
-  return a->value < b->value; 
+  return a->priority > b->priority; 
 }
 
 
