@@ -170,4 +170,5 @@ void update_next_tick_to_awake(int64_t ticks);
 /* next_tick_to_awake를 반환 */
 int64_t get_next_tick_to_awake(void);
 
+
 #endif /* threads/thread.h */

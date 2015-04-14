@@ -75,7 +75,10 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
-static bool value_less (const struct list_elem *, const struct list_elem *, void *);
+static bool cmp_wake_tick (const struct list_elem *, const struct list_elem *, void *);
+static bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
+/*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
+void test_max_priority(void);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -225,6 +228,8 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  test_max_priority();
+
   return tid;
 }
 
@@ -261,7 +266,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered (&ready_list, &t->elem, cmp_priority, 0);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -339,7 +344,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered (&ready_list, &cur->elem, cmp_priority, 0);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -367,6 +372,7 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  test_max_priority();
 }
 
 /* Returns the current thread's priority. */
@@ -620,7 +626,7 @@ thread_sleep(int64_t ticks)
   ASSERT (is_thread (cur));
   ASSERT (cur->status !+ THREAD_BLOCKED);
   
-  list_insert_ordered(&sleep_list, &cur->elem, value_less, 0);
+  list_insert_ordered(&sleep_list, &cur->elem, cmp_wake_tick, 0);
   cur->tick_to_awake = ticks;
   cur->status = THREAD_BLOCKED;
   update_next_tick_to_awake();
@@ -670,11 +676,36 @@ int64_t get_next_tick_to_awake(void)
 /* Returns true if value A is less than value B, false
    otherwise. */
 static bool
-value_less (const struct list_elem *a_, const struct list_elem *b_,
+cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
 {
-  const struct value *a = list_entry (a_, struct value, elem);
-  const struct value *b = list_entry (b_, struct value, elem);
+  const struct thread *a = list_entry (a_, struct thread, elem);
+  const struct thread *b = list_entry (b_, struct thread, elem);
   
   return a->value < b->value;
+}
+
+static bool
+cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
+            void *aux UNUSED) 
+{
+  const struct thread *a = list_entry (a_, struct thread, elem);
+  const struct thread *b = list_entry (b_, struct thread, elem);
+  
+  return a->value < b->value; 
+}
+
+
+void test_max_priority (void)
+{
+  struct thread *t
+  if ( list_empty(&ready_list) )
+  {
+    return;
+  }
+  t = list_entry(list_front(&ready_list), struct thread, elem);
+  if (thread_current()->priority < t->priority)
+  {
+    thread_yield();
+  }
 }
