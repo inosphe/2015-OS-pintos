@@ -61,6 +61,9 @@
 ## IA-32 architecture
 * http://www.pmzone.org/chapter01.html
 
+## Pagefault
+* http://lwn.net/Articles/550555/
+* https://courses.cs.washington.edu/courses/cse451/13sp/lectures/13-hardware.support.pdf
 
 ## git
 
