@@ -18,18 +18,21 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+/* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
   { \
     offset += 1; \
     *((int8_t*)(addr - offset)) = (int8_t)val; \
   } 
 
+/* push 32bit type value to stack */
 #define push_stack_int32(addr, offset, val) \
   { \
     offset += 4; \
     *((int32_t*)(addr - offset)) = (int32_t)val; \
   } 
 
+/* push continuous character string value to stack */
 #define push_stack_string(addr, offset, val) \
   { \
     t = strlen(val) + 1;  \
@@ -37,6 +40,7 @@
     memcpy(addr - offset, val, t); \
   } 
 
+/* set esp as addr - offset */
 #define set_esp(addr, offset) \
   { \
     *esp = addr - offset; \
@@ -57,9 +61,6 @@ process_execute (const char *file_name_)
   char *file_name = NULL;
   tid_t tid;
 
-  printf("*** process_execute ***\n");
-  printf("> file_name_ : %s, %d, %x\n", file_name_, sizeof(file_name_), (uint32_t)file_name_);
-
   /* This page is owned & managed by 'start_process' */
   fn_copy = palloc_get_page (0);
   if(!fn_copy)
@@ -73,10 +74,8 @@ process_execute (const char *file_name_)
     goto ERROR_HANDLE;
   strlcpy (file_name, file_name_, PGSIZE-1);
 
-  file_name = strtok_r(file_name, " ", &lasts);
+  file_name = strtok_r(file_name, " ", &lasts); //set filename using first token of file_name.
   
-  printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
-
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
@@ -85,8 +84,8 @@ process_execute (const char *file_name_)
   /* This is copied in thread_create-thread_init*/
   palloc_free_page(file_name);
 
-  printf("tid : %x\n", tid);
   return tid;
+
 
 ERROR_HANDLE:
   if(fn_copy != NULL)
@@ -111,9 +110,7 @@ start_process (void *file_name_)
   char count;
   int i;
   char *parse_temp;
-
-  printf("*** start_process ***\n");
-  printf("> file_name_ : %s, %d, %x\n", (const char*)file_name_, sizeof(file_name_), (uint32_t)file_name_);
+  struct thread *parent = thread_current ()->parent;
 
   count = 0;
   for(parse_temp = strtok_r(file_name_, " ", &lasts);
@@ -138,13 +135,8 @@ start_process (void *file_name_)
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
-  
-  printf("> file_name : %s %x\n", file_name, (uint32_t)file_name);
 
   success = load (file_name, &if_.eip, &if_.esp);
-  printf("success : %d\n", (int)success);
-  
-  printf("if_.esp : %x\n", (uint32_t)if_.esp);
   argument_stack(parse, count, &if_.esp);
   
   /* free parse memories */
@@ -155,12 +147,19 @@ start_process (void *file_name_)
   palloc_free_page(parse);
   parse = NULL;
 
-  hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
+  //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
 
   /* If load failed, quit. */
   palloc_free_page (file_name_);
-  if (!success) 
+  
+  sema_up(&parent->load_program);
+  
+  if (!success)
+  {
+    thread_current ()->load_status = -1;
     thread_exit ();
+  }
+  thread_current ()->load_status = 1;
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -182,9 +181,20 @@ start_process (void *file_name_)
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
-process_wait (tid_t child_tid UNUSED) 
+process_wait (tid_t child_tid) 
 {
-  return -1;
+  struct thread *child;
+  struct thread *t = thread_current ();
+  int ret = -1;
+
+  child = get_child_process (child_tid);
+  if (child == NULL)
+    return -1;
+
+  sema_down (&child->exit_program);
+  ret = child->exit_status;
+  remove_child_process (child);
+  return ret;
 }
 
 /* Free the current process's resources. */
@@ -209,7 +219,9 @@ process_exit (void)
       cur->pagedir = NULL;
       pagedir_activate (NULL);
       pagedir_destroy (pd);
-    }
+    } 
+
+    clear_opened_filedesc();
 }
 
 /* Sets up the CPU for running user code in the current
@@ -563,17 +575,15 @@ install_page (void *upage, void *kpage, bool writable)
 void
 argument_stack(char **parse ,int count ,void **esp)
 {
-  printf("*** argument_stack ***\n");
-  printf("> esp : %x\n", (uint32_t)*esp);
 
   int i;
   int t;
   uint32_t data_size = 0;
 
-  void *addr0; //argv's contents
-  uint8_t offset0;
-  void *addr1 ; //argvs
-  uint8_t offset1;
+  void *addr0; //argv's contents start address
+  uint8_t offset0;  //argv's contents offset
+  void *addr1 ; //argvs start address
+  uint8_t offset1; //argvs offset
   void *argv;
 
   addr0 = *esp;
@@ -585,33 +595,124 @@ argument_stack(char **parse ,int count ,void **esp)
     data_size += strlen(parse[i]) + 1;          //strlen + '\0'
   }
 
-  printf("data_size : %d\n", data_size);
   addr1 = (void*)(((uint32_t)addr0 - data_size) & 0xfffffffc);     //for word-align(4Byte)
   offset1 = 0;
 
-  printf("addr0 : %x\n", (uint32_t)addr0);
-  printf("addr1 : %x\n", (uint32_t)addr1);
-
-  push_stack_int32(addr1, offset1, 0);                //argv[argc]; 
+  push_stack_int32(addr1, offset1, 0);                //push argv[argc]; 
 
   for(i=count-1; i>=0; --i)
   {
-    push_stack_string(addr0, offset0, parse[i]);  //argv[i][j] strings
-    push_stack_int32(addr1, offset1, addr0-offset0);       //argv[i]
-
-    printf("argv[%d] : %s | %x \n", i, parse[i], (uint32_t)(addr0-offset0));
+    push_stack_string(addr0, offset0, parse[i]);      //push argv[i][j](string)
+    push_stack_int32(addr1, offset1, addr0-offset0);  //push argv[i]
   }
 
   while(addr0-offset0>addr1)
   {
-    push_stack_int8(addr0, offset0, 0);    //word-align
+    push_stack_int8(addr0, offset0, 0);    //push zero for word-align
   }
 
   argv = addr1-offset1;
 
-  push_stack_int32(addr1, offset1, argv);  //argv
-  push_stack_int32(addr1, offset1, count);  //argc
-  push_stack_int32(addr1, offset1, 0);      //return address
+  push_stack_int32(addr1, offset1, argv);   //push argv
+  push_stack_int32(addr1, offset1, count);  //push argc
+  push_stack_int32(addr1, offset1, 0);      //push fake address(zero) for return address
 
-  set_esp(addr1, offset1);
+  set_esp(addr1, offset1);                  //set esp value using addr1 - offset1
+}
+
+void
+clear_opened_filedesc(void)
+{
+  int i;
+  struct thread *t = thread_current ();
+
+  for(i=3; i<t->file_desc_size; ++i)
+  {
+    process_close_file(i);
+  }
+}
+
+
+// search and get file struct by file descriptor
+struct file*
+process_get_file(int fd)
+{
+  struct thread *t = thread_current ();
+  if(fd<0 || fd >= t->file_desc_size || t->file_desc[fd]==NULL)
+    return NULL; // not found
+
+  //printf("process_get_file(%d) : %x\n", t->file_desc[fd]);
+
+  return t->file_desc[fd];
+}
+
+int
+process_add_file (struct file *f)
+{
+  int fd = -1;
+  struct thread *t = thread_current ();
+  //printf("process_add_file %d, %d\n", t->file_desc_size, MAX_FILE_DESC_COUNT);
+  if(t->file_desc_size >= MAX_FILE_DESC_COUNT)
+  {
+    //File desc array is full.
+    return fd;
+  }
+
+  fd = t->file_desc_size++;
+
+  //Is it need to copy memory?
+  t->file_desc[fd] = f;
+
+  //printf("fd : %d\n", fd);
+  return fd;
+}
+
+void
+process_close_file (int fd)
+{
+  struct thread *t = thread_current ();
+  struct file *file = process_get_file(fd);
+  if(file != NULL)
+  {
+    file_close(file);
+    t->file_desc[fd] = NULL;
+  }
+}
+
+struct thread *get_child_process (int pid)
+{
+  struct thread *t;
+  struct thread *child;
+  struct list_elem *e;
+  t = thread_current();
+
+  for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
+       e = list_next (e))
+  {
+    child = list_entry (e, struct thread, child_elem);
+    if (child->tid == pid)
+      return child;
+  }
+  return NULL;
+}
+
+void remove_child_process (struct thread *cp)
+{
+
+  struct thread *t;
+  struct thread *child;
+  struct list_elem *e;
+  t = thread_current();
+  for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
+       e = list_next (e))
+  {
+    child = list_entry (e, struct thread, child_elem);
+    if (child == cp)
+    {
+      e->prev->next = e->next;
+      e->next->prev = e->prev;
+      palloc_free_page (cp);
+      break;
+    }
+  }
 }

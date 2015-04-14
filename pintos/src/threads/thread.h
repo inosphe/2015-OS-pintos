@@ -4,6 +4,12 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "threads/synch.h"
+
+
+#define MAX_FILE_DESC_COUNT 32
+
+struct file;
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -93,6 +99,10 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+    /* for assignment 2 file descriptor */
+    struct file* file_desc[MAX_FILE_DESC_COUNT];   /* my file dsecriptor table */
+    int file_desc_size; /* table real size(max fd) + 1 */
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -100,6 +110,17 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    /* for assignment2 */
+    struct thread *parent;  /* parent process pointer */
+    struct list child_list; /* linked list of child processes */
+    struct list_elem child_elem; /* element struct for child_list */
+    struct semaphore exit_program;
+    struct semaphore load_program; 
+    int load_status; /* when this process(or thread) load program to memory, set this value */
+    int exit_status; /* when this process(or thread) dying, set this value */
+    bool isExit;
+    bool isLoad;
   };
 
 /* If false (default), use round-robin scheduler.

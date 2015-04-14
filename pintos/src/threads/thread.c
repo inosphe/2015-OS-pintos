@@ -98,6 +98,9 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+
+  // Initialize file_desc array by 0. 
+  // File descriptor can be released before exit thread.
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -177,12 +180,17 @@ thread_create (const char *name, int priority,
 
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
+
   if (t == NULL)
     return TID_ERROR;
 
   /* Initialize thread. */
   init_thread (t, name, priority);
+  t->parent = thread_current ();
   tid = t->tid = allocate_tid ();
+  
+
+  list_push_back (&thread_current()->child_list, &t->child_elem);
 
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
@@ -288,18 +296,25 @@ thread_tid (void)
 void
 thread_exit (void) 
 {
+  struct thread *t = thread_current ();
   ASSERT (!intr_context ());
+
+  printf("%s: exit(%d)\n", t->name, t->exit_status);
 
 #ifdef USERPROG
   process_exit ();
 #endif
+
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  thread_current ()->status = THREAD_DYING;
+  t->status = THREAD_DYING;
+  t->isExit = true;
+  sema_up (&t->exit_program);
+
   schedule ();
   NOT_REACHED ();
 }
@@ -469,7 +484,19 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->parent = NULL;
+  t->load_status = 0;
+  t->exit_status = 0;
+  sema_init (&t->load_program, 0);
+  sema_init (&t->exit_program, 0);
+  t->isExit = false;
+  t->isLoad = false;
+  memset(t->file_desc, 0, sizeof(struct file*) * MAX_FILE_DESC_COUNT);
+  t->file_desc_size = 3;
   list_push_back (&all_list, &t->allelem);
+
+  /* assignment2 */
+  list_init (&t->child_list);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -532,17 +559,6 @@ thread_schedule_tail (struct thread *prev)
   /* Activate the new address space. */
   process_activate ();
 #endif
-
-  /* If the thread we switched from is dying, destroy its struct
-     thread.  This must happen late so that thread_exit() doesn't
-     pull out the rug under itself.  (We don't free
-     initial_thread because its memory was not obtained via
-     palloc().) */
-  if (prev != NULL && prev->status == THREAD_DYING && prev != initial_thread) 
-    {
-      ASSERT (prev != cur);
-      palloc_free_page (prev);
-    }
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
