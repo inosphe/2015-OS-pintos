@@ -24,6 +24,11 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+/* List of processes in sleep, This processes are denoted by 'THREAD_BLOCKED'.*/
+static struct list sleep_list;
+/* Lowest value (tick_to_awake) in sleep_list */
+static int next_tick_to_awake = -1;
+
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -70,6 +75,7 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
+static bool value_less (const struct list_elem *, const struct list_elem *, void *);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -84,6 +90,7 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
+//called only ONCE
 void
 thread_init (void) 
 {
@@ -91,6 +98,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
+  list_init (&sleep_list);
   list_init (&all_list);
 
   /* Set up a thread structure for the running thread. */
@@ -497,6 +505,9 @@ init_thread (struct thread *t, const char *name, int priority)
 
   /* assignment2 */
   list_init (&t->child_list);
+
+  /* sleep에서 깨어날 tick을 기술한다. sleep상태가 아니라면(초기값은) -1. */
+  tick_to_awake = -1;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -601,3 +612,69 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+void
+thread_sleep(int64_t ticks)
+{
+  struct thread *cur = running_thread ();
+  ASSERT (is_thread (cur));
+  ASSERT (cur->status !+ THREAD_BLOCKED);
+  
+  list_insert_ordered(&sleep_list, &cur->elem, value_less, 0);
+  cur->tick_to_awake = ticks;
+  cur->status = THREAD_BLOCKED;
+  update_next_tick_to_awake();
+
+  schedule ();
+}
+
+
+void
+thread_awake(int64_t ticks)
+{
+  struct list_elem* elem;
+  struct thread* t;
+  enum intr_level old_level;
+
+  if(next_tick_to_awake >= ticks)
+  {
+    old_level = intr_disable ();
+    elem = list_pop_front(&sleep_list);
+    t = list_entry(elem, struct thread, elem);
+    
+    thread_unblock(t);
+    update_next_tick_to_awake();
+  }
+}
+
+void update_next_tick_to_awake(int64_t ticks)
+{
+  struct list_elem *e;
+  if(list_empty(&sleep_list))
+  {
+    next_tick_to_awake = -1;
+  }
+  else
+  {
+    e = list_begin(sleep_list);
+    struct thread *t = list_entry (e, struct thread, elem);
+    next_tick_to_awake = t->tick_to_awake;
+  }
+}
+
+int64_t get_next_tick_to_awake(void)
+{
+  return next_tick_to_awake;
+}
+
+/* Returns true if value A is less than value B, false
+   otherwise. */
+static bool
+value_less (const struct list_elem *a_, const struct list_elem *b_,
+            void *aux UNUSED) 
+{
+  const struct value *a = list_entry (a_, struct value, elem);
+  const struct value *b = list_entry (b_, struct value, elem);
+  
+  return a->value < b->value;
+}

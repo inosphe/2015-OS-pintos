@@ -121,6 +121,8 @@ struct thread
     int exit_status; /* when this process(or thread) dying, set this value */
     bool isExit;
     bool isLoad;
+
+    int   tick_to_awake;
   };
 
 /* If false (default), use round-robin scheduler.
@@ -158,5 +160,14 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+/* 실행중인 쓰레드를 sleep 상태로 전환 */
+void thread_sleep(int64_t ticks);
+/* 슬립 리스트에서 깨어나야 할 쓰레드를 깨움 */
+void thread_awake(int64_t ticks);
+/* 슬립 리스트에서 가장 짧은 틱을 계산 */
+void update_next_tick_to_awake(int64_t ticks);
+/* next_tick_to_awake를 반환 */
+int64_t get_next_tick_to_awake(void);
 
 #endif /* threads/thread.h */
