@@ -170,5 +170,8 @@ void update_next_tick_to_awake(int64_t ticks);
 /* next_tick_to_awake를 반환 */
 int64_t get_next_tick_to_awake(void);
 
+bool cmp_wake_tick (const struct list_elem *, const struct list_elem *, void *);
+bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
+
 
 #endif /* threads/thread.h */

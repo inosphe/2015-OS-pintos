@@ -75,8 +75,6 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
-static bool cmp_wake_tick (const struct list_elem *, const struct list_elem *, void *);
-static bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
 /*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
 void test_max_priority(void);
 
@@ -675,7 +673,7 @@ int64_t get_next_tick_to_awake(void)
 
 /* Returns true if value A is less than value B, false
    otherwise. */
-static bool
+bool
 cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
 {
@@ -685,7 +683,7 @@ cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
   return a->value < b->value;
 }
 
-static bool
+bool
 cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
 {
