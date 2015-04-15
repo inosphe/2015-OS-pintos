@@ -111,6 +111,12 @@ struct thread
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
 
+    /* for assignment4-4 (by yh) */
+    int init_priority; // 스레드 생성시 설정된 우선순위를 저장
+    struct lock *wait_on_lock; // 해당 스레드가 대기하고 있는 lock의 주소
+    struct list donations; // 해당 스레드에 우선순위를 기부한 스레드들을 차례대로 저장하는 리스트
+    struct list_elem donation_elem;
+
     /* for assignment2 */
     struct thread *parent;  /* parent process pointer */
     struct list child_list; /* linked list of child processes */
@@ -170,5 +176,8 @@ void update_next_tick_to_awake(int64_t ticks);
 /* next_tick_to_awake를 반환 */
 int64_t get_next_tick_to_awake(void);
 
+void donate_priority (void);
+void remove_with_lock (struct lock *lock);
+void refresh_priority (void);
 
 #endif /* threads/thread.h */

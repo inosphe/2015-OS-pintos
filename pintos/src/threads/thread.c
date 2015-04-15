@@ -371,8 +371,13 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
-  test_max_priority();
+  int prev_priority = thread_get_priority ();
+  thread_current ()->init_priority = new_priority;
+  refresh_priority ();
+  if (prev_priority < thread_get_priority ())
+    donate_priority ();
+  if (prev_priority > thread_get_prioirty ())
+    test_max_priority();
 }
 
 /* Returns the current thread's priority. */
@@ -511,6 +516,11 @@ init_thread (struct thread *t, const char *name, int priority)
 
   /* assignment2 */
   list_init (&t->child_list);
+
+  /* assignment4-4 */
+  t->wait_on_lock = NULL; // 해당 스레드가 대기하고 있는 lock의 주소
+  t->init_priority = priority; // 스레드 생성시 설정된 우선순위를 저장한다.
+  list_init (&t->donations); // 해당 스레드에 우선순위를 기부한 스레드들을 차례대로 저장하는 리스트
 
   /* sleep에서 깨어날 tick을 기술한다. sleep상태가 아니라면(초기값은) -1. */
   tick_to_awake = -1;
@@ -709,3 +719,55 @@ void test_max_priority (void)
     thread_yield();
   }
 }
+
+/* do priority donation */
+void donate_priority (void)
+{
+  int depth = 1;
+  struct thread *t = thread_current();
+
+  // max nested depth = 8
+  for (; depth <= 8; ++depth)
+  {
+    if (t->wait_on_lock == NULL) break;
+    if (t->wait_on_lock->holder == NULL) break;
+
+    /* in this case, priority of every next threads is higher than previous threads's. so, donation chain end.*/
+    if (t->wait_on_lock->holder->priority >= t->priority) break;
+
+    t->wait_on_lock->holder->priority = t->priority;
+    t = t->wait_on_lock->holder;
+  }
+}
+
+// remove from donation list
+void remove_with_lock (struct lock *lock)
+{
+  struct list_elem *e = 0;
+  struct list *l = thread_current()->donations;
+  struct thread *t = 0;
+
+  for (e = list_begin (l); e != list_end (l); e = list_next (e))
+  {
+    t = list_entry (e, struct thread, donation_elem);
+    if (t->wait_on_lock == lock)
+      list_remove (e);
+  }
+}
+
+void refresh_priority (void)
+{
+  struct list_elem *e = 0;
+  struct list *l = thread_current()->donations;
+  struct thread *t = 0;
+
+  thread_current()->priority = thread_current()->init_priority;
+  
+  for (e = list_begin (l); e != list_end (l); e = list_next (e))
+  {
+    t = list_entry (e, struct thread, donation_elem);
+    if (t->priority > thread_get_priority())
+      thread_current()->priority() = t->priority();
+  }
+}
+
