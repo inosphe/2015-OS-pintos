@@ -89,6 +89,9 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
+  if(ticks<=0)
+    return;
+  
   int64_t start = timer_ticks ();
   //printf("timer_sleep | %lld + %lld = %lld\n", start, ticks, start+ticks);
   enum intr_level old_level = intr_disable ();
