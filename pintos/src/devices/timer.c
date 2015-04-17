@@ -90,8 +90,11 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
-
+  //printf("timer_sleep | %lld + %lld = %lld\n", start, ticks, start+ticks);
+  enum intr_level old_level = intr_disable ();
   thread_sleep(start + ticks);
+  intr_set_level (old_level);
+
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
