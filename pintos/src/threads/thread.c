@@ -75,14 +75,10 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
-<<<<<<< HEAD
-static bool cmp_wake_tick (const struct list_elem *, const struct list_elem *, void *);
+static bool tick_to_awake_less (const struct list_elem *, const struct list_elem *, void *);
 static bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
 /*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
 void test_max_priority(void);
-=======
-static bool tick_to_awake_less (const struct list_elem *, const struct list_elem *, void *);
->>>>>>> assignment4-1
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -630,10 +626,6 @@ thread_sleep(int64_t ticks)
   ASSERT (is_thread (cur));
   ASSERT (cur->status != THREAD_BLOCKED);
   
-<<<<<<< HEAD
-  list_insert_ordered(&sleep_list, &cur->elem, cmp_wake_tick, 0);
-=======
->>>>>>> assignment4-1
   cur->tick_to_awake = ticks;
   cur->status = THREAD_BLOCKED;
   list_insert_ordered(&sleep_list, &cur->elem, tick_to_awake_less, 0);
@@ -690,8 +682,7 @@ int64_t get_next_tick_to_awake(void)
 /* Returns true if value A is less than value B, false
    otherwise. */
 static bool
-<<<<<<< HEAD
-cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
+tick_to_awake_less (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
 {
   const struct thread *a = list_entry (a_, struct thread, elem);
@@ -702,32 +693,27 @@ cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
 
 static bool
 cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
-=======
-tick_to_awake_less (const struct list_elem *a_, const struct list_elem *b_,
->>>>>>> assignment4-1
             void *aux UNUSED) 
 {
   const struct thread *a = list_entry (a_, struct thread, elem);
   const struct thread *b = list_entry (b_, struct thread, elem);
   
-<<<<<<< HEAD
   return a->priority > b->priority; 
 }
 
 
 void test_max_priority (void)
 {
-  struct thread *t
+  struct thread *t;
+  
   if ( list_empty(&ready_list) )
   {
     return;
   }
   t = list_entry(list_front(&ready_list), struct thread, elem);
+  
   if (thread_current()->priority < t->priority)
   {
     thread_yield();
   }
-=======
-  return a->tick_to_awake < b->tick_to_awake;
->>>>>>> assignment4-1
 }
