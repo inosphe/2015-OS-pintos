@@ -122,7 +122,7 @@ struct thread
     bool isExit;
     bool isLoad;
 
-    int   tick_to_awake;
+    int64_t   tick_to_awake;
   };
 
 /* If false (default), use round-robin scheduler.
@@ -166,11 +166,11 @@ void thread_sleep(int64_t ticks);
 /* 슬립 리스트에서 깨어나야 할 쓰레드를 깨움 */
 void thread_awake(int64_t ticks);
 /* 슬립 리스트에서 가장 짧은 틱을 계산 */
-void update_next_tick_to_awake(int64_t ticks);
+void update_next_tick_to_awake();
 /* next_tick_to_awake를 반환 */
 int64_t get_next_tick_to_awake(void);
 
-bool cmp_wake_tick (const struct list_elem *, const struct list_elem *, void *);
+bool tick_to_awake_less (const struct list_elem *, const struct list_elem *, void *);
 bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
 
 

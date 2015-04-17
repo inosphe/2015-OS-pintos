@@ -3,3 +3,5 @@ bochs-2.6
 *.log
 libc.a
 sftp-config.json
+
+*.orig

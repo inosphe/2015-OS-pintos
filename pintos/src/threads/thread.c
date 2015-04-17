@@ -27,7 +27,7 @@ static struct list ready_list;
 /* List of processes in sleep, This processes are denoted by 'THREAD_BLOCKED'.*/
 static struct list sleep_list;
 /* Lowest value (tick_to_awake) in sleep_list */
-static int next_tick_to_awake = -1;
+static int64_t next_tick_to_awake = -1;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
@@ -310,7 +310,7 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
-  printf("%s: exit(%d)\n", t->name, t->exit_status);
+  //printf("%s: exit(%d)\n", t->name, t->exit_status);
 
 #ifdef USERPROG
   process_exit ();
@@ -511,7 +511,7 @@ init_thread (struct thread *t, const char *name, int priority)
   list_init (&t->child_list);
 
   /* sleep에서 깨어날 tick을 기술한다. sleep상태가 아니라면(초기값은) -1. */
-  tick_to_awake = -1;
+  t->tick_to_awake = -1;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -622,11 +622,11 @@ thread_sleep(int64_t ticks)
 {
   struct thread *cur = running_thread ();
   ASSERT (is_thread (cur));
-  ASSERT (cur->status !+ THREAD_BLOCKED);
+  ASSERT (cur->status != THREAD_BLOCKED);
   
-  list_insert_ordered(&sleep_list, &cur->elem, cmp_wake_tick, 0);
   cur->tick_to_awake = ticks;
   cur->status = THREAD_BLOCKED;
+  list_insert_ordered(&sleep_list, &cur->elem, tick_to_awake_less, 0);
   update_next_tick_to_awake();
 
   schedule ();
@@ -640,18 +640,24 @@ thread_awake(int64_t ticks)
   struct thread* t;
   enum intr_level old_level;
 
-  if(next_tick_to_awake >= ticks)
+  while(next_tick_to_awake>=0 && ticks >= next_tick_to_awake)
   {
+    //printf("thread_awake | next_tick_to_awake(%lld), list_size(%d)\n", next_tick_to_awake, list_size(&sleep_list));
     old_level = intr_disable ();
     elem = list_pop_front(&sleep_list);
     t = list_entry(elem, struct thread, elem);
+
+
+    //printf("popped : %lld\n", t->tick_to_awake);
     
     thread_unblock(t);
     update_next_tick_to_awake();
+
+    intr_set_level (old_level);
   }
 }
 
-void update_next_tick_to_awake(int64_t ticks)
+void update_next_tick_to_awake()
 {
   struct list_elem *e;
   if(list_empty(&sleep_list))
@@ -660,7 +666,7 @@ void update_next_tick_to_awake(int64_t ticks)
   }
   else
   {
-    e = list_begin(sleep_list);
+    e = list_begin(&sleep_list);
     struct thread *t = list_entry (e, struct thread, elem);
     next_tick_to_awake = t->tick_to_awake;
   }
@@ -674,7 +680,7 @@ int64_t get_next_tick_to_awake(void)
 /* Returns true if value A is less than value B, false
    otherwise. */
 bool
-cmp_wake_tick (const struct list_elem *a_, const struct list_elem *b_,
+tick_to_awake_less (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
 {
   const struct thread *a = list_entry (a_, struct thread, elem);
@@ -696,12 +702,14 @@ cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
 
 void test_max_priority (void)
 {
-  struct thread *t
+  struct thread *t;
+
   if ( list_empty(&ready_list) )
   {
     return;
   }
   t = list_entry(list_front(&ready_list), struct thread, elem);
+  
   if (thread_current()->priority < t->priority)
   {
     thread_yield();
