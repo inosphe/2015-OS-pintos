@@ -312,7 +312,7 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
-  printf("%s: exit(%d)\n", t->name, t->exit_status);
+  //printf("%s: exit(%d)\n", t->name, t->exit_status);
 
 #ifdef USERPROG
   process_exit ();
@@ -705,7 +705,7 @@ cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
 void test_max_priority (void)
 {
   struct thread *t;
-  
+
   if ( list_empty(&ready_list) )
   {
     return;
