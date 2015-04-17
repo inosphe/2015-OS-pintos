@@ -75,8 +75,7 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
-/*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
-void test_max_priority(void);
+
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -703,14 +702,18 @@ cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
 void test_max_priority (void)
 {
   struct thread *t;
+  struct thread *cur = running_thread();
 
-  if ( list_empty(&ready_list) )
+  if ( list_empty(&ready_list) || cur->status!=THREAD_RUNNING)
   {
     return;
   }
+
+  cur = thread_current();
+
   t = list_entry(list_front(&ready_list), struct thread, elem);
   
-  if (thread_current()->priority < t->priority)
+  if (cur->priority < t->priority)
   {
     thread_yield();
   }

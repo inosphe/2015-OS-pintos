@@ -173,5 +173,7 @@ int64_t get_next_tick_to_awake(void);
 bool tick_to_awake_less (const struct list_elem *, const struct list_elem *, void *);
 bool cmp_priority (const struct list_elem *, const struct list_elem *, void *);
 
+/*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
+void test_max_priority(void);
 
 #endif /* threads/thread.h */
