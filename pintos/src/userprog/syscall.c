@@ -24,16 +24,12 @@ syscall_init (void)
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
-/*
-  인터럽트로 프레임으로부터 인자를 파싱하여 적절한 핸들러를 호출한다.
-*/
+/* parse from interupt frame and call proper systemcall*/
 
 static void
 syscall_handler (struct intr_frame *f) 
 {
-  /*
-    매크로를 이용하여 코드 가독성을 높힌다.
-  */
+  /* macro is used for readability (argument type casting, get argument) */
   #define ARG_INT ((int*)arg)[i--]
   #define ARG_UNSIGNED ((unsigned*)arg)[i--]
   #define ARG_CONST_CHAR ((const char**)arg)[i--]
@@ -42,12 +38,15 @@ syscall_handler (struct intr_frame *f)
   #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
 
   int *arg = 0;
-  int *esp = 0;
+  void *esp = 0;
   int number;
   int i = 0;
   esp = f->esp;
-  number = *esp;
+  check_address (esp);
+  number = *(int*)esp;
   /* systemcall number is located in the top of user stack */
+  /* every systemcall is numbered in syscall_nr.h */
+  /* return value of systemcall will saved to eax */
   esp += 4;
   switch (number)
   {
@@ -120,6 +119,7 @@ syscall_handler (struct intr_frame *f)
     free (arg);
 }
 
+/* check a address. address must be in the user stack range */
 void
 check_address (void *addr)
 {
@@ -183,12 +183,13 @@ remove (const char *file)
     return false;
 }
 
+/* open file */
 int
 open(const char *file_name)
 {
 	struct file *file = filesys_open(file_name);
 	int fd = -1;
-	if(file == NULL)
+	if(!file)
 	{
 		return fd;
 	}
@@ -200,12 +201,9 @@ open(const char *file_name)
 int
 filesize (int fd)
 {
-  /* 파일 디스크립터를 이용하여 파일 객체 검색 */
-  /* 해당 파일의 길이를 리턴 */
-  /* 해당 파일이 존재하지 않으면 -1 리턴 */
-
+  /* search the file object by descripter */
   struct file *file = process_get_file(fd);
-	if(file == NULL)
+	if(!file)
 	{
 		return -1;
 	}
@@ -239,7 +237,7 @@ read (int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-    if(file == NULL)
+    if(!file)
     {
       return 0;
     }
@@ -277,7 +275,7 @@ write(int fd, void *buffer, unsigned size)
 	else
 	{
 		file = process_get_file(fd);
-		if(file == NULL)
+		if(!file)
 		{
 			return 0;
 		}
@@ -295,7 +293,7 @@ seek (int fd , unsigned position)
 {
 	struct file *file;
 	file = process_get_file(fd);
-	if(file == NULL)
+	if(!file)
 	{
 		return;
 	}
@@ -311,7 +309,7 @@ tell (int fd)
 	struct file *file;
 	unsigned pos;
 	file = process_get_file(fd);
-	if(file == NULL)
+	if(!file)
 	{
 		return 0;
 	}
@@ -364,7 +362,6 @@ int wait (tid_t tid)
 {
   return process_wait(tid);
 }
-
 
 bool
 user_mem_read(void *src, void *des, int bytes)
