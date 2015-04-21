@@ -373,7 +373,7 @@ thread_set_priority (int new_priority)
   refresh_priority ();
   if (prev_priority < thread_get_priority ())
     donate_priority ();
-  if (prev_priority > thread_get_prioirty ())
+  if (prev_priority > thread_get_priority ())
     test_max_priority();
 }
 
@@ -753,7 +753,7 @@ void donate_priority (void)
 void remove_with_lock (struct lock *lock)
 {
   struct list_elem *e = 0;
-  struct list *l = thread_current()->donations;
+  struct list *l = &thread_current()->donations;
   struct thread *t = 0;
 
   for (e = list_begin (l); e != list_end (l); e = list_next (e))
@@ -767,7 +767,7 @@ void remove_with_lock (struct lock *lock)
 void refresh_priority (void)
 {
   struct list_elem *e = 0;
-  struct list *l = thread_current()->donations;
+  struct list *l = &thread_current()->donations;
   struct thread *t = 0;
 
   thread_current()->priority = thread_current()->init_priority;
@@ -776,7 +776,7 @@ void refresh_priority (void)
   {
     t = list_entry (e, struct thread, donation_elem);
     if (t->priority > thread_get_priority())
-      thread_current()->priority() = t->priority();
+      thread_current()->priority = t->priority;
   }
 }
 
