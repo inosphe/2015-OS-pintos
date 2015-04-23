@@ -95,7 +95,7 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();
   //printf("timer_sleep | %lld + %lld = %lld\n", start, ticks, start+ticks);
   enum intr_level old_level = intr_disable ();
-  thread_sleep(start + ticks);
+  thread_sleep(start + ticks);  //call thread_sleep function. argument : tick be going to wake up
   intr_set_level (old_level);
 
 }
@@ -175,9 +175,9 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  thread_tick ();
+  thread_tick (); 
 
-  thread_awake(timer_ticks());
+  thread_awake(timer_ticks()); //on timer interrupt, check sleeping threads
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

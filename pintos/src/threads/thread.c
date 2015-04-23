@@ -96,6 +96,7 @@ thread_init (void)
 {
   ASSERT (intr_get_level () == INTR_OFF);
 
+  //init lists
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&sleep_list);
@@ -225,6 +226,7 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  //check current thread priority and schedule higher priority thread first
   test_max_priority();
 
   return tid;
@@ -263,7 +265,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_insert_ordered (&ready_list, &t->elem, cmp_priority, 0);
+  list_insert_ordered (&ready_list, &t->elem, cmp_priority, 0); //insert to ready_list sorting by thread priority
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -371,8 +373,11 @@ thread_set_priority (int new_priority)
   int prev_priority = thread_get_priority ();
   thread_current ()->init_priority = new_priority;
   refresh_priority ();
+
+  //if new priority is higher, donate priority
   if (prev_priority < thread_get_priority ())
     donate_priority ();
+  //otherwise, yield current preemption
   if (prev_priority > thread_get_priority ())
     test_max_priority();
 }
@@ -688,6 +693,7 @@ int64_t get_next_tick_to_awake(void)
 
 /* Returns true if value A is less than value B, false
    otherwise. */
+//for sorting sleep list
 bool
 tick_to_awake_less (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
@@ -698,6 +704,8 @@ tick_to_awake_less (const struct list_elem *a_, const struct list_elem *b_,
   return a->tick_to_awake < b->tick_to_awake;
 }
 
+
+// compare thread priority for sorting ready_list
 bool
 cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
             void *aux UNUSED) 
@@ -709,6 +717,7 @@ cmp_priority (const struct list_elem *a_, const struct list_elem *b_,
 }
 
 
+// test current thread priority with ready_list thread, if current thread's priority is lower, yield current preemption
 void test_max_priority (void)
 {
   struct thread *t;
@@ -764,13 +773,14 @@ void remove_with_lock (struct lock *lock)
   }
 }
 
+//reset priority for update
 void refresh_priority (void)
 {
   struct list_elem *e = 0;
   struct list *l = &thread_current()->donations;
   struct thread *t = 0;
 
-  thread_current()->priority = thread_current()->init_priority;
+  thread_current()->priority = thread_current()->init_priority; //set current thread priority with init_priority
   
   for (e = list_begin (l); e != list_end (l); e = list_next (e))
   {

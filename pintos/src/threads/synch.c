@@ -338,9 +338,10 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
   ASSERT (!intr_context ());
   ASSERT (lock_held_by_current_thread (lock));
 
-  if (!list_empty (&cond->waiters)) 
+  if (!list_empty (&cond->waiters)) //is there thread wating for conditional variable signal
   {
-    list_sort(&cond->waiters, cmp_sem_priority, 0);
+    list_sort(&cond->waiters, cmp_sem_priority, 0); //sort cond->waiters list by priority
+    //pop front watier and insert into ready_list
     sema_up (&list_entry (list_pop_front (&cond->waiters),
                           struct semaphore_elem, elem)->semaphore);
   }
@@ -362,7 +363,7 @@ cond_broadcast (struct condition *cond, struct lock *lock)
     cond_signal (cond, lock);
 }
 
-
+//compare semaphore_elem of conditional variable for sorting by priority
 bool
 cmp_sem_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED)
 {
@@ -376,6 +377,7 @@ cmp_sem_priority(const struct list_elem *a, const struct list_elem *b, void *aux
   if(list_empty(&sb->semaphore.waiters))
     return false;
 
+  //pop front thread (highest priority)
   ta = list_entry(list_front(&sa->semaphore.waiters),
          struct thread, elem);
   tb = list_entry(list_front(&sb->semaphore.waiters),
