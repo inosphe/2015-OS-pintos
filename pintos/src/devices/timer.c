@@ -174,8 +174,24 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+  int64_t start = timer_ticks ();
   ticks++;
   thread_tick (); 
+
+  if (thread_mlfqs)
+  {
+    mlfqs_increment ();
+    
+    if (timer_ticks() % TIMER_FREQ == 0) // 1sec elaps
+    {
+      mlfqs_load_avg ();
+      mlfqs_recalc ();
+    }
+    if (timer_ticks() % 4 == 0) // 4ticks
+    {
+      mlfqs_priority (thread_current());
+    }
+  }
 
   thread_awake(timer_ticks()); //on timer interrupt, check sleeping threads
 }

@@ -8,7 +8,6 @@
 
 
 #define MAX_FILE_DESC_COUNT 32
-
 struct file;
 
 /* States in a thread's life cycle. */
@@ -129,6 +128,10 @@ struct thread
     bool isLoad;
 
     int64_t   tick_to_awake;
+
+    /* for mlfq */
+    int nice;
+    int recent_cpu;
   };
 
 /* If false (default), use round-robin scheduler.
@@ -184,5 +187,12 @@ void remove_with_lock (struct lock *lock);
 /*현재 수행중인 스레드와 가장 높은 우선순위의 스레드의 우선순위를 비교하여 스케쥴*/
 void test_max_priority(void);
 void refresh_priority (void);
+
+/* Project 5: MLFQ */
+void mlfqs_priority (struct thread *t);
+void mlfqs_recent_cpu (struct thread *t);
+void mlfqs_load_avg (void);
+void mlfqs_increment (void);
+void mlfqs_reclac (void);
 
 #endif /* threads/thread.h */
