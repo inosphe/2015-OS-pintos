@@ -143,6 +143,11 @@ file_allow_write (struct file *file)
     }
 }
 
+int  file_write_allowed(struct file * file){
+  ASSERT (file != NULL);
+  return !file->deny_write;
+}
+
 /* Returns the size of FILE in bytes. */
 off_t
 file_length (struct file *file) 

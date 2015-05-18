@@ -30,6 +30,7 @@ struct vm_entry {
 
 };
 
+
 void vm_init (struct hash* vm);
 void vm_destroy (struct hash* vm);
 

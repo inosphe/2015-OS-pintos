@@ -29,20 +29,11 @@ static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, 
     return false;
 }
 
+//vm's desturoctor function. Don't need to delete pages.
 static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
 {
-  //struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
   struct thread* t = thread_current();
-
-  //hash_delete(&t->vm, e);
-
-
-  // if (vme)
-  // {
-  //   if (vme->is_loaded)
-  //     palloc_free_page (pagedir_get_page(t->pagedir, vme->vaddr));
-  //   free (vme);
-  // }
+  hash_delete(&t->vm, e);
 }
 
 void vm_init (struct hash* vm)

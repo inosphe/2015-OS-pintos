@@ -136,6 +136,9 @@ struct thread
 
     /* for virtual memory */
     struct hash vm;
+
+    /* for manage mmap*/
+    struct list list_mmap;
   };
 
 /* If false (default), use round-robin scheduler.

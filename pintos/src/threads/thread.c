@@ -563,6 +563,9 @@ init_thread (struct thread *t, const char *name, int priority)
   /* assignment5 */
   t->nice = NICE_DEFAULT;
   t->recent_cpu = RECENT_CPU_DEFAULT;
+
+  //initialize list_mmap needed to manage mmap_file structures;
+  list_init(&t->list_mmap);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

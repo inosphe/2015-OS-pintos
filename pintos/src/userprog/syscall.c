@@ -128,6 +128,16 @@ syscall_handler (struct intr_frame *f)
       DECL_ARGS(1)
       close (ARG_INT);
       break;
+
+    case SYS_MMAP:
+      DECL_ARGS(2);
+      mmap(ARG_INT, ARG_UNSIGNED);
+      break;
+    
+    case SYS_MUNMAP:
+      DECL_ARGS(1);
+      munmap(ARG_INT);
+      break;
   }
   unpin_ptr (esp);
 
