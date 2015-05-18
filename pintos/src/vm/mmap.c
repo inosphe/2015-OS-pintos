@@ -24,12 +24,12 @@ mapid_t mmap (int fd, void *addr)
     return -1;
   }
 
-  //if invalid vaddr, fail
+  //if invalid addr, fail
   if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
     return -1;
 
   //if not aligned, fail
-  if(vaddr & PGMASK){
+  if((uint32_t)addr & PGMASK){
     return -1;
   }
 
@@ -70,6 +70,7 @@ mapid_t mmap (int fd, void *addr)
   return mfile->mapid;
 }
 
+/* unmap / release every vm_entries, close file, etc... */
 static void do_mummap(struct mmap_file* mfile){
     hash_destroy (&mfile->vm, vm_destroy_func); 
     file_close(mfile->file);
@@ -77,6 +78,7 @@ static void do_mummap(struct mmap_file* mfile){
     free(mfile);
 }
 
+/* release mmap by mapid */
 void munmap (mapid_t id)
 {
   struct thread* t = thread_current();
@@ -85,6 +87,7 @@ void munmap (mapid_t id)
       do_mummap(mfile);
   }
 }
+
 
 struct mmap_file* get_mmap_file(mapid_t id){
   struct thread* t = thread_current();
