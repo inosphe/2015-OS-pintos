@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <syscall-nr.h>
 #include <console.h>
@@ -12,6 +13,7 @@
 #include "devices/shutdown.h"
 #include "filesys/filesys.h"
 #include "userprog/syscall.h"
+#include "vm/page.h"
 
 #define EOF 0
 static void syscall_handler (struct intr_frame *);
@@ -33,6 +35,7 @@ syscall_handler (struct intr_frame *f)
   #define ARG_INT ((int*)arg)[i--]
   #define ARG_UNSIGNED ((unsigned*)arg)[i--]
   #define ARG_CONST_CHAR ((const char**)arg)[i--]
+  #define ARG_VOID ((void**)arg)[i--]
   #define ARG_CUSTOM(_T_) ((T*)arg)[i--]
 
   #define DECL_ARGS(count) i = count-1; get_argument (esp, &arg, count);
@@ -61,17 +64,23 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_CREATE:
       DECL_ARGS(2)
+      check_valid_string ((const void*)arg[0], esp);
       f->eax = create (ARG_CONST_CHAR, ARG_UNSIGNED);
+      unpin_string ((void*)arg[0]);
       break;
 
     case SYS_REMOVE:
       DECL_ARGS(1)
+      check_valid_string ((const void*)arg[0], esp);
       f->eax = remove (ARG_CONST_CHAR);
+      unpin_string ((void*)arg[0]);
       break;
 
     case SYS_EXEC:
       DECL_ARGS(1)
+      check_valid_string ((const void*)arg[0], esp);
       f->eax = exec (ARG_CONST_CHAR);
+      unpin_string ((void*)arg[0]);
       break;
 
     case SYS_WAIT:
@@ -81,7 +90,9 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_OPEN:
       DECL_ARGS(1)
-      f->eax = open(ARG_INT);
+      check_valid_string ((const void*)arg[0], esp);
+      f->eax = open (ARG_CONST_CHAR);
+      unpin_string ((void*)arg[0]);
       break;
 
     case SYS_FILESIZE:
@@ -91,12 +102,16 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_WRITE:
       DECL_ARGS(3)
-      f->eax = write(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
+      check_valid_buffer ((void*)arg[1], arg[2], esp, false);
+      f->eax = write(ARG_INT, ARG_VOID, ARG_UNSIGNED);
+      unpin_buffer ((void*)arg[1], arg[2]);
       break;
 
     case SYS_READ:
       DECL_ARGS(3)
-      f->eax = read(ARG_INT, ARG_CONST_CHAR, ARG_UNSIGNED);
+      check_valid_buffer ((void*)arg[1], arg[2], esp, true);
+      f->eax = read(ARG_INT, ARG_VOID, ARG_UNSIGNED);
+      unpin_buffer ((void*)arg[1], arg[2]);
       break;    
 
     case SYS_SEEK:
@@ -113,20 +128,47 @@ syscall_handler (struct intr_frame *f)
       DECL_ARGS(1)
       close (ARG_INT);
       break;
-
   }
+  unpin_ptr (esp);
+
   if (arg)
     free (arg);
 }
 
 /* check a address. address must be in the user stack range */
-void
+struct vm_entry* 
 check_address (void *addr)
 {
-  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr > 0xc0000000)
+  /* Is the addr in the vm table? */
+  struct vm_entry* vme = find_vme (addr);
+
+  if (vme != NULL && vme->is_loaded)
   {
-    exit (-1);
+    /* user stack range check */
+    if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
+      exit (-1);
+    else
+      return vme; /* it's correct address */
   }
+
+  /* can't find the addr in the vm table.. oh no */
+  else
+    exit (-1);
+}
+
+
+void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
+{
+  int i;
+  for (i = 0; i < size; ++i)
+    check_address (buffer + i);
+}
+
+void check_valid_string (const void* str, void* esp)
+{
+  int i;
+  for (i = 0; i < strlen (str); ++i)
+    check_address (str + i);
 }
 
 void

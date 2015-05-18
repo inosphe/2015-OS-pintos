@@ -15,6 +15,7 @@
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
+#include "vm/page.h"
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
@@ -333,6 +334,7 @@ thread_exit (void)
   list_remove (&thread_current()->allelem);
   t->status = THREAD_DYING;
   t->isExit = true;
+  vm_destroy (&t->vm);
   sema_up (&t->exit_program);
 
   schedule ();
@@ -558,6 +560,9 @@ init_thread (struct thread *t, const char *name, int priority)
   /* assignment5 */
   t->nice = NICE_DEFAULT;
   t->recent_cpu = RECENT_CPU_DEFAULT;
+
+  /* assignment6 */
+  vm_init (&t->vm);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

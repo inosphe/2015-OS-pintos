@@ -3,6 +3,7 @@
 
 #include <debug.h>
 #include <list.h>
+#include <hash.h>
 #include <stdint.h>
 #include "threads/synch.h"
 
@@ -132,6 +133,9 @@ struct thread
     /* for mlfq */
     int nice;
     int recent_cpu;
+
+    /* for virtual memory */
+    struct hash vm;
   };
 
 /* If false (default), use round-robin scheduler.
