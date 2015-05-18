@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "vm/page.h"
 #include <debug.h>
 
 /* Number of page faults processed. */
@@ -83,6 +84,8 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
+     debug_backtrace_all();
+
   switch (f->cs)
     {
     case SEL_UCSEG:
@@ -99,7 +102,6 @@ kill (struct intr_frame *f)
          may cause kernel exceptions--but they shouldn't arrive
          here.)  Panic the kernel to make the point.  */
       intr_dump_frame (f);
-      debug_backtrace();
       PANIC ("Kernel bug - unexpected interrupt in kernel"); 
       break;
 
@@ -132,6 +134,7 @@ page_fault (struct intr_frame *f)
   bool write;        /* True: access was write, false: access was read. */
   bool user;         /* True: access by user, false: access by kernel. */
   void *fault_addr;  /* Fault address. */
+  struct vm_entry* vme;
 
   /* Obtain faulting address, the virtual address that was
      accessed to cause the fault.  It may point to code or to
@@ -154,6 +157,24 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
+  //printf("page_fault %p | type(%d)\n", fault_addr, f->cs);
+
+  if(!fault_addr){
+    kill(f);
+    return;
+  }
+  
+  //printf("%p\n", find_vme(fault_addr));
+  vme = find_vme(fault_addr);
+  if(vme && handle_mm_fault(vme)){
+
+  }
+  else{
+    kill (f);
+  }
+
+  //printf("fault end\n");
+  
   
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
@@ -163,6 +184,6 @@ page_fault (struct intr_frame *f)
   //         not_present ? "not present" : "rights violation",
   //         write ? "writing" : "reading",
   //         user ? "user" : "kernel");
-  kill (f);
+  
 }
 

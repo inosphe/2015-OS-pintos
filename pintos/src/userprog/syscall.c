@@ -139,6 +139,7 @@ syscall_handler (struct intr_frame *f)
 struct vm_entry* 
 check_address (void *addr)
 {
+  //printf("check_address %x\n", addr);
   /* Is the addr in the vm table? */
   struct vm_entry* vme = find_vme (addr);
 

@@ -335,6 +335,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Open executable file. */
   file = filesys_open (file_name);
+  process_add_file(file);
   if (file == NULL) 
     {
       printf ("load: %s: open failed\n", file_name);
@@ -424,7 +425,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
   return success;
 }
 
@@ -511,14 +511,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       struct vm_entry* vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
 
-      vme->type = VM_FILE;
+      vme->type = VM_BIN;
       vme->is_loaded = false;
       vme->pinned = false;
       vme->file = file;
       vme->offset = ofs;
       vme->vaddr = (void*)upage;
-      vme->read_bytes = read_bytes;
-      vme->zero_bytes = zero_bytes;
+      vme->read_bytes = page_read_bytes;
+      vme->zero_bytes = page_zero_bytes;
       vme->writable = writable;
 
       insert_vme (&thread_current()->vm, vme);
@@ -572,7 +572,7 @@ setup_stack (void **esp)
 
         vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
         
-        vme->vaddr = (void*)kpage;
+        vme->vaddr = (void*)PHYS_BASE-PGSIZE;
         vme->writable = true;
         vme->is_loaded = true;
         vme->pinned = false;
@@ -753,10 +753,16 @@ void remove_child_process (struct thread *cp)
 // page fault handler
 bool handle_mm_fault (struct vm_entry *vme)
 {
-  uint8_t kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
-
-  if (!kaddr)
+  void* kaddr;
+  if(vme->is_loaded){
+    printf("already loaded\n");
     return false;
+  }
+   kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
+  if (!kaddr){
+    return false;
+  }
+
   vme->pinned = true;
 
   switch (vme->type)

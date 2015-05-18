@@ -206,6 +206,9 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   t->parent = thread_current ();
   tid = t->tid = allocate_tid ();
+
+  /* assignment6 */
+  vm_init (&t->vm);
   
 
   list_push_back (&thread_current()->child_list, &t->child_elem);
@@ -320,7 +323,7 @@ thread_exit (void)
   struct thread *t = thread_current ();
   ASSERT (!intr_context ());
 
-  //printf("%s: exit(%d)\n", t->name, t->exit_status);
+  printf("%s: exit(%d)\n", t->name, t->exit_status);
 
 #ifdef USERPROG
   process_exit ();
@@ -332,9 +335,9 @@ thread_exit (void)
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
+  vm_destroy (&t->vm);
   t->status = THREAD_DYING;
   t->isExit = true;
-  vm_destroy (&t->vm);
   sema_up (&t->exit_program);
 
   schedule ();
@@ -560,9 +563,6 @@ init_thread (struct thread *t, const char *name, int priority)
   /* assignment5 */
   t->nice = NICE_DEFAULT;
   t->recent_cpu = RECENT_CPU_DEFAULT;
-
-  /* assignment6 */
-  vm_init (&t->vm);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -613,6 +613,7 @@ thread_schedule_tail (struct thread *prev)
 {
   struct thread *cur = running_thread ();
   
+  ASSERT(cur != NULL);
   ASSERT (intr_get_level () == INTR_OFF);
 
   /* Mark us as running. */
@@ -641,6 +642,7 @@ schedule (void)
   struct thread *next = next_thread_to_run ();
   struct thread *prev = NULL;
 
+  ASSERT(cur != NULL);
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
@@ -672,6 +674,7 @@ void
 thread_sleep(int64_t ticks)
 {
   struct thread *cur = running_thread ();
+  ASSERT(cur != NULL);
   ASSERT (is_thread (cur));
   ASSERT (cur->status != THREAD_BLOCKED);
   

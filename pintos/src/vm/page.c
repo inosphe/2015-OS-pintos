@@ -7,7 +7,13 @@
 static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
 {
   struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
-  return hash_int ((int)vme->vaddr);
+  //printf("vm_hash_func : %p, %p\n", vme->vaddr, pg_round_down (vme->vaddr));
+
+  void* vaddr = pg_round_down (vme->vaddr);
+
+  unsigned hash = hash_bytes (&vaddr, sizeof vaddr);
+  //printf("hash : %u\n", hash);
+  return hash;
 }
 
 static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, void* aux UNUSED)
@@ -17,7 +23,7 @@ static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, 
   vme_a = hash_entry (a, struct vm_entry, elem);
   vme_b = hash_entry (b, struct vm_entry, elem);
 
-  if (vme_a->vaddr < vme_b->vaddr)
+  if (pg_round_down(vme_a->vaddr) < pg_round_down(vme_b->vaddr))
     return true;
   else
     return false;
@@ -25,18 +31,23 @@ static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, 
 
 static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
 {
-  struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
+  //struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
+  struct thread* t = thread_current();
 
-  if (vme)
-  {
-    if (vme->vaddr)
-      palloc_free_page (vme->vaddr);
-    free (vme);
-  }
+  //hash_delete(&t->vm, e);
+
+
+  // if (vme)
+  // {
+  //   if (vme->is_loaded)
+  //     palloc_free_page (pagedir_get_page(t->pagedir, vme->vaddr));
+  //   free (vme);
+  // }
 }
 
 void vm_init (struct hash* vm)
 {
+  //printf("vm_init %p\n", (void*)vm);
   hash_init (vm, vm_hash_func, vm_less_func, NULL);
 }
 
@@ -51,7 +62,9 @@ struct vm_entry* find_vme (void* vaddr)
 
   // temp vm_entry (saving addr to find element)
   struct vm_entry p;
-  p.vaddr = pg_round_down (vaddr);
+  p.vaddr = vaddr;
+
+  //printf("find_vme vm(%p)\n", &thread_current()->vm);
 
   // first argument: current thread's vm hash table
   e = hash_find (&thread_current()->vm, &p.elem);
@@ -64,7 +77,8 @@ struct vm_entry* find_vme (void* vaddr)
 
 bool insert_vme (struct hash* vm, struct vm_entry* vme)
 {
-  if (hash_insert (vm, vme) != NULL)
+  //printf("insert_vme (%p) : %p\n", (void*)vm, (void*)vme->vaddr);
+  if (hash_insert (vm, &vme->elem) != NULL)
     return true;
   else
     return false;
@@ -101,7 +115,10 @@ void unpin_buffer (void* buffer, unsigned size)
 
 bool load_file (void* kaddr, struct vm_entry *vme)
 {
-  file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
+  off_t read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
   memset (kaddr + vme->read_bytes, 0, vme->zero_bytes);
+  //printf("size : %d\n", file_length(vme->file));
+
+  // printf("load_file %x, %x, %d, %d, %d\n", kaddr, vme->file, vme->read_bytes, vme->offset, read);
   return true;
 }

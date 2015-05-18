@@ -81,10 +81,14 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
   page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
   lock_release (&pool->lock);
 
+  //printf("page_idx : %u\n", page_idx);
+
   if (page_idx != BITMAP_ERROR)
     pages = pool->base + PGSIZE * page_idx;
   else
     pages = NULL;
+
+  //printf("pages : %x\n", (void*)pages);
 
   if (pages != NULL) 
     {
@@ -97,6 +101,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
         PANIC ("palloc_get: out of pages");
     }
 
+  //printf("pages2 : %x\n", (void*)pages);
   return pages;
 }
 
