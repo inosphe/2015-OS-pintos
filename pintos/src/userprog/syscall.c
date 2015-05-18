@@ -131,7 +131,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_MMAP:
       DECL_ARGS(2);
-      mmap(ARG_INT, ARG_UNSIGNED);
+      f->eax = mmap(ARG_INT, ARG_UNSIGNED);
       break;
     
     case SYS_MUNMAP:
@@ -168,7 +168,6 @@ check_address (void *addr)
 void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 {
   int i;
-  check_address(buffer);
   for (i = 0; i < size; ++i)
     check_address (buffer + i);
 }
@@ -176,7 +175,6 @@ void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 void check_valid_string (const void* str, void* esp)
 {
   int i;
-  check_address(str);
   for (i = 0; i < strlen (str); ++i)
     check_address (str + i);
 }

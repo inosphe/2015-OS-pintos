@@ -19,7 +19,7 @@ struct vm_entry {
   bool pinned;  // if vm_entry is exist, then this value is false.
 
   struct file* file; // mapped file
-  struct list_elem mmap_elem;
+  struct hash_elem mmap_elem;
 
   size_t offset;
   size_t read_bytes;

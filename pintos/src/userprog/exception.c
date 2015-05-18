@@ -84,16 +84,16 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
-     debug_backtrace();
+     //debug_backtrace();
 
   switch (f->cs)
     {
     case SEL_UCSEG:
       /* User's code segment, so it's a user exception, as we
          expected.  Kill the user process.  */
-      printf ("%s: dying due to interrupt %#04x (%s).\n",
-              thread_name (), f->vec_no, intr_name (f->vec_no));
-      intr_dump_frame (f);
+      // printf ("%s: dying due to interrupt %#04x (%s).\n",
+      //         thread_name (), f->vec_no, intr_name (f->vec_no));
+      //intr_dump_frame (f);
       break;
 
     case SEL_KCSEG:

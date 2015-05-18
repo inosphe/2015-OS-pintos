@@ -23,8 +23,19 @@ mapid_t mmap (int fd, void *addr)
   if(!file){
     return -1;
   }
+
+  //if invalid vaddr, fail
+  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
+    return -1;
+
+  //if not aligned, fail
+  if(vaddr & PGMASK){
+    return -1;
+  }
+
   mfile = (struct mmap_file*)malloc(sizeof(struct mmap_file));
-  mfile->mapid = id++;
+  mfile->mapid = ++id;
+  mfile->file = file;
   read_bytes = file_length(file);
 
   vm_init(&mfile->vm);
@@ -45,16 +56,25 @@ mapid_t mmap (int fd, void *addr)
       vme->zero_bytes = page_zero_bytes;
       vme->writable = file_write_allowed(file);
 
-      insert_vme (&mfile->vm, vme);
+      hash_insert (&mfile->vm, &vme->mmap_elem);
       insert_vme (&t->vm, vme);
 
       ofs += page_read_bytes;
       addr += PGSIZE;
+
+      read_bytes -= page_read_bytes;
   }
 
   list_push_back(&t->list_mmap, &mfile->elem);
-  
+
   return mfile->mapid;
+}
+
+static void do_mummap(struct mmap_file* mfile){
+    hash_destroy (&mfile->vm, vm_destroy_func); 
+    file_close(mfile->file);
+    list_remove(&mfile->elem);
+    free(mfile);
 }
 
 void munmap (mapid_t id)
@@ -62,10 +82,7 @@ void munmap (mapid_t id)
   struct thread* t = thread_current();
   struct mmap_file* mfile = get_mmap_file(id);
   if(mfile){
-    file_close(mfile->file);
-    hash_destroy (&mfile->vm, vm_destroy_func);  
-    free(mfile);
-    list_remove(&mfile->elem);
+      do_mummap(mfile);
   }
 }
 
@@ -87,13 +104,18 @@ struct mmap_file* get_mmap_file(mapid_t id){
 void vm_destroy_func (struct hash_elem* e, void* _mfile)
 {
   struct thread* t = thread_current();
-  struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
+  struct vm_entry *vme = hash_entry (e, struct vm_entry, mmap_elem);
   struct mmap_file * mfile = (struct mmap_file*)_mfile;
 
-  if (vme->is_loaded)
+  hash_delete(&t->vm, &vme->elem);
+
+  if (vme->is_loaded){
+    if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
+      file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
+    }
     palloc_free_page (pagedir_get_page(t->pagedir, vme->vaddr));
+    pagedir_clear_page(t->pagedir, vme->vaddr);
+  }
 
-  hash_delete(&mfile->vm, e);
-
-  vme->is_loaded = false;
+  free(vme);  
 }

@@ -138,19 +138,6 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
 
   success = load (file_name, &if_.eip, &if_.esp);
-  argument_stack(parse, count, &if_.esp);
-  
-  /* free parse memories */
-  for (i = 0; i < count; ++i)
-  {
-    palloc_free_page(parse[i]);
-  }
-  palloc_free_page(parse);
-  parse = NULL;
-
-  //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
-
-  
   
   /* If load failed, quit. */
   if (!success)
@@ -160,6 +147,17 @@ start_process (void *file_name_)
   }
   else{
     thread_current ()->load_status = 1;
+    argument_stack(parse, count, &if_.esp);
+    
+    /* free parse memories */
+    for (i = 0; i < count; ++i)
+    {
+      palloc_free_page(parse[i]);
+    }
+    palloc_free_page(parse);
+    parse = NULL;
+
+    //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);    
   }
 
   sema_up(&parent->load_program);
@@ -167,10 +165,7 @@ start_process (void *file_name_)
 
   if(!success){
     thread_exit ();
-  }
-
-
-  
+  }  
   
 
   /* Start the user process by simulating a return from an
