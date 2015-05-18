@@ -153,24 +153,22 @@ check_address (void *addr)
   /* Is the addr in the vm table? */
   struct vm_entry* vme = find_vme (addr);
 
-  if (vme != NULL && vme->is_loaded)
-  {
-    /* user stack range check */
-    if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
-      exit (-1);
-    else
-      return vme; /* it's correct address */
-  }
-
   /* can't find the addr in the vm table.. oh no */
-  else
+  if (vme == NULL)
     exit (-1);
+
+  /* user stack range check */
+  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
+    exit (-1);
+
+  return vme;
 }
 
 
 void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 {
   int i;
+  check_address(buffer);
   for (i = 0; i < size; ++i)
     check_address (buffer + i);
 }
@@ -178,6 +176,7 @@ void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 void check_valid_string (const void* str, void* esp)
 {
   int i;
+  check_address(str);
   for (i = 0; i < strlen (str); ++i)
     check_address (str + i);
 }
@@ -393,20 +392,13 @@ pid_t exec (const char *cmd_line)
     sema_down (&t->load_program);
     return -1;
   }
- 
-  
-  for (e = list_begin (&t->child_list); e != list_end (&t->child_list);
-       e = list_next (e))
-  {
-    child = list_entry (e, struct thread, child_elem);
-    if (child->tid == child_pid)
-      break;
-  }
-  
-  sema_down (&t->load_program);
 
-  if (child->load_status == -1)
+  child = get_child_process(child_pid);
+  
+  if (child->load_status == -1){
+    sema_down (&t->load_program);
     return -1;
+  }
 
   return child_pid;
 }

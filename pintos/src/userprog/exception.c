@@ -84,7 +84,7 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
-     debug_backtrace_all();
+     debug_backtrace();
 
   switch (f->cs)
     {
@@ -164,8 +164,8 @@ page_fault (struct intr_frame *f)
     return;
   }
   
-  //printf("%p\n", find_vme(fault_addr));
   vme = find_vme(fault_addr);
+  //printf("vme : %p\n", find_vme(fault_addr));
   if(vme && handle_mm_fault(vme)){
 
   }

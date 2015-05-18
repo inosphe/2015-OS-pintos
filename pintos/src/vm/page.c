@@ -108,8 +108,8 @@ bool load_file (void* kaddr, struct vm_entry *vme)
 {
   off_t read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
   memset (kaddr + vme->read_bytes, 0, vme->zero_bytes);
-  //printf("size : %d\n", file_length(vme->file));
+   //printf("size : %d\n", file_length(vme->file));
 
-  // printf("load_file %x, %x, %d, %d, %d\n", kaddr, vme->file, vme->read_bytes, vme->offset, read);
+  // printf("load_file %x, %x, %d, %d, %d, %d\n", kaddr, vme->file, vme->read_bytes, vme->zero_bytes, vme->offset, read);
   return true;
 }

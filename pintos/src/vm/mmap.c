@@ -59,10 +59,13 @@ mapid_t mmap (int fd, void *addr)
 
 void munmap (mapid_t id)
 {
+  struct thread* t = thread_current();
   struct mmap_file* mfile = get_mmap_file(id);
   if(mfile){
     file_close(mfile->file);
     hash_destroy (&mfile->vm, vm_destroy_func);  
+    free(mfile);
+    list_remove(&mfile->elem);
   }
 }
 

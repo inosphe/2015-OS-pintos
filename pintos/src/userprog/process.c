@@ -150,17 +150,28 @@ start_process (void *file_name_)
 
   //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);
 
+  
+  
   /* If load failed, quit. */
-  palloc_free_page (file_name_);
-  
-  sema_up(&parent->load_program);
-  
   if (!success)
   {
     thread_current ()->load_status = -1;
+    
+  }
+  else{
+    thread_current ()->load_status = 1;
+  }
+
+  sema_up(&parent->load_program);
+  palloc_free_page (file_name_);
+
+  if(!success){
     thread_exit ();
   }
-  thread_current ()->load_status = 1;
+
+
+  
+  
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -500,9 +511,12 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
 
+
+  //printf("* Load_segment | %d, %d\n", read_bytes, zero_bytes);
   file_seek (file, ofs);
   while (read_bytes > 0 || zero_bytes > 0) 
     {
+      
       /* Calculate how to fill this page.
          We will read PAGE_READ_BYTES bytes from FILE
          and zero the final PAGE_ZERO_BYTES bytes. */
@@ -510,6 +524,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       struct vm_entry* vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
+
+      //printf("load_segment | %d, %d\n", read_bytes, zero_bytes);
+      //printf("> %p | %d, %d, %d\n", upage, page_read_bytes, page_zero_bytes, ofs);
 
       vme->type = VM_BIN;
       vme->is_loaded = false;
@@ -549,6 +566,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       zero_bytes -= page_zero_bytes;
       ofs += page_read_bytes;
       upage += PGSIZE;
+      //printf("> %d, %d\n", read_bytes, zero_bytes);
     }
   return true;
 }
@@ -760,6 +778,7 @@ bool handle_mm_fault (struct vm_entry *vme)
   }
    kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
   if (!kaddr){
+    printf("kaddr null\n");
     return false;
   }
 
@@ -772,7 +791,9 @@ bool handle_mm_fault (struct vm_entry *vme)
         return false;
       break;
     case VM_FILE:
-      return false;
+      if (!load_file ((void*)kaddr, vme))
+        return false;
+      break;
     case VM_ANON:
       return false;
     default:
