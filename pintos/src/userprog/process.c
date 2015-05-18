@@ -528,6 +528,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       //printf("load_segment | %d, %d\n", read_bytes, zero_bytes);
       //printf("> %p | %d, %d, %d\n", upage, page_read_bytes, page_zero_bytes, ofs);
 
+      /* vm_entry fields init */
       vme->type = VM_BIN;
       vme->is_loaded = false;
       vme->pinned = false;
@@ -538,6 +539,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       vme->zero_bytes = page_zero_bytes;
       vme->writable = writable;
 
+      /* insert new vm_entry to the vm table */
       insert_vme (&thread_current()->vm, vme);
 
 /*
@@ -588,6 +590,7 @@ setup_stack (void **esp)
       {
         *esp = PHYS_BASE;
 
+        /* vm_entry fields init */ 
         vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
         
         vme->vaddr = (void*)PHYS_BASE-PGSIZE;
@@ -595,6 +598,7 @@ setup_stack (void **esp)
         vme->is_loaded = true;
         vme->pinned = false;
         
+        /* insert new vm_entry to the vm table */
         insert_vme (&thread_current()->vm, vme);
       }
       else
@@ -784,12 +788,15 @@ bool handle_mm_fault (struct vm_entry *vme)
 
   vme->pinned = true;
 
+  /* VM constants are defined in page.h */
   switch (vme->type)
   {
     case VM_BIN:
       if (!load_file ((void*)kaddr, vme))
         return false;
       break;
+
+    /* for memory mapped file */
     case VM_FILE:
       if (!load_file ((void*)kaddr, vme))
         return false;

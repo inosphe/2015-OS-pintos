@@ -7,10 +7,16 @@
 
 static void vm_destroy_func (struct hash_elem* e, void* aux);
 
+/* load file data to memory (demand paging) */
+/* fd: descriptor of the file that should mapping to address space */
+/* addr: mapping start address */
 mapid_t mmap (int fd, void *addr)
 {
   static int id = 0;
+  
+  /* search fild descriptors list by fd */
   struct file* file = process_get_file(fd);
+
   struct thread* t = thread_current();
   struct mmap_file* mfile;
   off_t ofs = 0;
@@ -19,6 +25,8 @@ mapid_t mmap (int fd, void *addr)
   if(!file){
     return -1;
   }
+  
+  /* by UNIX semantic, mmap()ed file must accesible until munmap() called or process exit. so duplicate file object  */
   file = file_reopen(file);
   if(!file){
     return -1;
@@ -35,6 +43,7 @@ mapid_t mmap (int fd, void *addr)
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+      /* vm_entry field init */
       vme->type = VM_FILE;
       vme->is_loaded = false;
       vme->pinned = false;
@@ -57,6 +66,7 @@ mapid_t mmap (int fd, void *addr)
   return mfile->mapid;
 }
 
+/* release every vm_entries by mapid */
 void munmap (mapid_t id)
 {
   struct thread* t = thread_current();

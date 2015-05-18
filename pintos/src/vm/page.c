@@ -4,6 +4,7 @@
 #include "filesys/file.h"
 #include <stdio.h>
 
+/* hash function (wrapped) */
 static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
 {
   struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
@@ -16,6 +17,7 @@ static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
   return hash;
 }
 
+/* hash compare function */
 static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, void* aux UNUSED)
 {
   struct vm_entry *vme_a, *vme_b;
@@ -36,6 +38,7 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
   hash_delete(&t->vm, e);
 }
 
+/* initialize the vm hash table by above functions */
 void vm_init (struct hash* vm)
 {
   //printf("vm_init %p\n", (void*)vm);
@@ -47,17 +50,18 @@ void vm_destroy (struct hash* vm)
   hash_destroy (vm, vm_destroy_func);
 }
 
+/*find vm_entry by virtual address  */
 struct vm_entry* find_vme (void* vaddr)
 {
   struct hash_elem* e = NULL;
 
-  // temp vm_entry (saving addr to find element)
+  /* temp vm_entry (saving addr to find element) */
   struct vm_entry p;
   p.vaddr = vaddr;
 
   //printf("find_vme vm(%p)\n", &thread_current()->vm);
 
-  // first argument: current thread's vm hash table
+  /* first argument: current thread's vm hash table */
   e = hash_find (&thread_current()->vm, &p.elem);
 
   if (e != NULL)
@@ -83,6 +87,7 @@ bool delete_vme (struct hash* vm, struct vm_entry* vme)
     return false;
 }
 
+/* if vaddr exist in vm table, pinned = false */
 void unpin_ptr (void* vaddr)
 {
   struct vm_entry* vme = find_vme (vaddr);
@@ -104,6 +109,8 @@ void unpin_buffer (void* buffer, unsigned size)
     unpin_ptr ((char*)buffer + i);
 }
 
+/* load file (address kaddr ~ kaddr+read_bytes) 
+   and kaddr+read_bytes ~ kaddr+read_bytes+zero_bytes = 0*/
 bool load_file (void* kaddr, struct vm_entry *vme)
 {
   off_t read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 

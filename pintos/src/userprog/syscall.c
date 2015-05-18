@@ -164,7 +164,7 @@ check_address (void *addr)
   return vme;
 }
 
-
+/* check every addresses in buffer */
 void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 {
   int i;
@@ -173,6 +173,7 @@ void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
     check_address (buffer + i);
 }
 
+/* check every addresses in string */
 void check_valid_string (const void* str, void* esp)
 {
   int i;
