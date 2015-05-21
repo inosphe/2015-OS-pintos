@@ -22,6 +22,8 @@ mapid_t mmap (int fd, void *addr)
   if(!file){
     return -1;
   }
+
+  //source file descriptions may be closed. so reopen the file
   file = file_reopen(file);
   if(!file){
     return -1;
@@ -73,6 +75,7 @@ mapid_t mmap (int fd, void *addr)
       vme->zero_bytes = page_zero_bytes;
       vme->writable = file_write_allowed(file);
 
+      //insert to both thread vm, mmfile vm
       hash_insert (&mfile->vm, &vme->mmap_elem);
       insert_vme (&t->vm, vme);
 
