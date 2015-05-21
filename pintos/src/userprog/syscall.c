@@ -164,10 +164,13 @@ check_address (void *addr)
   return vme;
 }
 
-struct vm_entry* check_address_not_code(void* addr){
+//check this page is writable
+struct vm_entry* check_address_writable(void* addr){
   struct vm_entry* vme = check_address(addr);
-  if(!vme || vme->type == VM_BIN)
-    exit (-1);
+  
+  if(!vme->writable)
+    exit(-1);
+
   return vme;
 }
 
@@ -285,7 +288,7 @@ read (int fd, void *buffer, unsigned size)
 	struct file *file;
 
   //can not write to text segment
-  check_address_not_code(buffer);
+  check_address_writable(buffer);
 
 	if(fd == 0)
 	{
