@@ -6,6 +6,8 @@
 #include "filesys/off_t.h"
 
 typedef int mapid_t;
+#define MAP_FAILED ((mapid_t) -1)
+
 struct mmap_file{
   mapid_t mapid;
   struct file* file;

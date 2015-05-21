@@ -6,6 +6,7 @@
 
 
 static void vm_destroy_func (struct hash_elem* e, void* aux);
+static void do_mummap(struct mmap_file* mfile);
 
 mapid_t mmap (int fd, void *addr)
 {
@@ -13,6 +14,7 @@ mapid_t mmap (int fd, void *addr)
   struct file* file = process_get_file(fd);
   struct thread* t = thread_current();
   struct mmap_file* mfile;
+  int success = 0;
   off_t ofs = 0;
   uint32_t read_bytes=0;
 
@@ -40,9 +42,21 @@ mapid_t mmap (int fd, void *addr)
 
   vm_init(&mfile->vm);
   mfile->vm.aux = mfile;
-  
+  success = 1;
+  list_push_back(&t->list_mmap, &mfile->elem);
+
   while(read_bytes>0){
-      struct vm_entry* vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
+      struct vm_entry* vme, *vme_check;
+
+      if(addr){
+        vme_check = find_vme(addr);
+        if(vme_check){
+          success = 0;
+          break;
+        }
+      }
+
+      vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
@@ -65,9 +79,13 @@ mapid_t mmap (int fd, void *addr)
       read_bytes -= page_read_bytes;
   }
 
-  list_push_back(&t->list_mmap, &mfile->elem);
-
-  return mfile->mapid;
+  if(success){
+    return mfile->mapid;
+  }
+  else{
+    do_mummap(mfile);
+    return MAP_FAILED;
+  }
 }
 
 /* unmap / release every vm_entries, close file, etc... */
