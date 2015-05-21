@@ -70,6 +70,7 @@ struct vm_entry* find_vme (void* vaddr)
     return NULL;
 }
 
+//insert allocated vm_entry instance to thread vm hash
 bool insert_vme (struct hash* vm, struct vm_entry* vme)
 {
   //printf("insert_vme (%p) : %p\n", (void*)vm, (void*)vme->vaddr);
@@ -79,6 +80,7 @@ bool insert_vme (struct hash* vm, struct vm_entry* vme)
     return false;
 }
 
+//remove vm_entry instance to thread vm hash
 bool delete_vme (struct hash* vm, struct vm_entry* vme)
 {
   if (hash_delete (vm, vme) != NULL)

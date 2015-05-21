@@ -164,6 +164,13 @@ check_address (void *addr)
   return vme;
 }
 
+struct vm_entry* check_address_not_code(void* addr){
+  struct vm_entry* vme = check_address(addr);
+  if(!vme || vme->type == VM_BIN)
+    exit (-1);
+  return vme;
+}
+
 /* check every addresses in buffer */
 void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 {
@@ -245,6 +252,7 @@ open(const char *file_name)
 	int fd = -1;
 	if(!file)
 	{
+    //printf("open : %s - failed.\n", file_name);
 		return fd;
 	}
   
@@ -275,6 +283,9 @@ read (int fd, void *buffer, unsigned size)
 	int i, ret;
 	char c;
 	struct file *file;
+
+  //can not write to text segment
+  check_address_not_code(buffer);
 
 	if(fd == 0)
 	{

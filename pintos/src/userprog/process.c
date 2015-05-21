@@ -18,6 +18,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "vm/page.h"
+#include "vm/mmap.h"
 
 /* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
@@ -212,10 +213,9 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
-//  struct vm_entry* vme = find_vme (
 
-//  palloc_free_page (cur->fd);
-//  delete_vme (&cur->vm, 
+  clear_opened_mmfiles();   //clear all opened memory-mapped-file
+
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
   pd = cur->pagedir;
@@ -233,7 +233,8 @@ process_exit (void)
       pagedir_destroy (pd);
     } 
 
-    clear_opened_filedesc();
+    clear_opened_filedesc();  //clear all opened file 
+    
 }
 
 /* Sets up the CPU for running user code in the current
@@ -251,7 +252,6 @@ process_activate (void)
      interrupts. */
   tss_update ();
 }
-
 /* We load ELF binaries.  The following definitions are taken
    from the ELF specification, [ELF1], more-or-less verbatim.  */
 
@@ -707,6 +707,7 @@ process_add_file (struct file *f)
   if(t->file_desc_size >= MAX_FILE_DESC_COUNT)
   {
     //File desc array is full.
+    printf("file_desc_size is overed MAX_FILE_DESC_COUNT(%d)\n", MAX_FILE_DESC_COUNT);
     return fd;
   }
 
@@ -773,21 +774,26 @@ void remove_child_process (struct thread *cp)
 bool handle_mm_fault (struct vm_entry *vme)
 {
   void* kaddr;
+  //when fault raised if vme is already loaded, it's error
   if(vme->is_loaded){
-    printf("already loaded\n");
+    printf("already loaded\n"); 
     return false;
   }
-   kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
+
+  //allocate physical page frame from User pool
+  kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
   if (!kaddr){
     printf("kaddr null\n");
     return false;
   }
 
+  //just default value;
   vme->pinned = true;
 
   /* VM constants are defined in page.h */
   switch (vme->type)
   {
+    //load from ELF binary file
     case VM_BIN:
       if (!load_file ((void*)kaddr, vme))
         return false;
@@ -804,6 +810,7 @@ bool handle_mm_fault (struct vm_entry *vme)
       return false;
   }
   
+  //intall page to thread's page directory
   install_page (vme->vaddr, kaddr, vme->writable);
   vme->is_loaded = true;
   return true;

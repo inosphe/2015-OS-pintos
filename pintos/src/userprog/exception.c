@@ -159,31 +159,19 @@ page_fault (struct intr_frame *f)
 
   //printf("page_fault %p | type(%d)\n", fault_addr, f->cs);
 
+  //this is null exception. error.
   if(!fault_addr){
     kill(f);
     return;
   }
   
+  /* fine vm_entry and handle it.(load from files...)*/
   vme = find_vme(fault_addr);
-  //printf("vme : %p\n", find_vme(fault_addr));
   if(vme && handle_mm_fault(vme)){
 
   }
-  else{
-    kill (f);
+  else{ //vme not exists or physical frame may not allocated.
+    kill (f); //kill process
   }
-
-  //printf("fault end\n");
-  
-  
-  /* To implement virtual memory, delete the rest of the function
-     body, and replace it with code that brings in the page to
-     which fault_addr refers. */
-  // printf ("Page fault at %p: %s error %s page in %s context.\n",
-  //         fault_addr,
-  //         not_present ? "not present" : "rights violation",
-  //         write ? "writing" : "reading",
-  //         user ? "user" : "kernel");
-  
 }
 

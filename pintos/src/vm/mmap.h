@@ -19,4 +19,6 @@ mapid_t mmap (int fd, void *addr);
 struct mmap_file* get_mmap_file(mapid_t id);
 void munmap (mapid_t);
 
+void clear_opened_mmfiles(void);
+
 #endif
