@@ -138,11 +138,13 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
 
   success = load (file_name, &if_.eip, &if_.esp);
+  //printf("success : %d\n", success);
   
   /* If load failed, quit. */
   if (!success)
   {
     thread_current ()->load_status = -1;
+    thread_current ()->exit_status = -1;
     
   }
   else{
@@ -161,12 +163,12 @@ start_process (void *file_name_)
   }
 
   sema_up(&parent->load_program);
+  
   palloc_free_page (file_name_);
 
   if(!success){
     thread_exit ();
   }  
-  
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in

@@ -176,8 +176,11 @@ void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 void check_valid_string (const void* str, void* esp)
 {
   int i;
-  for (i = 0; i < strlen (str); ++i)
+  for (i = 0; ; ++i){
     check_address (str + i);
+    if(*((char*)str+i) == NULL)
+      break;
+  }
 }
 
 void
@@ -393,10 +396,14 @@ pid_t exec (const char *cmd_line)
   }
 
   child = get_child_process(child_pid);
-  
-  if (child->load_status == -1){
+
+  if (child->load_status == 0){
     sema_down (&t->load_program);
-    return -1;
+  }
+
+  if(child->load_status == -1){
+    remove_child_process(t);
+    child_pid = -1;
   }
 
   return child_pid;
