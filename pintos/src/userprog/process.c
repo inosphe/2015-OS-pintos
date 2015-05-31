@@ -805,6 +805,7 @@ bool handle_mm_fault (struct vm_entry *vme)
       break;
 
     default:
+      printf("invalid type\n");
       return false;
   }
 

@@ -170,6 +170,8 @@ page_fault (struct intr_frame *f)
   if(vme && handle_mm_fault(vme)){
   }
   else{ //vme not exists or physical frame may not allocated.
+    printf("page fault failed.\n");
+    printf("fault_addr(%p), vme(%p)\n", fault_addr, vme);
     kill (f); //kill process
   }
 }
