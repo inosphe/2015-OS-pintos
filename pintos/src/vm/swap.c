@@ -3,10 +3,12 @@
 #include <bitmap.h>
 #include "threads/vaddr.h"
 #include "devices/block.h"
+#include "threads/synch.h"
 
 
 static struct block* swap_block;
 static struct bitmap* swap_map;
+static struct lock lock;
 
 /*
 	defined in block.h
@@ -29,20 +31,26 @@ void swap_init(){
 		PANIC("no swap bitmap created.");
 	}
 
+	lock_init(&lock);
+
 	bitmap_set_all(swap_map, false);
 }
 
 void swap_in(size_t used_index, void* kaddr){
 	int i;
+
+	lock_acquire(&lock);
 	for(i=0; i<SECTORS_PER_PAGE; ++i){
 		block_read(swap_block, used_index*SECTORS_PER_PAGE+i, kaddr+i*BLOCK_SECTOR_SIZE);
 	}
 
 	bitmap_flip(swap_block, used_index);
+	lock_release(&lock);
 }
 
 size_t swap_out(void* kaddr){
 	int i;
+	lock_acquire(&lock);
 	size_t index = bitmap_scan_and_flip(swap_map, 0, 1, false);
 	if(index == BITMAP_ERROR){
 		return SWAP_ERROR;
@@ -50,6 +58,7 @@ size_t swap_out(void* kaddr){
 	for(i=0; i<SECTORS_PER_PAGE; ++i){
 		block_write(swap_block, index*SECTORS_PER_PAGE+i, kaddr+i*BLOCK_SECTOR_SIZE);
 	}
+	lock_release(&lock);
 
 	return index;
 }
