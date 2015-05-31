@@ -84,7 +84,7 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
-     //debug_backtrace();
+     debug_backtrace();
 
   switch (f->cs)
     {
@@ -168,7 +168,6 @@ page_fault (struct intr_frame *f)
   /* fine vm_entry and handle it.(load from files...)*/
   vme = find_vme(fault_addr);
   if(vme && handle_mm_fault(vme)){
-
   }
   else{ //vme not exists or physical frame may not allocated.
     kill (f); //kill process

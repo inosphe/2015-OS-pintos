@@ -1,9 +1,9 @@
-#include "mmap.h"
-#include "page.h"
-#include "threads/vaddr.h"
+#include "vm/mmap.h"
 #include "vm/page.h"
+#include "threads/vaddr.h"
 #include "threads/thread.h"
 #include <list.h>
+#include <assert.h>
 
 
 static void vm_destroy_func (struct hash_elem* e, void* aux);
@@ -60,20 +60,19 @@ mapid_t mmap (int fd, void *addr)
         }
       }
 
-      vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       //source of memory mapped file is FILE
-      vme->type = VM_FILE;
+      vme = alloc_vmentry(VM_FILE, addr);
       vme->is_loaded = false;
       vme->pinned = false;
       vme->file = file;
       vme->offset = ofs;
-      vme->vaddr = (void*)addr;
       vme->read_bytes = page_read_bytes;
       vme->zero_bytes = page_zero_bytes;
       vme->writable = file_write_allowed(file);
+      vme->mfile_id = mfile->mapid;
 
       //insert to both thread vm, mmfile vm
       hash_insert (&mfile->vm, &vme->mmap_elem);
@@ -99,7 +98,7 @@ mapid_t mmap (int fd, void *addr)
 static void do_mummap(struct mmap_file* mfile){
     hash_destroy (&mfile->vm, vm_destroy_func); 
     file_close(mfile->file);
-    free(mfile);
+    
 }
 
 /* release mmap by mapid */
@@ -107,8 +106,9 @@ void munmap (mapid_t id)
 {
   struct mmap_file* mfile = get_mmap_file(id);
   if(mfile){
-      list_remove(&mfile->elem);
       do_mummap(mfile);
+      list_remove(&mfile->elem);
+      free(mfile);
   }
 }
 
@@ -116,6 +116,7 @@ void munmap (mapid_t id)
 struct mmap_file* get_mmap_file(mapid_t id){
   struct thread* t = thread_current();
   struct list_elem* e;
+
   for (e = list_begin (&t->list_mmap); e != list_end (&t->list_mmap);
      e = list_next (e))
   {
@@ -142,22 +143,39 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
 {
   struct thread* t = thread_current();
   struct vm_entry *vme = hash_entry (e, struct vm_entry, mmap_elem);
-  struct mmap_file * mfile = (struct mmap_file*)_mfile;
+  
 
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
+
+  free_page(vme->page);
   hash_delete(&t->vm, &vme->elem);
+
+  free(vme);  
+}
+
+bool mmap_vmentry_flush(struct page* page){
+  struct thread* t = page->thread;
+  struct vm_entry* vme = page->vme;
+
+  if(!vme)
+    return false;
+
+  ASSERT(vme->mfile_id>=0);
+  if(vme->mfile_id<0)
+    return false;
+
+  struct mmap_file * mfile = get_mmap_file(vme->mfile_id);
+  ASSERT(mfile != NULL);
+  if(!mfile)
+    return false;
 
   if (vme->is_loaded){
     //write to file if memory is dirty
     if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
       file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
     }
-    //free physical page
-    palloc_free_page (pagedir_get_page(t->pagedir, vme->vaddr));
-    //remove from thread page directory
-    pagedir_clear_page(t->pagedir, vme->vaddr);
   }
 
-  free(vme);  
+  return true;
 }

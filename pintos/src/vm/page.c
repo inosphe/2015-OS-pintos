@@ -3,6 +3,12 @@
 #include "threads/vaddr.h"
 #include "filesys/file.h"
 #include <stdio.h>
+#include "vm/swap.h"
+
+
+
+/* mapping the virtual address to the physical address */
+static bool install_page (struct thread* t, void *upage, void *kpage, bool writable);
 
 /* hash function (wrapped) */
 static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
@@ -35,7 +41,15 @@ static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, 
 static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
 {
   struct thread* t = thread_current();
+  struct vm_entry* vme = hash_entry (e, struct vm_entry, elem);
+
+  if(vme->page){
+    del_page_from_lru_list(vme->page); 
+    free(vme->page);
+  }
+
   hash_delete(&t->vm, e);
+  free(vme);
 }
 
 /* initialize the vm hash table by above functions */
@@ -83,8 +97,10 @@ bool insert_vme (struct hash* vm, struct vm_entry* vme)
 //remove vm_entry instance to thread vm hash
 bool delete_vme (struct hash* vm, struct vm_entry* vme)
 {
-  if (hash_delete (vm, vme) != NULL)
+  if (hash_delete (vm, vme) != NULL){
+    free(vme);
     return true;
+  }
   else
     return false;
 }
@@ -115,10 +131,108 @@ void unpin_buffer (void* buffer, unsigned size)
    and kaddr+read_bytes ~ kaddr+read_bytes+zero_bytes = 0*/
 bool load_file (void* kaddr, struct vm_entry *vme)
 {
-  off_t read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
+  off_t read;
+  read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
   memset (kaddr + vme->read_bytes, 0, vme->zero_bytes);
-   //printf("size : %d\n", file_length(vme->file));
-
-  // printf("load_file %x, %x, %d, %d, %d, %d\n", kaddr, vme->file, vme->read_bytes, vme->zero_bytes, vme->offset, read);
   return true;
+}
+
+struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr){
+  struct thread* current_thread = thread_current();
+  struct vm_entry* vme = (struct vm_entry*)malloc(sizeof(struct vm_entry));
+  if(vme == NULL)
+    return NULL;
+  
+  memset(vme, 0, sizeof(struct vm_entry));
+  vme->type = type;
+  vme->vaddr = vaddr;
+  vme->mfile_id = -1;
+  vme->swap_slot = SWAP_ERROR;
+  insert_vme(&current_thread->vm, vme);
+  return vme;
+}
+
+struct page* alloc_page(enum palloc_flags flags){
+  struct page* page = NULL;
+  void* kaddr = NULL;
+
+  //printf("alloc_page(%x)\n", flags);
+
+  kaddr = palloc_get_page(flags);
+  if(kaddr == NULL){
+    try_to_free_pages(flags);
+    
+    kaddr = palloc_get_page(flags);
+  }
+
+  //printf("alloc_page(%p)\n", kaddr);
+
+  if(kaddr){
+    page = (struct page*)malloc(sizeof(struct page));
+    memset(page, 0, sizeof(struct page));
+    page->kaddr = kaddr;
+    page->thread = thread_current();
+    add_page_to_lru_list(page);  
+
+  }  
+  return page;
+}
+
+bool page_set_vmentry(struct page* page, struct vm_entry* vme){
+  //printf("page_set_vmentry | vaddr(%p), kaddr(%p)\n", vme->vaddr, page->kaddr);
+  if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){
+    page->vme = vme;
+    vme->is_loaded = page->kaddr != NULL;
+    vme->page = page;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+void free_page(struct page* page){
+    if(!page)
+      return;
+
+    if(page->vme){
+      switch(page->vme->type){
+        case VM_BIN:
+          if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+            page->vme->swap_slot = swap_out(page->kaddr);
+            page->vme->type = VM_ANON;
+          }
+          break;
+        case VM_FILE:
+          if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+            mmap_vmentry_flush(page);
+          }
+          break;
+        case VM_ANON:
+          page->vme->swap_slot = swap_out(page->kaddr);
+          break;
+      }
+
+      page->vme->is_loaded = false;
+      ASSERT(page->kaddr == pagedir_get_page(page->thread->pagedir, page->vme->vaddr));
+
+      page->vme->page = NULL;
+      pagedir_clear_page(page->thread->pagedir, page->vme->vaddr); //remove from thread page directory
+    }
+
+    del_page_from_lru_list(page);   
+    palloc_free_page (page->kaddr); //free physical page
+
+    
+
+    free(page);
+}
+
+static bool
+install_page (struct thread* t, void *upage, void *kpage, bool writable)
+{
+  /* Verify that there's not already a page at that virtual
+     address, then map our page there. */
+  return (pagedir_get_page (t->pagedir, upage) == NULL
+          && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }

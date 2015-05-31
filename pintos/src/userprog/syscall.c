@@ -154,12 +154,14 @@ check_address (void *addr)
   struct vm_entry* vme = find_vme (addr);
 
   /* can't find the addr in the vm table.. oh no */
-  if (vme == NULL)
+  if (vme == NULL){
     exit (-1);
+  }
 
   /* user stack range check */
-  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000)
+  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000){
     exit (-1);
+  }
 
   return vme;
 }
@@ -168,8 +170,9 @@ check_address (void *addr)
 struct vm_entry* check_address_writable(void* addr){
   struct vm_entry* vme = check_address(addr);
   
-  if(!vme->writable)
+  if(!vme->writable){
     exit(-1);
+  }
 
   return vme;
 }
@@ -286,6 +289,7 @@ read (int fd, void *buffer, unsigned size)
 	int i, ret;
 	char c;
 	struct file *file;
+  struct vm_entry* vme;
 
   //can not write to text segment
   check_address_writable(buffer);

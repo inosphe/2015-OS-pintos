@@ -325,17 +325,18 @@ thread_exit (void)
 
   printf("%s: exit(%d)\n", t->name, t->exit_status);
 
+  
 #ifdef USERPROG
   process_exit ();
 #endif
 
+  vm_destroy (&t->vm);
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
   list_remove (&thread_current()->allelem);
-  vm_destroy (&t->vm);
   t->status = THREAD_DYING;
   t->isExit = true;
   sema_up (&t->exit_program);

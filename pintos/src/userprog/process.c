@@ -17,8 +17,8 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
-#include "vm/page.h"
 #include "vm/mmap.h"
+#include "vm/swap.h"
 
 /* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
@@ -108,7 +108,8 @@ start_process (void *file_name_)
   struct intr_frame if_;
   char *lasts;
   bool success;
-  char **parse = palloc_get_page (PAL_USER);
+  struct page* arguments_pages[16];
+  char *parse[16];
   char count;
   int i;
   char *parse_temp;
@@ -119,12 +120,16 @@ start_process (void *file_name_)
     parse_temp != NULL;
     parse_temp = strtok_r(NULL, " ", &lasts))
   {
-    parse[count] = palloc_get_page(PAL_USER);
+    arguments_pages[count] = alloc_page(PAL_USER);
+    parse[count] = arguments_pages[count]->kaddr;
     if(strlen(parse_temp) >= PGSIZE-1)
       printf("@ %s | each argument length must be lower than %d.\n", parse_temp, PGSIZE-1);
 
     strlcpy(parse[count], parse_temp, PGSIZE-1);
     ++count;
+
+    if(count == 16)
+      break;
   }
 
   if(count > 0)
@@ -155,10 +160,8 @@ start_process (void *file_name_)
     /* free parse memories */
     for (i = 0; i < count; ++i)
     {
-      palloc_free_page(parse[i]);
+      free_page(arguments_pages[i]);
     }
-    palloc_free_page(parse);
-    parse = NULL;
 
     //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);    
   }
@@ -438,9 +441,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
 /* load() helpers. */
 
-/* mapping the virtual address to the physical address */
-static bool install_page (void *upage, void *kpage, bool writable);
-
 /* Checks whether PHDR describes a valid, loadable segment in
    FILE and returns true if so, false otherwise. */
 static bool
@@ -520,18 +520,16 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
-      struct vm_entry* vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
+      struct vm_entry* vme = alloc_vmentry(VM_BIN, (void*)upage);
 
       //printf("load_segment | %d, %d\n", read_bytes, zero_bytes);
       //printf("> %p | %d, %d, %d\n", upage, page_read_bytes, page_zero_bytes, ofs);
 
       /* vm_entry fields init */
-      vme->type = VM_BIN;
       vme->is_loaded = false;
       vme->pinned = false;
       vme->file = file;
       vme->offset = ofs;
-      vme->vaddr = (void*)upage;
       vme->read_bytes = page_read_bytes;
       vme->zero_bytes = page_zero_bytes;
       vme->writable = writable;
@@ -575,32 +573,29 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack (void **esp) 
 {
-  struct vm_entry* vme;
-  uint8_t *kpage;
+  
   bool success = false;
+  struct page* kpage;
+  struct vm_entry* vme;
 
-  kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+  kpage = alloc_page (PAL_USER | PAL_ZERO);
   if (kpage != NULL) 
-    {
-      success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      if (success)
+  {
+    struct vm_entry* vme = alloc_vmentry(VM_ANON, PHYS_BASE - PGSIZE);
+    if(vme){
+      vme->writable = true;
+      if (page_set_vmentry(kpage, vme))
       {
         *esp = PHYS_BASE;
-
-        /* vm_entry fields init */ 
-        vme = (struct vm_entry*)malloc (sizeof(struct vm_entry));
-        
-        vme->vaddr = (void*)PHYS_BASE-PGSIZE;
-        vme->writable = true;
-        vme->is_loaded = true;
-        vme->pinned = false;
-        
-        /* insert new vm_entry to the vm table */
-        insert_vme (&thread_current()->vm, vme);
+        success = true;
       }
-      else
-        palloc_free_page (kpage);
     }
+  }
+
+  if(!success){
+    if(vme) delete_vme(&thread_current()->vm, vme);
+    if(kpage) free_page (kpage);
+  }
   return success;
 }
 
@@ -613,16 +608,7 @@ setup_stack (void **esp)
    with palloc_get_page().
    Returns true on success, false if UPAGE is already mapped or
    if memory allocation fails. */
-static bool
-install_page (void *upage, void *kpage, bool writable)
-{
-  struct thread *t = thread_current ();
 
-  /* Verify that there's not already a page at that virtual
-     address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
-}
 
 void
 argument_stack(char **parse ,int count ,void **esp)
@@ -773,7 +759,10 @@ void remove_child_process (struct thread *cp)
 // page fault handler
 bool handle_mm_fault (struct vm_entry *vme)
 {
-  void* kaddr;
+  struct page* page = NULL;
+
+  //printf("handle_mm_fault | vaddr(%p), type(%d)\n", vme->vaddr, vme->type);
+
   //when fault raised if vme is already loaded, it's error
   if(vme->is_loaded){
     printf("already loaded\n"); 
@@ -781,37 +770,47 @@ bool handle_mm_fault (struct vm_entry *vme)
   }
 
   //allocate physical page frame from User pool
-  kaddr = palloc_get_page (PAL_USER|PAL_ZERO);
-  if (!kaddr){
-    printf("kaddr null\n");
+  page = alloc_page(PAL_USER|PAL_ZERO);
+  if (!page){
+    printf("page null\n");
     return false;
   }
 
-  //just default value;
-  vme->pinned = true;
+  if(!page_set_vmentry(page, vme)){
+    printf("page install failed.\n");
+    return false;
+  }
+
+  //printf("page : %p\n", page);
+  //printf("page->kaddr(%p)\n", page->kaddr);
 
   /* VM constants are defined in page.h */
   switch (vme->type)
   {
     //load from ELF binary file
     case VM_BIN:
-      if (!load_file ((void*)kaddr, vme))
+      if (!load_file (page->kaddr, vme))
         return false;
       break;
 
     /* for memory mapped file */
     case VM_FILE:
-      if (!load_file ((void*)kaddr, vme))
+      if (!load_file (page->kaddr, vme))
         return false;
       break;
     case VM_ANON:
-      return false;
+      ASSERT(page->vme->swap_slot != SWAP_ERROR);
+      swap_in(page->vme->swap_slot, page->kaddr);
+      page->vme->swap_slot = SWAP_ERROR;
+      break;
+
     default:
       return false;
   }
-  
-  //intall page to thread's page directory
-  install_page (vme->vaddr, kaddr, vme->writable);
-  vme->is_loaded = true;
+
+  ASSERT(vme->is_loaded == true);
+
+  //printf("handle_mm_fault end | kaddr(%p), vaddr(%p), type(%d), loaded(%d)\n", page->kaddr, vme->vaddr, vme->type, vme->is_loaded);
+
   return true;
 }
