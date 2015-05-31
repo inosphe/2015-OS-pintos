@@ -108,8 +108,8 @@ start_process (void *file_name_)
   struct intr_frame if_;
   char *lasts;
   bool success;
-  struct page* arguments_pages[16];
-  char *parse[16];
+  struct page* arguments_pages[32];
+  char *parse[32];
   char count;
   int i;
   char *parse_temp;
@@ -128,7 +128,7 @@ start_process (void *file_name_)
     strlcpy(parse[count], parse_temp, PGSIZE-1);
     ++count;
 
-    if(count == 16)
+    if(count == 32)
       break;
   }
 

@@ -84,7 +84,7 @@ kill (struct intr_frame *f)
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
 
-     debug_backtrace();
+     //debug_backtrace();
 
   switch (f->cs)
     {
