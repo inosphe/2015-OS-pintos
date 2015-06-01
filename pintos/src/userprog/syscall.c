@@ -113,7 +113,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_READ:
       DECL_ARGS(3)
-      check_valid_buffer ((void*)arg[1], arg[2], esp, false);
+      check_valid_buffer ((void*)arg[1], arg[2], esp, true);
       f->eax = read(ARG_INT, ARG_VOID, ARG_UNSIGNED, esp);
       unpin_buffer ((void*)arg[1], arg[2]);
       break;    

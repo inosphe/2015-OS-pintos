@@ -159,10 +159,8 @@ struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr){
   struct vm_entry* vme;
   vme = (struct vm_entry*)malloc(sizeof(struct vm_entry));
   if(vme == NULL){
-    lock_release(&lock);
     return NULL;
   }
-
 
   memset(vme, 0, sizeof(struct vm_entry));
   vme->type = type;
