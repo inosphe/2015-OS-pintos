@@ -173,25 +173,29 @@ struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr){
   return vme;
 }
 
+//all page is allocated by this function
 struct page* alloc_page(enum palloc_flags flags){
   struct page* page = NULL;
   void* kaddr = NULL;
 
   lock_acquire(&lock);
+  //get physical memory
   kaddr = palloc_get_page(flags);
-  if(kaddr == NULL){
+  
+  //if cannot alloc physical memory
+  if(kaddr == NULL){ 
     lock_release(&lock);
-    try_to_free_pages(flags);
+    try_to_free_pages(flags); //release least recently used page
     lock_acquire(&lock);
-    kaddr = palloc_get_page(flags);
+    kaddr = palloc_get_page(flags); //try alloc physical memory again!
   }
 
   if(kaddr){
-    page = (struct page*)malloc(sizeof(struct page));
+    page = (struct page*)malloc(sizeof(struct page));   //create page instance
     memset(page, 0, sizeof(struct page));
     page->kaddr = kaddr;
     page->thread = thread_current();
-    add_page_to_lru_list(page);  
+    add_page_to_lru_list(page);     //add to LRU list
   }  
   lock_release(&lock);
 
@@ -201,7 +205,10 @@ struct page* alloc_page(enum palloc_flags flags){
 bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   //printf("page_set_vmentry | vaddr(%p), kaddr(%p)\n", vme->vaddr, page->kaddr);
   lock_acquire(&lock);
-  if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){
+
+  //install vaddr - kaddr mapping to page directory
+  if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){ 
+    //if succeeded, setup vme to page, page to vme either.
     page->vme = vme;
     vme->is_loaded = page->kaddr != NULL;
     ASSERT(page->kaddr);
@@ -221,9 +228,13 @@ void free_page(struct page* page){
 
     lock_acquire(&lock);
 
+
+    //swap out memories
     if(page->vme){
       switch(page->vme->type){
         case VM_BIN:
+
+          //if it is dirtied, it's type changed to VM_ANON, and swapped out
           if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
             ASSERT(page->vme->writable);
             page->vme->swap_slot = swap_out(page->kaddr);
@@ -233,6 +244,7 @@ void free_page(struct page* page){
           break;
         case VM_FILE:
           if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+            //flush memory mapped file
             mmap_vmentry_flush(page);
           }
           break;
@@ -248,6 +260,7 @@ void free_page(struct page* page){
       pagedir_clear_page(page->thread->pagedir, page->vme->vaddr); //remove from thread page directory
     }
 
+    //delete from LRU list
     del_page_from_lru_list(page);   
     ASSERT(page->kaddr != NULL);
     palloc_free_page (page->kaddr); //free physical page

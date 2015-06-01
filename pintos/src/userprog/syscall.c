@@ -15,6 +15,8 @@
 #include "userprog/syscall.h"
 #include "vm/page.h"
 #include "debug.h"
+#include "devices/block.h"
+#include "threads/vaddr.h"
 
 #define EOF 0
 static void syscall_handler (struct intr_frame *);
@@ -315,6 +317,21 @@ read (int fd, void *buffer, unsigned size)
 	char c;
 	struct file *file;
   struct vm_entry* vme;
+
+
+  for(i=0; size>0; ++i){
+    void* vaddr = buffer+i*BLOCK_SECTOR_SIZE;
+    vme = find_vme(vaddr);
+    if(vme == NULL){
+      if(verify_stack(thread_current()->stack, vaddr)==true){
+          vme = expand_stack(vaddr);  
+        }
+    }
+
+    size -= PGSIZE;
+  }
+
+  
 
 	if(fd == 0)
 	{

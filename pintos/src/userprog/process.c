@@ -834,7 +834,7 @@ bool verify_stack(void* esp, void* addr){
 
   void* esp2 = esp;
 
-  ret = ((addr+32) > esp2);
+  ret = ((addr+32) >= esp2);
   ret2 = (addr<PHYS_BASE);
   ret3 = (PHYS_BASE<MAX_STACK_SIZE+esp);
 

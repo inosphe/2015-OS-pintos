@@ -160,7 +160,7 @@ page_fault (struct intr_frame *f)
 
   //this is null exception. error.
   if(!fault_addr){
-    kill(f);
+    exit(-1);
     return;
   }
 
@@ -171,11 +171,15 @@ page_fault (struct intr_frame *f)
       vme = expand_stack(fault_addr);
     }
   }
+
+  if(write && vme && vme->writable == false){
+    exit(-1);
+  }
   
   if(vme && handle_mm_fault(vme)){
   }
   else{ //vme not exists or physical frame may not allocated.
-    kill (f); //kill process
+    exit(-1);
   }
 }
 
