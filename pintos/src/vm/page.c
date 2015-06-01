@@ -173,10 +173,12 @@ struct page* alloc_page(enum palloc_flags flags){
   struct page* page = NULL;
   void* kaddr = NULL;
 
+  lock_acquire(&lock);
   kaddr = palloc_get_page(flags);
   if(kaddr == NULL){
+    lock_release(&lock);
     try_to_free_pages(flags);
-    
+    lock_acquire(&lock);
     kaddr = palloc_get_page(flags);
   }
 
@@ -186,8 +188,9 @@ struct page* alloc_page(enum palloc_flags flags){
     page->kaddr = kaddr;
     page->thread = thread_current();
     add_page_to_lru_list(page);  
-
   }  
+  lock_release(&lock);
+
   return page;
 }
 
@@ -196,6 +199,7 @@ bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){
     page->vme = vme;
     vme->is_loaded = page->kaddr != NULL;
+    ASSERT(page->kaddr);
     vme->page = page;
     return true;
   }
