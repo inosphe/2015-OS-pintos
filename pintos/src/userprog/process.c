@@ -20,6 +20,8 @@
 #include "vm/mmap.h"
 #include "vm/swap.h"
 
+const int MAX_STACK_SIZE = 8 * 1024 * 1024;
+
 /* push 8bit type value to stack */
 #define push_stack_int8(addr, offset, val) \
   { \
@@ -813,4 +815,17 @@ bool handle_mm_fault (struct vm_entry *vme)
 
 
   return true;
+}
+
+
+bool expand_stack(void* addr){
+  struct vm_entry* vme = alloc_vmentry(VM_ANON, pg_round_down (addr));
+  printf("expand_stack : %p\n", vme);
+  return vme != NULL;
+}
+
+bool verify_stack(void * esp, void* addr){
+  int ret = addr > (esp+32);
+  printf("verify_stack : %p > %p + 32 : %d\n", addr, esp+32, ret);
+  return ret!=0;
 }

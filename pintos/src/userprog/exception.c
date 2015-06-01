@@ -6,6 +6,7 @@
 #include "threads/thread.h"
 #include "vm/page.h"
 #include <debug.h>
+#include "threads/vaddr.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -160,14 +161,17 @@ page_fault (struct intr_frame *f)
   //printf("page_fault %p | type(%d)\n", fault_addr, f->cs);
 
   //this is null exception. error.
-  if(!fault_addr){
+  if(!fault_addr || fault_addr>=PHYS_BASE){
     kill(f);
     return;
   }
   
   /* fine vm_entry and handle it.(load from files...)*/
   vme = find_vme(fault_addr);
-  if(vme && handle_mm_fault(vme)){
+  if(!vme && verify_stack(f->esp, fault_addr) && expand_stack(fault_addr)){
+    
+  }
+  else if(vme && handle_mm_fault(vme)){
   }
   else{ //vme not exists or physical frame may not allocated.
     printf("page fault failed.\n");
