@@ -820,6 +820,7 @@ bool handle_mm_fault (struct vm_entry *vme)
 }
 
 
+//expand stack - alloc vm entry
 struct vm_entry* expand_stack(void* addr){
   struct vm_entry* vme;
   vme = alloc_vmentry(VM_ANON, pg_round_down (addr));
@@ -827,6 +828,7 @@ struct vm_entry* expand_stack(void* addr){
   return vme;
 }
 
+//check stack heuristic
 bool verify_stack(void* esp, void* addr){
   bool ret;
   bool ret2;

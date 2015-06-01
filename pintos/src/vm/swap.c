@@ -40,12 +40,15 @@ void swap_in(size_t used_index, void* kaddr){
 	int i;
 	ASSERT(used_index!=SWAP_ERROR);
 	lock_acquire(&lock);
+
+	//read to memory from swap block
 	if(kaddr){
 		for(i=0; i<SECTORS_PER_PAGE; ++i){
 			block_read(swap_block, used_index*SECTORS_PER_PAGE+i, kaddr+i*BLOCK_SECTOR_SIZE);
 		}
 	}
 
+	//flip swap bitmap used_index to false
 	bitmap_flip(swap_map, used_index);
 	lock_release(&lock);
 }
@@ -53,12 +56,16 @@ void swap_in(size_t used_index, void* kaddr){
 size_t swap_out(void* kaddr){
 	int i;
 	lock_acquire(&lock);
+
+	//get bitmap index from swap map
 	size_t index = bitmap_scan_and_flip(swap_map, 0, 1, true);
 
 	ASSERT(index != BITMAP_ERROR);
 	if(index == BITMAP_ERROR){
 		return SWAP_ERROR;
 	}
+
+	//write to swap block from memory
 	for(i=0; i<SECTORS_PER_PAGE; ++i){
 		block_write(swap_block, index*SECTORS_PER_PAGE+i, kaddr+i*BLOCK_SECTOR_SIZE);
 	}
