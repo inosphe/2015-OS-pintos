@@ -31,6 +31,8 @@ void del_page_from_lru_list(struct page* page){
 struct list_elem* gt_next_lru_clock(){
 	struct list_elem* 	e;
 
+	lock_acquire(&lru_lock);
+
 	e = list_begin(&lru_list);
 	while(true)
 	{
@@ -42,6 +44,8 @@ struct list_elem* gt_next_lru_clock(){
 				pagedir_set_accessed(thread->pagedir, page->vme->vaddr, false);
 			}
 			else{
+
+				lock_release(&lru_lock);
 				return page;
 			}	
 		}
@@ -51,6 +55,8 @@ struct list_elem* gt_next_lru_clock(){
 			e = list_begin(&lru_list);
 		}
 	}
+
+	lock_release(&lru_lock);
 	
 	return NULL;
 }
@@ -59,6 +65,7 @@ struct list_elem* gt_next_lru_clock(){
 void try_to_free_pages(enum palloc_flags flags){
 	struct page* victim = gt_next_lru_clock();
 	if(victim == NULL){
+		printf("no victim\n");
 		return;
 	}
 

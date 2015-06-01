@@ -346,8 +346,6 @@ ide_read (void *d_, block_sector_t sec_no, void *buffer)
 {
   struct ata_disk *d = d_;
   struct channel *c = d->channel;
-  ((char*)buffer)[0] = 0;
-  ((char*)buffer)[BLOCK_SECTOR_SIZE-1] = 0;
   lock_acquire (&c->lock);
   select_sector (d, sec_no);
   issue_pio_command (c, CMD_READ_SECTOR_RETRY);

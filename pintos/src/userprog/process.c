@@ -761,7 +761,6 @@ bool handle_mm_fault (struct vm_entry *vme)
 {
   struct page* page = NULL;
 
-  //printf("handle_mm_fault | vaddr(%p), type(%d)\n", vme->vaddr, vme->type);
 
   //when fault raised if vme is already loaded, it's error
   if(vme->is_loaded){
@@ -799,8 +798,9 @@ bool handle_mm_fault (struct vm_entry *vme)
         return false;
       break;
     case VM_ANON:
-      ASSERT(page->vme->swap_slot != SWAP_ERROR);
-      swap_in(page->vme->swap_slot, page->kaddr);
+      if(page->vme->swap_slot!=SWAP_ERROR){
+        swap_in(page->vme->swap_slot, page->kaddr);
+      }
       page->vme->swap_slot = SWAP_ERROR;
       break;
 
@@ -811,7 +811,6 @@ bool handle_mm_fault (struct vm_entry *vme)
 
   ASSERT(vme->is_loaded == true);
 
-  //printf("handle_mm_fault end | kaddr(%p), vaddr(%p), type(%d), loaded(%d)\n", page->kaddr, vme->vaddr, vme->type, vme->is_loaded);
 
   return true;
 }

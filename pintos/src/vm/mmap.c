@@ -4,6 +4,7 @@
 #include "threads/thread.h"
 #include <list.h>
 #include <assert.h>
+#include "vm/swap.h"
 
 
 static void vm_destroy_func (struct hash_elem* e, void* aux);
@@ -148,7 +149,14 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
 
-  free_page(vme->page);
+  if(vme->page){
+    ASSERT(vme->page->thread == t);
+    del_page_from_lru_list(vme->page); 
+    if(vme->swap_slot != SWAP_ERROR)
+      swap_in(vme->swap_slot, NULL);
+    free(vme->page);
+  }
+
   hash_delete(&t->vm, &vme->elem);
 
   free(vme);  
@@ -173,6 +181,7 @@ bool mmap_vmentry_flush(struct page* page){
   if (vme->is_loaded){
     //write to file if memory is dirty
     if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
+      ASSERT(mfile->file != NULL);
       file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
     }
   }

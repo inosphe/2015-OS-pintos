@@ -4,8 +4,9 @@
 #include "filesys/file.h"
 #include <stdio.h>
 #include "vm/swap.h"
+#include "threads/synch.h"
 
-
+static struct lock lock;
 
 /* mapping the virtual address to the physical address */
 static bool install_page (struct thread* t, void *upage, void *kpage, bool writable);
@@ -44,11 +45,14 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
   struct vm_entry* vme = hash_entry (e, struct vm_entry, elem);
 
   if(vme->page){
+    ASSERT(vme->page->thread == t);
     del_page_from_lru_list(vme->page); 
+    if(vme->swap_slot != SWAP_ERROR)
+      swap_in(vme->swap_slot, NULL);
     free(vme->page);
   }
 
-  hash_delete(&t->vm, e);
+  //hash_delete(&t->vm, e);
   free(vme);
 }
 
@@ -56,6 +60,7 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
 void vm_init (struct hash* vm)
 {
   //printf("vm_init %p\n", (void*)vm);
+  lock_init(&lock);
   hash_init (vm, vm_hash_func, vm_less_func, NULL);
 }
 
@@ -87,22 +92,33 @@ struct vm_entry* find_vme (void* vaddr)
 //insert allocated vm_entry instance to thread vm hash
 bool insert_vme (struct hash* vm, struct vm_entry* vme)
 {
+
+   lock_acquire(&lock);
+
   //printf("insert_vme (%p) : %p\n", (void*)vm, (void*)vme->vaddr);
-  if (hash_insert (vm, &vme->elem) != NULL)
+  if (hash_insert (vm, &vme->elem) != NULL){
+    lock_release(&lock);
     return true;
-  else
+  }
+  else{
+    lock_release(&lock);
     return false;
+  }
 }
 
 //remove vm_entry instance to thread vm hash
 bool delete_vme (struct hash* vm, struct vm_entry* vme)
 {
-  if (hash_delete (vm, vme) != NULL){
+  lock_acquire(&lock);
+  if (hash_delete (vm, &vme->elem) != NULL){
     free(vme);
+    lock_release(&lock);
     return true;
   }
-  else
+  else{
+    lock_release(&lock);
     return false;
+  }
 }
 
 /* if vaddr exist in vm table, pinned = false */
@@ -132,6 +148,7 @@ void unpin_buffer (void* buffer, unsigned size)
 bool load_file (void* kaddr, struct vm_entry *vme)
 {
   off_t read;
+  ASSERT(vme->file);
   read = file_read_at (vme->file, kaddr, vme->read_bytes, vme->offset); 
   memset (kaddr + vme->read_bytes, 0, vme->zero_bytes);
   return true;
@@ -156,16 +173,12 @@ struct page* alloc_page(enum palloc_flags flags){
   struct page* page = NULL;
   void* kaddr = NULL;
 
-  //printf("alloc_page(%x)\n", flags);
-
   kaddr = palloc_get_page(flags);
   if(kaddr == NULL){
     try_to_free_pages(flags);
     
     kaddr = palloc_get_page(flags);
   }
-
-  //printf("alloc_page(%p)\n", kaddr);
 
   if(kaddr){
     page = (struct page*)malloc(sizeof(struct page));
@@ -195,12 +208,16 @@ void free_page(struct page* page){
     if(!page)
       return;
 
+    lock_acquire(&lock);
+
     if(page->vme){
       switch(page->vme->type){
         case VM_BIN:
           if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+            ASSERT(page->vme->writable);
             page->vme->swap_slot = swap_out(page->kaddr);
             page->vme->type = VM_ANON;
+            page->vme->file = NULL;
           }
           break;
         case VM_FILE:
@@ -221,11 +238,14 @@ void free_page(struct page* page){
     }
 
     del_page_from_lru_list(page);   
+    ASSERT(page->kaddr != NULL);
     palloc_free_page (page->kaddr); //free physical page
 
     
 
     free(page);
+
+    lock_release(&lock);
 }
 
 static bool
