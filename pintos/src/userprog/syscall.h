@@ -23,6 +23,7 @@ void close (int fd);
 // assignment2: system call
 
 struct vm_entry* check_address (void *addr);
+struct vm_entry* check_address2 (void* esp, void *addr);
 static void get_argument (void *esp, int **arg, int count);
 
 // project6: vm

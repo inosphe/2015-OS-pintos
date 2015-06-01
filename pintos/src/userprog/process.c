@@ -838,7 +838,8 @@ bool verify_stack(void* esp, void* addr){
   ret2 = (addr<PHYS_BASE);
   ret3 = (PHYS_BASE<MAX_STACK_SIZE+esp);
 
-  // printf("%d, %d\n", ret, ret2);
+  // printf("verify_stack esp(%p), addr(%p)\n", esp, addr);
+  //  printf("%d, %d, %d\n", ret, ret2, ret3);
 
   return ret && ret2 && ret3;
 }

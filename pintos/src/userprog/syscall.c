@@ -14,6 +14,7 @@
 #include "filesys/filesys.h"
 #include "userprog/syscall.h"
 #include "vm/page.h"
+#include "debug.h"
 
 #define EOF 0
 static void syscall_handler (struct intr_frame *);
@@ -46,6 +47,7 @@ syscall_handler (struct intr_frame *f)
   int i = 0;
   esp = f->esp;
   check_address (esp);
+  // printf("syscall_handler esp(%p)\n", esp);
   number = *(int*)esp;
   /* systemcall number is located in the top of user stack */
   /* every systemcall is numbered in syscall_nr.h */
@@ -152,10 +154,11 @@ check_address (void *addr)
   //printf("check_address %x\n", addr);
   /* Is the addr in the vm table? */
   struct vm_entry* vme = find_vme (addr);
+  struct thread* t = thread_current();
 
   /* can't find the addr in the vm table.. oh no */
   if (vme == NULL){
-    exit (-1);
+      exit (-1);
   }
 
   /* user stack range check */
@@ -166,8 +169,30 @@ check_address (void *addr)
   return vme;
 }
 
+struct vm_entry* check_address2 (void* esp, void *addr){
+  //printf("check_address %x\n", addr);
+  /* Is the addr in the vm table? */
+  struct vm_entry* vme = find_vme (addr);
+  struct thread* t = thread_current();
+
+  /* can't find the addr in the vm table.. oh no */
+  if (vme == NULL){
+    if(verify_stack(esp, addr) == false){
+      exit (-1);
+    }
+  }
+
+  /* user stack range check */
+  if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000){
+    debug_backtrace();
+    exit (-1);
+  }
+
+  return vme;
+}
+
 //check this page is writable
-struct vm_entry* check_address_writable(void* addr){
+struct vm_entry* check_address_writable(void *esp, void* addr){
   struct vm_entry* vme = check_address(addr);
   
   if(!vme->writable){
@@ -182,7 +207,7 @@ void check_valid_buffer (void* buffer, unsigned size, void* esp, bool to_write)
 {
   int i;
   for (i = 0; i < size; ++i)
-    check_address (buffer + i);
+    check_address2 (esp, buffer + i);
 }
 
 /* check every addresses in string */
@@ -190,7 +215,7 @@ void check_valid_string (const void* str, void* esp)
 {
   int i;
   for (i = 0; ; ++i){
-    check_address (str + i);
+    check_address2 (esp, str + i);
     if(*((char*)str+i) == NULL)
       break;
   }
@@ -290,9 +315,6 @@ read (int fd, void *buffer, unsigned size)
 	char c;
 	struct file *file;
   struct vm_entry* vme;
-
-  //can not write to text segment
-  check_address_writable(buffer);
 
 	if(fd == 0)
 	{
