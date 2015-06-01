@@ -148,6 +148,7 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
 
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
+  mmap_vmentry_flush(vme->page);
 
   if(vme->page){
     ASSERT(vme->page->thread == t);
@@ -158,6 +159,7 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
   }
 
   hash_delete(&t->vm, &vme->elem);
+
 
   free(vme);  
 }

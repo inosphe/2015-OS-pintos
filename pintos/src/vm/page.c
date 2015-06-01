@@ -196,6 +196,7 @@ bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){
     page->vme = vme;
     vme->is_loaded = page->kaddr != NULL;
+    ASSERT(page->kaddr);
     vme->page = page;
     return true;
   }

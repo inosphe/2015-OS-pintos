@@ -780,6 +780,8 @@ bool handle_mm_fault (struct vm_entry *vme)
     return false;
   }
 
+  ASSERT(vme->is_loaded == true);
+
   //printf("page : %p\n", page);
   //printf("page->kaddr(%p)\n", page->kaddr);
 
