@@ -136,6 +136,7 @@ page_fault (struct intr_frame *f)
   bool user;         /* True: access by user, false: access by kernel. */
   void *fault_addr;  /* Fault address. */
   struct vm_entry* vme;
+  void *stack_pointer = f->esp;
 
   /* Obtain faulting address, the virtual address that was
      accessed to cause the fault.  It may point to code or to
@@ -164,11 +165,20 @@ page_fault (struct intr_frame *f)
     return;
   }
 
+  // printf("thread : %p - %s(%d)\n", thread_current(),thread_current()->name, thread_current()->tid);
+  // printf("esp : %p\n", stack_pointer);
+  // printf("stack : %p\n", thread_current()->stack);
+  // printf("user : %d\n", user);
+  // printf("fault_addr : %p\n", fault_addr);
+
+
   /* fine vm_entry and handle it.(load from files...)*/
   vme = find_vme(fault_addr);
+  //printf("vme : %p\n", vme);
   if(vme == NULL){
     if(verify_stack(f->esp, fault_addr)==true){
       vme = expand_stack(fault_addr);
+      //printf("stack : %p\n", vme);
     }
   }
 

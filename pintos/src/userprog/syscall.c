@@ -15,6 +15,8 @@
 #include "userprog/syscall.h"
 #include "vm/page.h"
 #include "debug.h"
+#include "devices/block.h"
+#include "threads/vaddr.h"
 
 #define EOF 0
 static void syscall_handler (struct intr_frame *);
@@ -111,8 +113,8 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_READ:
       DECL_ARGS(3)
-      check_valid_buffer ((void*)arg[1], arg[2], esp, true);
-      f->eax = read(ARG_INT, ARG_VOID, ARG_UNSIGNED);
+      check_valid_buffer ((void*)arg[1], arg[2], esp, false);
+      f->eax = read(ARG_INT, ARG_VOID, ARG_UNSIGNED, esp);
       unpin_buffer ((void*)arg[1], arg[2]);
       break;    
 
@@ -184,7 +186,6 @@ struct vm_entry* check_address2 (void* esp, void *addr){
 
   /* user stack range check */
   if ((uint32_t)addr < 0x8048000 || (uint32_t)addr >= 0xc0000000){
-    debug_backtrace();
     exit (-1);
   }
 
@@ -247,6 +248,9 @@ void
 exit (int status)
 {
   struct thread *t = thread_current ();
+  // if(status < 0){
+  //   debug_backtrace();
+  // }
   t->exit_status = status;
   thread_exit ();
 }
@@ -304,7 +308,7 @@ filesize (int fd)
 }
 
 int
-read (int fd, void *buffer, unsigned size)
+read (int fd, void *buffer, unsigned size, void* esp)
 {
 	/* 파일에 동시 접근이 일어날 수 있으므로Lock사용 */
 	/* 파일 디스크립터를 이용하여 파일 객체 검색 */
@@ -314,7 +318,16 @@ read (int fd, void *buffer, unsigned size)
 	int i, ret;
 	char c;
 	struct file *file;
-  struct vm_entry* vme;  
+  struct vm_entry* vme; 
+
+
+  if(verify_stack(esp, buffer)==true){
+    void* vaddr = buffer;
+    for(i=0; is_user_vaddr(vaddr) && ((vme = find_vme(vaddr))==NULL); ++i, vaddr+=PGSIZE){
+      vme = expand_stack(vaddr);
+    }
+  }
+
 
 	if(fd == 0)
 	{
