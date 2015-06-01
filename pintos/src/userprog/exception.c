@@ -158,20 +158,21 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
-  //printf("page_fault %p | type(%d)\n", fault_addr, f->cs);
-
   //this is null exception. error.
-  if(!fault_addr || fault_addr>=PHYS_BASE){
+  if(!fault_addr){
     kill(f);
     return;
   }
-  
+
   /* fine vm_entry and handle it.(load from files...)*/
   vme = find_vme(fault_addr);
-  if(!vme && verify_stack(f->esp, fault_addr) && expand_stack(fault_addr)){
-    
+  if(vme == NULL){
+    if(verify_stack(f->esp, fault_addr)==true){
+      vme = expand_stack(fault_addr);
+    }
   }
-  else if(vme && handle_mm_fault(vme)){
+  
+  if(vme && handle_mm_fault(vme)){
   }
   else{ //vme not exists or physical frame may not allocated.
     kill (f); //kill process

@@ -820,14 +820,25 @@ bool handle_mm_fault (struct vm_entry *vme)
 }
 
 
-bool expand_stack(void* addr){
-  struct vm_entry* vme = alloc_vmentry(VM_ANON, pg_round_down (addr));
-  printf("expand_stack : %p\n", vme);
-  return vme != NULL;
+struct vm_entry* expand_stack(void* addr){
+  struct vm_entry* vme;
+  vme = alloc_vmentry(VM_ANON, pg_round_down (addr));
+  vme->writable = true;
+  return vme;
 }
 
-bool verify_stack(void * esp, void* addr){
-  int ret = addr > (esp+32);
-  printf("verify_stack : %p > %p + 32 : %d\n", addr, esp+32, ret);
-  return ret!=0;
+bool verify_stack(void* esp, void* addr){
+  bool ret;
+  bool ret2;
+  bool ret3;
+
+  void* esp2 = esp;
+
+  ret = ((addr+32) > esp2);
+  ret2 = (addr<PHYS_BASE);
+  ret3 = (PHYS_BASE<MAX_STACK_SIZE+esp);
+
+  // printf("%d, %d\n", ret, ret2);
+
+  return ret && ret2 && ret3;
 }

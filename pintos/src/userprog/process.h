@@ -19,8 +19,8 @@ struct thread *get_child_process (int pid);
 void remove_child_process (struct thread *cp);
 
 bool handle_mm_fault (struct vm_entry *vme);
-bool expand_stack(void* addr);
-bool verify_stack(void * esp, void* addr);
+struct vm_entry* expand_stack(void* addr);
+bool verify_stack(void* esp, void* addr);
 
 
 #endif /* userprog/process.h */

@@ -156,10 +156,14 @@ bool load_file (void* kaddr, struct vm_entry *vme)
 
 struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr){
   struct thread* current_thread = thread_current();
-  struct vm_entry* vme = (struct vm_entry*)malloc(sizeof(struct vm_entry));
-  if(vme == NULL)
+  struct vm_entry* vme;
+  vme = (struct vm_entry*)malloc(sizeof(struct vm_entry));
+  if(vme == NULL){
+    lock_release(&lock);
     return NULL;
-  
+  }
+
+
   memset(vme, 0, sizeof(struct vm_entry));
   vme->type = type;
   vme->vaddr = vaddr;
@@ -196,14 +200,17 @@ struct page* alloc_page(enum palloc_flags flags){
 
 bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   //printf("page_set_vmentry | vaddr(%p), kaddr(%p)\n", vme->vaddr, page->kaddr);
+  lock_acquire(&lock);
   if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){
     page->vme = vme;
     vme->is_loaded = page->kaddr != NULL;
     ASSERT(page->kaddr);
     vme->page = page;
+    lock_release(&lock);
     return true;
   }
   else{
+  lock_release(&lock);
     return false;
   }
 }

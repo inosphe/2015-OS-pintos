@@ -135,7 +135,9 @@ void
 clear_opened_mmfiles(void){
   struct thread *t = thread_current ();
   while(!list_empty(&t->list_mmap)){
-    do_mummap(list_entry(list_pop_front(&t->list_mmap), struct mmap_file, elem));
+    struct list_elem* e = list_front(&t->list_mmap);
+    do_mummap(list_entry(e, struct mmap_file, elem));
+    list_pop_front(&t->list_mmap);
   }
 }
 
@@ -144,21 +146,18 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
 {
   struct thread* t = thread_current();
   struct vm_entry *vme = hash_entry (e, struct vm_entry, mmap_elem);
+  struct hash_elem* elem;
   
 
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
-  mmap_vmentry_flush(vme->page);
 
   if(vme->page){
-    ASSERT(vme->page->thread == t);
-    del_page_from_lru_list(vme->page); 
-    if(vme->swap_slot != SWAP_ERROR)
-      swap_in(vme->swap_slot, NULL);
-    free(vme->page);
+    free_page(vme->page);
   }
 
-  hash_delete(&t->vm, &vme->elem);
+  elem = hash_delete(&t->vm, &vme->elem);
+  ASSERT(find_vme(vme->vaddr) == NULL);
 
 
   free(vme);  
@@ -176,7 +175,6 @@ bool mmap_vmentry_flush(struct page* page){
     return false;
 
   struct mmap_file * mfile = get_mmap_file(vme->mfile_id);
-  ASSERT(mfile != NULL);
   if(!mfile)
     return false;
 
