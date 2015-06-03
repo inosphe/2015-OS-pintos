@@ -5,7 +5,8 @@
 #include <hash.h>
 #include "filesys/off_t.h"
 
-struct page;
+struct thread;
+struct vm_entry;
 
 typedef int mapid_t;
 #define MAP_FAILED ((mapid_t) -1)
@@ -23,6 +24,6 @@ void munmap (mapid_t);		//close
 
 void clear_opened_mmfiles(void);	//close all
 
-bool mmap_vmentry_flush(struct page* page);
+bool mmap_vmentry_flush(struct thread* t, struct vm_entry* vme);
 
 #endif

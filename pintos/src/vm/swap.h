@@ -16,6 +16,7 @@ void swap_init();
 	swapslot[used_index] => kaddr
 */
 void swap_in(size_t used_index, void* kaddr);
+void release_swap_slot(size_t used_index);
 
 /*
 	save physical memory to swap file;

@@ -152,38 +152,32 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
 
+
   if(vme->page){
-    free_page(vme->page);
+    free_page(vme->page, true);
   }
 
-  elem = hash_delete(&t->vm, &vme->elem);
-  ASSERT(find_vme(vme->vaddr) == NULL);
+  ASSERT(vme->page == NULL);
 
-
-  free(vme);  
+  delete_vme(&t->vm, vme);
 }
 
-bool mmap_vmentry_flush(struct page* page){
-  struct thread* t = page->thread;
-  struct vm_entry* vme = page->vme;
+bool mmap_vmentry_flush(struct thread* t, struct vm_entry* vme){
+  struct mmap_file * mfile;
 
-  if(!vme)
-    return false;
+  ASSERT(t);
+  ASSERT(vme);
 
   ASSERT(vme->mfile_id>=0);
-  if(vme->mfile_id<0)
-    return false;
 
-  struct mmap_file * mfile = get_mmap_file(vme->mfile_id);
-  if(!mfile)
-    return false;
+  mfile = get_mmap_file(vme->mfile_id);
+  ASSERT(mfile);
 
-  if (vme->is_loaded){
-    //write to file if memory is dirty
-    if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
-      ASSERT(mfile->file != NULL);
-      file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
-    }
+  ASSERT(vme->is_loaded);
+  //write to file if memory is dirty
+  if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
+    ASSERT(mfile->file != NULL);
+    file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
   }
 
   return true;

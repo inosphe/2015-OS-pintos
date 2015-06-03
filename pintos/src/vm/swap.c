@@ -53,6 +53,10 @@ void swap_in(size_t used_index, void* kaddr){
 	lock_release(&lock);
 }
 
+void release_swap_slot(size_t used_index){
+	swap_in(used_index, NULL);
+}
+
 size_t swap_out(void* kaddr){
 	int i;
 	lock_acquire(&lock);
