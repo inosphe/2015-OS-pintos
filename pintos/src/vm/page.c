@@ -10,6 +10,7 @@ static struct lock lock;
 
 /* mapping the virtual address to the physical address */
 static bool install_page (struct thread* t, void *upage, void *kpage, bool writable);
+static void free_vm_entry(struct vm_entry* vme);
 
 /* hash function (wrapped) */
 static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
@@ -44,16 +45,7 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
   struct thread* t = thread_current();
   struct vm_entry* vme = hash_entry (e, struct vm_entry, elem);
 
-  if(vme->page){
-    ASSERT(vme->page->thread == t);
-    del_page_from_lru_list(vme->page); 
-    if(vme->swap_slot != SWAP_ERROR)
-      swap_in(vme->swap_slot, NULL);
-    free(vme->page);
-  }
-
-  //hash_delete(&t->vm, e);
-  free(vme);
+  free_vm_entry(vme);
 }
 
 void page_init(){
@@ -114,7 +106,7 @@ bool delete_vme (struct hash* vm, struct vm_entry* vme)
 {
   lock_acquire(&lock);
   if (hash_delete (vm, &vme->elem) != NULL){
-    free(vme);
+    free_vm_entry(vme);
     lock_release(&lock);
     return true;
   }
@@ -230,50 +222,72 @@ bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   }
 }
 
-void free_page(struct page* page){
+void free_vm_entry(struct vm_entry* vme){
+  if(!vme)
+    return;
+
+  if(vme->page){
+    ASSERT(vme->page->vme == vme);
+    free_page(vme->page, false);
+    ASSERT(vme->page == NULL);
+  }
+
+  
+
+
+  //hash_delete(&t->vm, e);
+  free(vme);
+}
+
+void free_page(struct page* page, bool preserve){
     if(!page)
       return;
 
     lock_acquire(&lock);
 
-
     //swap out memories
     if(page->vme){
-      switch(page->vme->type){
-        case VM_BIN:
+      if(preserve){
+        switch(page->vme->type){
+          case VM_BIN:
 
-          //if it is dirtied, it's type changed to VM_ANON, and swapped out
-          if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
-            ASSERT(page->vme->writable);
+            //if it is dirtied, it's type changed to VM_ANON, and swapped out
+            if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+              ASSERT(page->vme->writable);
+              page->vme->swap_slot = swap_out(page->kaddr);
+              page->vme->type = VM_ANON;
+              page->vme->file = NULL;
+            }
+            break;
+          case VM_FILE:
+            if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
+              //flush memory mapped file
+              mmap_vmentry_flush(page->thread, page->vme);
+            }
+            break;
+          case VM_ANON:
             page->vme->swap_slot = swap_out(page->kaddr);
-            page->vme->type = VM_ANON;
-            page->vme->file = NULL;
-          }
-          break;
-        case VM_FILE:
-          if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
-            //flush memory mapped file
-            mmap_vmentry_flush(page);
-          }
-          break;
-        case VM_ANON:
-          page->vme->swap_slot = swap_out(page->kaddr);
-          break;
+            break;
+        }
+      }
+      else{
+        if(page->vme->swap_slot != SWAP_ERROR)
+          release_swap_slot(page->vme->swap_slot);
+        page->vme->swap_slot = SWAP_ERROR;
       }
 
       page->vme->is_loaded = false;
+      //printf("page(%p), vme(%p), thread(%p), kaddr(%p), vaddr(%p)\n", page, page->vme, page->thread, page->kaddr, page->vme->vaddr);
       ASSERT(page->kaddr == pagedir_get_page(page->thread->pagedir, page->vme->vaddr));
-
-      page->vme->page = NULL;
       pagedir_clear_page(page->thread->pagedir, page->vme->vaddr); //remove from thread page directory
+      page->vme->page = NULL;
+      
     }
 
     //delete from LRU list
     del_page_from_lru_list(page);   
     ASSERT(page->kaddr != NULL);
     palloc_free_page (page->kaddr); //free physical page
-
-    
 
     free(page);
 

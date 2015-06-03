@@ -98,6 +98,7 @@ ERROR_HANDLE:
   if(file_name != NULL)
     palloc_free_page(file_name);
   
+  ASSERT(false);
   return TID_ERROR;
 }
 
@@ -162,7 +163,7 @@ start_process (void *file_name_)
     /* free parse memories */
     for (i = 0; i < count; ++i)
     {
-      free_page(arguments_pages[i]);
+      free_page(arguments_pages[i], false);
     }
 
     //hex_dump(if_.esp, if_.esp, PHYS_BASE - if_.esp, true);    
@@ -220,25 +221,26 @@ process_exit (void)
   uint32_t *pd;
 
   clear_opened_mmfiles();   //clear all opened memory-mapped-file
+  vm_destroy (&cur->vm);
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
   pd = cur->pagedir;
   if (pd != NULL) 
-    {
-      /* Correct ordering here is crucial.  We must set
-         cur->pagedir to NULL before switching page directories,
-         so that a timer interrupt can't switch back to the
-         process page directory.  We must activate the base page
-         directory before destroying the process's page
-         directory, or our active page directory will be one
-         that's been freed (and cleared). */
-      cur->pagedir = NULL;
-      pagedir_activate (NULL);
-      pagedir_destroy (pd);
-    } 
+  {
+    /* Correct ordering here is crucial.  We must set
+       cur->pagedir to NULL before switching page directories,
+       so that a timer interrupt can't switch back to the
+       process page directory.  We must activate the base page
+       directory before destroying the process's page
+       directory, or our active page directory will be one
+       that's been freed (and cleared). */
+    cur->pagedir = NULL;
+    pagedir_activate (NULL);
+    pagedir_destroy (pd);
+  } 
 
-    clear_opened_filedesc();  //clear all opened file 
+  clear_opened_filedesc();  //clear all opened file 
     
 }
 
@@ -596,7 +598,7 @@ setup_stack (void **esp)
 
   if(!success){
     if(vme) delete_vme(&thread_current()->vm, vme);
-    if(kpage) free_page (kpage);
+    if(kpage) free_page (kpage, false);
   }
   return success;
 }

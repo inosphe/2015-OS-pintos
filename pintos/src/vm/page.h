@@ -63,6 +63,6 @@ bool load_file (void* kaddr, struct vm_entry *vme);
 struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr);
 struct page* alloc_page(enum palloc_flags);
 bool page_set_vmentry(struct page* page, struct vm_entry* vme);
-void free_page(struct page* page);
+void free_page(struct page* page, bool preserve);
 
 #endif

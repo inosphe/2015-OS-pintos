@@ -325,12 +325,10 @@ thread_exit (void)
 
   printf("%s: exit(%d)\n", t->name, t->exit_status);
 
-  
 #ifdef USERPROG
   process_exit ();
 #endif
 
-  vm_destroy (&t->vm);
 
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us

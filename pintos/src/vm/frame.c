@@ -78,6 +78,8 @@ void try_to_free_pages(enum palloc_flags flags){
 		return;
 	}
 
+	//printf("victim : %p\n", victim);
+
 	//free chosen victim;
-	free_page(victim);  
+	free_page(victim, true);  
 }
