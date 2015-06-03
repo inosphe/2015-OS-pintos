@@ -139,6 +139,8 @@ struct thread
 
     /* for manage mmap*/
     struct list list_mmap;
+
+    struct lock lock_vme;
   };
 
 /* If false (default), use round-robin scheduler.

@@ -56,11 +56,14 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
   free(vme);
 }
 
+void page_init(){
+  lock_init(&lock);
+}
+
 /* initialize the vm hash table by above functions */
 void vm_init (struct hash* vm)
 {
   //printf("vm_init %p\n", (void*)vm);
-  lock_init(&lock);
   hash_init (vm, vm_hash_func, vm_less_func, NULL);
 }
 
@@ -155,19 +158,26 @@ bool load_file (void* kaddr, struct vm_entry *vme)
 }
 
 struct vm_entry* alloc_vmentry(uint8_t type, void* vaddr){
-  struct thread* current_thread = thread_current();
+  struct thread* t = thread_current();
   struct vm_entry* vme;
+
+  lock_acquire(&t->lock_vme);
+
   vme = (struct vm_entry*)malloc(sizeof(struct vm_entry));
   if(vme == NULL){
+    lock_release(&t->lock_vme);
     return NULL;
   }
+  
 
   memset(vme, 0, sizeof(struct vm_entry));
   vme->type = type;
   vme->vaddr = vaddr;
   vme->mfile_id = -1;
   vme->swap_slot = SWAP_ERROR;
-  insert_vme(&current_thread->vm, vme);
+
+  insert_vme(&t->vm, vme);
+  lock_release(&t->lock_vme);
   return vme;
 }
 
@@ -208,14 +218,14 @@ bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   if(install_page (page->thread, vme->vaddr, page->kaddr, vme->writable)){ 
     //if succeeded, setup vme to page, page to vme either.
     page->vme = vme;
+
     vme->is_loaded = page->kaddr != NULL;
-    ASSERT(page->kaddr);
     vme->page = page;
     lock_release(&lock);
     return true;
   }
   else{
-  lock_release(&lock);
+    lock_release(&lock);
     return false;
   }
 }

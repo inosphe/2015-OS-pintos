@@ -44,6 +44,8 @@ struct page{
   struct list_elem lru;
 };
 
+void page_init();
+
 
 void vm_init (struct hash* vm);
 void vm_destroy (struct hash* vm);

@@ -762,11 +762,21 @@ void remove_child_process (struct thread *cp)
 bool handle_mm_fault (struct vm_entry *vme)
 {
   struct page* page = NULL;
+  struct thread* t = thread_current();
+  bool ret = true;
 
+
+  if(vme == NULL){
+    printf("no vme\n");
+  }
+
+  
+  lock_acquire(&t->lock_vme);
 
   //when fault raised if vme is already loaded, it's error
   if(vme->is_loaded){
     printf("already loaded\n"); 
+    lock_release(&t->lock_vme);
     return false;
   }
 
@@ -774,11 +784,13 @@ bool handle_mm_fault (struct vm_entry *vme)
   page = alloc_page(PAL_USER|PAL_ZERO);
   if (!page){
     printf("page null\n");
+    lock_release(&t->lock_vme);
     return false;
   }
 
   if(!page_set_vmentry(page, vme)){
     printf("page install failed.\n");
+    lock_release(&t->lock_vme);
     return false;
   }
 
@@ -788,18 +800,19 @@ bool handle_mm_fault (struct vm_entry *vme)
   //printf("page->kaddr(%p)\n", page->kaddr);
 
   /* VM constants are defined in page.h */
+
   switch (vme->type)
   {
     //load from ELF binary file
     case VM_BIN:
       if (!load_file (page->kaddr, vme))
-        return false;
+        ret = false;
       break;
 
     /* for memory mapped file */
     case VM_FILE:
       if (!load_file (page->kaddr, vme))
-        return false;
+        ret = false;
       break;
     case VM_ANON:
       if(page->vme->swap_slot!=SWAP_ERROR){
@@ -810,13 +823,15 @@ bool handle_mm_fault (struct vm_entry *vme)
 
     default:
       printf("invalid type\n");
-      return false;
+      ret = false;
+      break;
   }
 
-  ASSERT(vme->is_loaded == true);
+  lock_release(&t->lock_vme);
 
+  //ASSERT(vme->is_loaded == true);
 
-  return true;
+  return ret;
 }
 
 

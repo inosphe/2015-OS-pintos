@@ -131,6 +131,7 @@ main (void)
 #endif
 
   
+  page_init();
   lru_list_init();
   swap_init();
 

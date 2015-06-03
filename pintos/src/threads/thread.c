@@ -567,6 +567,8 @@ init_thread (struct thread *t, const char *name, int priority)
 
   //initialize list_mmap needed to manage mmap_file structures;
   list_init(&t->list_mmap);
+
+  lock_init(&t->lock_vme);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
