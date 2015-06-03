@@ -17,12 +17,12 @@ static void free_vm_entry(struct vm_entry* vme);
 static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
 {
   struct vm_entry *vme = hash_entry (e, struct vm_entry, elem);
-  //printf("vm_hash_func : %p, %p\n", vme->vaddr, pg_round_down (vme->vaddr));
 
   void* vaddr = pg_round_down (vme->vaddr);
 
   unsigned hash = hash_bytes (&vaddr, sizeof vaddr);
-  //printf("hash : %u\n", hash);
+  
+  // printf("vm_hash_func : %p, %p = %u\n", vme->vaddr, pg_round_down (vme->vaddr), hash);
   return hash;
 }
 
@@ -108,8 +108,8 @@ bool delete_vme (struct hash* vm, struct vm_entry* vme)
 {
   lock_acquire(&lock);
   if (hash_delete (vm, &vme->elem) != NULL){
-    free_vm_entry(vme);
     lock_release(&lock);
+    free_vm_entry(vme);
     return true;
   }
   else{
@@ -262,10 +262,8 @@ void free_page(struct page* page, bool preserve){
             }
             break;
           case VM_FILE:
-            if(pagedir_is_dirty(page->thread->pagedir, page->vme->vaddr)){
-              //flush memory mapped file
+            //flush memory mapped file
               mmap_vmentry_flush(page->thread, page->vme);
-            }
             break;
           case VM_ANON:
             page->vme->swap_slot = swap_out(page->kaddr);

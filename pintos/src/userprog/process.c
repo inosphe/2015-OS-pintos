@@ -798,8 +798,8 @@ bool handle_mm_fault (struct vm_entry *vme)
 
   ASSERT(vme->is_loaded == true);
 
-  //printf("page : %p\n", page);
-  //printf("page->kaddr(%p)\n", page->kaddr);
+  // printf("page : %p\n", page);
+  // printf("page->kaddr(%p)\n", page->kaddr);
 
   /* VM constants are defined in page.h */
 
@@ -807,14 +807,18 @@ bool handle_mm_fault (struct vm_entry *vme)
   {
     //load from ELF binary file
     case VM_BIN:
-      if (!load_file (page->kaddr, vme))
+      if (!load_file (page->kaddr, vme)){
+        printf("case0\n");
         ret = false;
+      }
       break;
 
     /* for memory mapped file */
     case VM_FILE:
-      if (!load_file (page->kaddr, vme))
+      if (!load_file (page->kaddr, vme)){
+        printf("case1\n");
         ret = false;
+      }
       break;
     case VM_ANON:
       if(page->vme->swap_slot!=SWAP_ERROR){
@@ -842,6 +846,7 @@ struct vm_entry* expand_stack(void* addr){
   struct vm_entry* vme;
   vme = alloc_vmentry(VM_ANON, pg_round_down (addr));
   vme->writable = true;
+  // printf("expand_stack : addr(%p) vme(%p)\n", addr, vme);
   return vme;
 }
 

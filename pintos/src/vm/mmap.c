@@ -5,10 +5,36 @@
 #include <list.h>
 #include <assert.h>
 #include "vm/swap.h"
+#include "threads/interrupt.h"
 
 
 static void vm_destroy_func (struct hash_elem* e, void* aux);
 static void do_mummap(struct mmap_file* mfile);
+
+static unsigned vm_hash_func (const struct hash_elem* e, void* aux UNUSED)
+{
+  struct vm_entry *vme = hash_entry (e, struct vm_entry, mmap_elem);
+
+  void* vaddr = pg_round_down (vme->vaddr);
+
+  unsigned hash = hash_bytes (&vaddr, sizeof vaddr);
+  
+  return hash;
+}
+
+/* hash compare function */
+static bool vm_less_func (const struct hash_elem* a, const struct hash_elem* b, void* aux UNUSED)
+{
+  struct vm_entry *vme_a, *vme_b;
+  
+  vme_a = hash_entry (a, struct vm_entry, mmap_elem);
+  vme_b = hash_entry (b, struct vm_entry, mmap_elem);
+
+  if (pg_round_down(vme_a->vaddr) < pg_round_down(vme_b->vaddr))
+    return true;
+  else
+    return false;
+}
 
 mapid_t mmap (int fd, void *addr)
 {
@@ -44,7 +70,7 @@ mapid_t mmap (int fd, void *addr)
   mfile->file = file;
   read_bytes = file_length(file);
 
-  vm_init(&mfile->vm);
+  hash_init (&mfile->vm, vm_hash_func, vm_less_func, NULL);
   mfile->vm.aux = mfile;
   success = 1;
 
@@ -76,6 +102,7 @@ mapid_t mmap (int fd, void *addr)
       vme->mfile_id = mfile->mapid;
 
       //insert to both thread vm, mmfile vm
+
       hash_insert (&mfile->vm, &vme->mmap_elem);
       insert_vme (&t->vm, vme);
 
@@ -152,12 +179,10 @@ void vm_destroy_func (struct hash_elem* e, void* _mfile)
   //delete hash element from thready vm
   //this entry is managed by mmap, not thread it self
 
-
   if(vme->page){
     free_page(vme->page, true);
   }
 
-  ASSERT(vme->page == NULL);
 
   delete_vme(&t->vm, vme);
 }
@@ -174,6 +199,7 @@ bool mmap_vmentry_flush(struct thread* t, struct vm_entry* vme){
   ASSERT(mfile);
 
   ASSERT(vme->is_loaded);
+
   //write to file if memory is dirty
   if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
     ASSERT(mfile->file != NULL);

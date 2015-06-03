@@ -320,11 +320,13 @@ read (int fd, void *buffer, unsigned size, void* esp)
 	struct file *file;
   struct vm_entry* vme; 
 
+  // printf("read %p %u\n", buffer, size);
 
   if(verify_stack(esp, buffer)==true){
     void* vaddr = buffer;
-    for(i=0; is_user_vaddr(vaddr) && ((vme = find_vme(vaddr))==NULL); ++i, vaddr+=PGSIZE){
-      vme = expand_stack(vaddr);
+    for(i=0; is_user_vaddr(vaddr); ++i, vaddr+=PGSIZE){
+      if((vme = find_vme(vaddr))==NULL)
+        vme = expand_stack(vaddr);
     }
   }
 
