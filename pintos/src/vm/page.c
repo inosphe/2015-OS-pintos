@@ -7,6 +7,7 @@
 #include "threads/synch.h"
 
 static struct lock lock;
+static struct lock lock_alloc;
 
 /* mapping the virtual address to the physical address */
 static bool install_page (struct thread* t, void *upage, void *kpage, bool writable);
@@ -50,6 +51,7 @@ static void vm_destroy_func (struct hash_elem* e, void* aux UNUSED)
 
 void page_init(){
   lock_init(&lock);
+  lock_init(&lock_alloc);
 }
 
 /* initialize the vm hash table by above functions */
@@ -178,15 +180,14 @@ struct page* alloc_page(enum palloc_flags flags){
   struct page* page = NULL;
   void* kaddr = NULL;
 
-  lock_acquire(&lock);
+  lock_acquire(&lock_alloc);
+
   //get physical memory
   kaddr = palloc_get_page(flags);
   
   //if cannot alloc physical memory
   if(kaddr == NULL){ 
-    lock_release(&lock);
     try_to_free_pages(flags); //release least recently used page
-    lock_acquire(&lock);
     kaddr = palloc_get_page(flags); //try alloc physical memory again!
   }
 
@@ -197,7 +198,8 @@ struct page* alloc_page(enum palloc_flags flags){
     page->thread = thread_current();
     add_page_to_lru_list(page);     //add to LRU list
   }  
-  lock_release(&lock);
+  lock_release(&lock_alloc);
+
 
   return page;
 }
@@ -286,6 +288,7 @@ void free_page(struct page* page, bool preserve){
 
     //delete from LRU list
     del_page_from_lru_list(page);   
+    page->thread = NULL;
     ASSERT(page->kaddr != NULL);
     palloc_free_page (page->kaddr); //free physical page
 

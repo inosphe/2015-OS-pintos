@@ -33,6 +33,8 @@ void del_page_from_lru_list(struct page* page){
 //FIFO
 struct list_elem* gt_next_lru_clock(){
 	struct list_elem* 	e;
+	struct page* ret = NULL;
+	struct thread* t = thread_current();
 
 	lock_acquire(&lru_lock);
 
@@ -42,6 +44,8 @@ struct list_elem* gt_next_lru_clock(){
 		struct page* page = list_entry(e, struct page, lru);
 		struct thread* thread = page->thread;
 
+		//printf("%p : page : %p, %p, begin(%p), end(%p)\n", e, page, list_begin(&lru_list), list_end(&lru_list));
+
 		if(!page->vme->pinned){	//pinned page is not freed.
 
 			//if page's acceess bit is 1, it will have second chance
@@ -49,12 +53,12 @@ struct list_elem* gt_next_lru_clock(){
 				pagedir_set_accessed(thread->pagedir, page->vme->vaddr, false);
 			}
 			else{
-
-				lock_release(&lru_lock);
-
 				//else it's chosen to be victim;
-				return page;
+				ret = page;
+				break;
 			}	
+		}
+		else{
 		}
 		
 
@@ -62,12 +66,16 @@ struct list_elem* gt_next_lru_clock(){
 		e = list_next(e);
 		if(e == list_end(&lru_list)){
 			e = list_begin(&lru_list);
+			ret = list_entry(e, struct page, lru);
+			//printf("reset : %p\n", ret);
+			break;
 		}
 	}
 
+	//printf("ret : %p\n", ret);
 	lock_release(&lru_lock);
 	
-	return NULL;
+	return ret;
 }
 
 
