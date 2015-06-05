@@ -204,6 +204,7 @@ struct page* alloc_page(enum palloc_flags flags){
   return page;
 }
 
+//set vme to page, install page to pagedir
 bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   //printf("page_set_vmentry | vaddr(%p), kaddr(%p)\n", vme->vaddr, page->kaddr);
   lock_acquire(&lock);
@@ -224,6 +225,7 @@ bool page_set_vmentry(struct page* page, struct vm_entry* vme){
   }
 }
 
+//free vm entry, and free page
 void free_vm_entry(struct vm_entry* vme){
   if(!vme)
     return;
@@ -241,6 +243,8 @@ void free_vm_entry(struct vm_entry* vme){
   free(vme);
 }
 
+
+//free page, delete from LRU list
 void free_page(struct page* page, bool preserve){
     if(!page)
       return;

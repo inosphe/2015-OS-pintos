@@ -850,7 +850,7 @@ struct vm_entry* expand_stack(void* addr){
   return vme;
 }
 
-//check stack heuristic
+//check stack heuristic, by 3 conitions
 bool verify_stack(void* esp, void* addr){
   bool ret;
   bool ret2;

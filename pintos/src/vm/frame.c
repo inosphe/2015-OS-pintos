@@ -30,7 +30,7 @@ void del_page_from_lru_list(struct page* page){
 }
 
 
-//FIFO
+//get least used page by FIFO
 struct list_elem* gt_next_lru_clock(){
 	struct list_elem* 	e;
 	struct page* ret = NULL;

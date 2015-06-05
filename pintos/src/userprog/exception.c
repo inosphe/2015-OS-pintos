@@ -176,6 +176,7 @@ page_fault (struct intr_frame *f)
   vme = find_vme(fault_addr);
   //printf("vme : %p\n", vme);
   if(vme == NULL){
+    //if vme is null, and fault addr is in stack capable, expand stack
     if(verify_stack(f->esp, fault_addr)==true){
       vme = expand_stack(fault_addr);
       //printf("stack : %p\n", vme);
