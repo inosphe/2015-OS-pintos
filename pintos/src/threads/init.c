@@ -39,6 +39,7 @@
 #endif
 #include "vm/frame.h"
 #include "vm/swap.h"
+#include "filesys/buffer_cache.h"
 
 /* Page directory with kernel mappings only. */
 uint32_t *init_page_dir;
@@ -101,6 +102,8 @@ main (void)
   malloc_init ();
   paging_init ();
 
+  bc_init();    //init buffer cache | need to init earlier
+
   /* Segmentation. */
 #ifdef USERPROG
   tss_init ();
@@ -134,6 +137,7 @@ main (void)
   page_init();
   lru_list_init();
   swap_init();
+  
 
   printf ("Boot complete.\n");
   
@@ -141,6 +145,7 @@ main (void)
   run_actions (argv);
 
   /* Finish up. */
+  bc_term();    //terminate buffer cache
   shutdown ();
   thread_exit ();
 }
