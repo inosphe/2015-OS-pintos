@@ -223,6 +223,9 @@ process_exit (void)
   clear_opened_mmfiles();   //clear all opened memory-mapped-file
   vm_destroy (&cur->vm);
 
+  if(cur->dir)
+    dir_close(cur->dir);
+
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
   pd = cur->pagedir;

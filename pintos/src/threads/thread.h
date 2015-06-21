@@ -6,6 +6,7 @@
 #include <hash.h>
 #include <stdint.h>
 #include "threads/synch.h"
+#include "filesys/directory.h"
 
 
 #define MAX_FILE_DESC_COUNT 128
@@ -133,6 +134,8 @@ struct thread
     /* for mlfq */
     int nice;
     int recent_cpu;
+
+    struct dir* dir;
 
     /* for virtual memory */
     struct hash vm;

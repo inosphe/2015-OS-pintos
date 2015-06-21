@@ -7,6 +7,7 @@
 #include "filesys/inode.h"
 #include "filesys/directory.h"
 #include "threads/synch.h"
+#include "threads/thread.h"
 
 /* Partition that contains the file system. */
 struct block *fs_device;
@@ -32,6 +33,8 @@ filesys_init (bool format)
 
   free_map_open ();
 
+  thread_current()->dir = dir_open_root();
+
   lock_init(&lock);
 }
 
@@ -51,16 +54,35 @@ bool
 filesys_create (const char *name, off_t initial_size) 
 {
   block_sector_t inode_sector = 0;
-  struct dir *dir = dir_open_root ();
+  char filename[NAME_MAX+1];
+  struct dir *dir = parse_path(name, filename);
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
-                  && inode_create (inode_sector, initial_size)
-                  && dir_add (dir, name, inode_sector));
+                  && inode_create (inode_sector, initial_size, 0)
+                  && dir_add (dir, filename, inode_sector));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
 
   return success;
+}
+
+bool filesys_create_dir (const char *name){
+  char filename[NAME_MAX+1];
+  block_sector_t inode_sector = 0;
+  struct dir *dir = parse_path(name, filename);
+  bool success = (dir != NULL
+                  && free_map_allocate (1, &inode_sector)
+                  && dir_create(inode_sector, 16)
+                  && dir_add (dir, filename, inode_sector));
+
+  if(success){
+    struct dir *newdir = dir_open(inode_sector);
+    dir_add(newdir, ".", inode_get_inumber(dir_get_inode(newdir)));
+    dir_add(newdir, "..", inode_get_inumber(dir_get_inode(dir)));
+  }
+
+  return true;
 }
 
 /* Opens the file with the given NAME.
@@ -71,14 +93,16 @@ filesys_create (const char *name, off_t initial_size)
 struct file *
 filesys_open (const char *name)
 {
-  struct dir *dir = dir_open_root ();
+  char filename[NAME_MAX+1];
+  struct dir *dir = parse_path(name, filename);
+
   struct inode *inode = NULL;
   struct file* file = NULL;
 
   lock_acquire(&lock);
 
   if (dir != NULL)
-    dir_lookup (dir, name, &inode);
+    dir_lookup (dir, filename, &inode);
   dir_close (dir);
 
   file = file_open (inode);
@@ -95,9 +119,16 @@ filesys_open (const char *name)
 bool
 filesys_remove (const char *name) 
 {
-  struct dir *dir = dir_open_root ();
-  bool success = dir != NULL && dir_remove (dir, name);
-  dir_close (dir); 
+  char filename[NAME_MAX+1];
+  struct dir *dir = parse_path(name, filename);
+  struct inode* inode;
+  bool success;
+  if(dir_lookup(dir, filename, &inode)){
+    if(!inode_is_dir(inode) || !dir_readdir (dir, name)){
+      success = dir != NULL && dir_remove (dir, filename);
+    }
+    dir_close (dir); 
+  }
 
   return success;
 }
@@ -106,10 +137,70 @@ filesys_remove (const char *name)
 static void
 do_format (void)
 {
+  struct dir* root;
   printf ("Formatting file system...");
   free_map_create ();
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
+  root = dir_open(inode_open(ROOT_DIR_SECTOR));
+  printf("root : %p\n", root);
+  dir_add(root, ".", ROOT_DIR_SECTOR);
+  dir_add(root, "..", ROOT_DIR_SECTOR);
   free_map_close ();
+  dir_close(root);
   printf ("done.\n");
+}
+
+struct dir* parse_path(char* path_name, char* file_name){
+  struct dir* dir = NULL;
+  struct inode* inode;
+  char *token, *nextToken, *savePtr;
+  char* path_name_cp;
+  path_name_cp = (char*)malloc(strlen(path_name)+1);
+  if(path_name == NULL || path_name_cp == NULL || strlen(path_name) == 0){
+    free(path_name_cp);
+    return NULL;
+  }
+  memcpy(path_name_cp, path_name, strlen(path_name));
+
+  token = strtok_r(path_name, "/", &savePtr);
+  if(strlen(token)==0){
+    dir = dir_open_root();
+  }
+  else{
+    dir = dir_reopen(thread_current()->dir);
+  }
+
+  nextToken = strtok_r(NULL, "/", &savePtr);
+
+  while(token!=NULL && (nextToken!=NULL || file_name==NULL)){
+    dir_lookup (dir, token, &inode);
+
+    if(inode == NULL || !inode_is_dir(inode)){
+      dir_close (dir);
+      free(path_name_cp);
+      return NULL;
+    }
+    else{
+      dir_close (dir);
+      dir = dir_open(inode);
+    }
+
+    token = nextToken;
+    nextToken = strtok_r(NULL, "/", &savePtr);
+
+  }
+
+  if(file_name){
+    strlcpy(file_name, token, NAME_MAX);
+  }
+
+  ASSERT(dir);
+  free(path_name_cp);
+
+  if(strlen(token)>NAME_MAX){
+    dir = NULL;
+  }
+
+  return dir;
 }

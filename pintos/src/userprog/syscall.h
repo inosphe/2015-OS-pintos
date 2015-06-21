@@ -19,6 +19,11 @@ int write(int fd, void *buffer, unsigned size);
 void seek (int fd , unsigned position);
 unsigned tell (int fd);
 void close (int fd);
+bool sys_isdir(int fd);
+bool sys_chdir(const char* dir);
+bool sys_mkdir(const char* dir);
+bool sys_readdir(int fd, char* name);
+int sys_inumber(int fd);
 
 // assignment2: system call
 

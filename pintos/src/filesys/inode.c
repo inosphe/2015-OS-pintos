@@ -10,7 +10,7 @@
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
-#define DIRECT_BLOCK_ENTRIES 124
+#define DIRECT_BLOCK_ENTRIES 123
 #define INDIRECT_BLOCK_ENTRIES 128
 
 /* On-disk inode.
@@ -22,6 +22,7 @@ struct inode_disk
     block_sector_t direct_map_table[DIRECT_BLOCK_ENTRIES];  //point data sector
     block_sector_t indirect_block_sec;                      //point indirect map
     block_sector_t double_indirect_block_sec;               //point double-indirect map
+    unsigned is_dir;
   };
 
 enum direct_t{
@@ -78,7 +79,7 @@ inode_init (void)
    Returns true if successful.
    Returns false if memory or disk allocation fails. */
 bool
-inode_create (block_sector_t sector, off_t length)
+inode_create (block_sector_t sector, off_t length, uint32_t is_dir)
 {
   struct inode_disk *disk_inode = NULL;
   bool success = false;
@@ -95,6 +96,7 @@ inode_create (block_sector_t sector, off_t length)
       size_t sectors = bytes_to_sectors (length);
       disk_inode->length = length;
       disk_inode->magic = INODE_MAGIC;
+      disk_inode->is_dir = is_dir;
 
       success = true;
       if(length > 0){
@@ -592,4 +594,10 @@ inode_length (const struct inode *inode)
     return 0;
   }
   return inode_disk.length;
+}
+
+bool inode_is_dir(const struct inode* inode){
+  struct inode_disk inode_disk;
+  get_disk_inode(inode, &inode_disk);
+  return inode_disk.is_dir==1;
 }

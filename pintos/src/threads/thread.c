@@ -115,6 +115,7 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  initial_thread->dir = NULL;
 
   // Initialize file_desc array by 0. 
   // File descriptor can be released before exit thread.
@@ -206,6 +207,9 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   t->parent = thread_current ();
   tid = t->tid = allocate_tid ();
+  if(thread_current()->dir != NULL){
+    t->dir = dir_reopen(thread_current()->dir);
+  }
 
   /* assignment6 */
   vm_init (&t->vm);

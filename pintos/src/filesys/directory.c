@@ -26,7 +26,7 @@ struct dir_entry
 bool
 dir_create (block_sector_t sector, size_t entry_cnt)
 {
-  return inode_create (sector, entry_cnt * sizeof (struct dir_entry));
+  return inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
 }
 
 /* Opens and returns the directory for the given INODE, of which
@@ -99,15 +99,19 @@ lookup (const struct dir *dir, const char *name,
   ASSERT (name != NULL);
 
   for (ofs = 0; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
-       ofs += sizeof e) 
-    if (e.in_use && !strcmp (name, e.name)) 
+       ofs += sizeof e) {
+
+    if (e.in_use && (strcmp (name, e.name)==0)) 
       {
+        // printf("entry name(%s) sector(%u)\n", e.name, e.inode_sector);
         if (ep != NULL)
           *ep = e;
         if (ofsp != NULL)
           *ofsp = ofs;
         return true;
       }
+  }
+
   return false;
 }
 
@@ -191,6 +195,9 @@ dir_remove (struct dir *dir, const char *name)
 
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
+
+  if(strcmp(name, ".")==0 || strcmp(name, "..")==0)
+    return false;
 
   /* Find directory entry. */
   if (!lookup (dir, name, &e, &ofs))

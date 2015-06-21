@@ -142,6 +142,32 @@ syscall_handler (struct intr_frame *f)
       DECL_ARGS(1);
       munmap(ARG_INT);
       break;
+
+    case SYS_ISDIR:
+      DECL_ARGS(1);
+      f->eax = sys_isdir(ARG_INT);
+      break;
+
+    case SYS_CHDIR:
+      DECL_ARGS(1);
+      f->eax = sys_chdir(ARG_CONST_CHAR);
+      break;
+
+    case SYS_MKDIR:
+      DECL_ARGS(1);
+      f->eax = sys_mkdir(ARG_CONST_CHAR);
+      break;
+
+    case SYS_READDIR:
+      DECL_ARGS(2);
+      f->eax = sys_readdir(ARG_INT, ARG_CONST_CHAR);
+      break;
+
+    case SYS_INUMBER:
+      DECL_ARGS(1);
+      f->eax = sys_inumber(ARG_CONST_CHAR);
+      break;
+
   }
   unpin_ptr (esp);
 
@@ -172,7 +198,6 @@ check_address (void *addr)
 }
 
 struct vm_entry* check_address2 (void* esp, void *addr){
-  //printf("check_address %x\n", addr);
   /* Is the addr in the vm table? */
   struct vm_entry* vme = find_vme (addr);
   struct thread* t = thread_current();
@@ -497,3 +522,46 @@ get_user (const uint8_t *uaddr)
 }
 
 
+bool sys_isdir(int fd){
+  struct file* file = process_get_file(fd);
+  if(!file)
+    return false;
+  return inode_is_dir(file_get_inode(file));
+}
+
+bool sys_chdir(const char* dir_name){
+  struct dir* dir = parse_path(dir_name, NULL);
+  if(dir){
+    thread_current()->dir = dir;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+bool sys_mkdir(const char* dir_name){
+  return filesys_create_dir(dir_name);
+}
+
+bool sys_readdir(int fd, char* name){
+  struct file* file = process_get_file(fd);
+  struct dir* dir;
+  char dir_name[NAME_MAX + 1];
+
+  if(!file || !inode_is_dir(file_get_inode(file)));
+    return false;
+
+  dir = dir_open(file_get_inode(file));
+  while(dir_readdir(dir, dir_name)){
+    strcat(name, dir_name);
+  }
+  return true;
+}
+
+int sys_inumber(int fd){
+  struct file* file = process_get_file(fd);
+  if(!file)
+    return -1;
+  return inode_get_inumber(file_get_inode(file));
+}
