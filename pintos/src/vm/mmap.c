@@ -203,7 +203,7 @@ bool mmap_vmentry_flush(struct thread* t, struct vm_entry* vme){
   //write to file if memory is dirty
   if(pagedir_is_dirty(t->pagedir, vme->vaddr)){
     ASSERT(mfile->file != NULL);
-    file_write_at(mfile->file, vme->vaddr, PGSIZE, vme->offset);
+    file_write_at(mfile->file, vme->vaddr, vme->read_bytes, vme->offset);
   }
 
   return true;

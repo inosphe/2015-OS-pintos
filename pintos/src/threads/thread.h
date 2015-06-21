@@ -8,7 +8,7 @@
 #include "threads/synch.h"
 
 
-#define MAX_FILE_DESC_COUNT 64
+#define MAX_FILE_DESC_COUNT 128
 struct file;
 
 /* States in a thread's life cycle. */
