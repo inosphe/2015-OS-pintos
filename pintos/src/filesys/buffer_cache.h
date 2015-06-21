@@ -14,6 +14,7 @@ struct buffer_head{
 	block_sector_t	sector;			//block sector id
 	void*			data;			//data pointer
 	struct lock 	lock;			//lock for synch
+	bool			inUse;			//in using, must not modify this
 };
 
 void bc_init (void); //Buffer cache를 초기화하는 함수

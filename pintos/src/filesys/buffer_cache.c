@@ -33,7 +33,7 @@ void bc_term (void){
 static bool alloc(struct buffer_head* pBuffer_h, block_sector_t id){
 	ASSERT(pBuffer_h->data != NULL);
 
-	lock_acquire(&pBuffer_h->lock);
+	//printf("bc alloc | %u\n", id);
 
 	if(pBuffer_h->initialized){
 		bc_flush_entry_not_synch(pBuffer_h);	//flush if allocated
@@ -44,8 +44,6 @@ static bool alloc(struct buffer_head* pBuffer_h, block_sector_t id){
 	pBuffer_h->accessed = true;		//prevent to release immediately
 	pBuffer_h->sector = id;
 	block_read (fs_device, pBuffer_h->sector, pBuffer_h->data);		//read sector data on init
-
-	lock_release(&pBuffer_h->lock);
 
 	return true;
 }
@@ -71,12 +69,17 @@ struct buffer_head* bc_lookup (block_sector_t id){
 
 	ASSERT(target_buffer_head);
 
+	lock_acquire(&target_buffer_head->lock);
+
+	//printf("lookup : %u\n", id);
 	//allocate
-	if(target_buffer_head->sector != id){
+	if(target_buffer_head->sector != id || !target_buffer_head->initialized){
 		alloc(target_buffer_head, id);
 	}
 
+
 	ASSERT(target_buffer_head->sector == id);
+	ASSERT(target_buffer_head->initialized);
 	lock_release(&lock);
 
 	return target_buffer_head;
@@ -84,16 +87,18 @@ struct buffer_head* bc_lookup (block_sector_t id){
 
 
 bool bc_read (block_sector_t sector_idx, void* buffer, off_t bytes_read, int chunk_size, int sector_ofs){
-	struct buffer_head* buffer_h = bc_lookup(sector_idx);
-	lock_acquire(&buffer_h->lock);
+	struct buffer_head* buffer_h = bc_lookup(sector_idx);	//lock acquired in lookup
+
 
 	ASSERT(buffer);
 	ASSERT(buffer_h->sector == sector_idx);
 	ASSERT(buffer_h->initialized == true);
 	ASSERT(buffer_h->data);
 
+	buffer_h->inUse = true;
 	//read from buffer
 	memcpy(buffer+bytes_read, buffer_h->data+sector_ofs, chunk_size);
+	buffer_h->inUse = false;
 
 	lock_release(&buffer_h->lock);
 
@@ -101,16 +106,18 @@ bool bc_read (block_sector_t sector_idx, void* buffer, off_t bytes_read, int chu
 }
 
 bool bc_write (block_sector_t sector_idx, void* buffer, off_t bytes_written, int chunk_size, int sector_ofs){
-	struct buffer_head* buffer_h = bc_lookup(sector_idx);
+	struct buffer_head* buffer_h = bc_lookup(sector_idx);	//lock acquired in lookup
 
-	lock_acquire(&buffer_h->lock);
 
 	ASSERT(buffer_h->sector == sector_idx);
 	ASSERT(buffer_h->initialized == true);
 
+	buffer_h->inUse = true;
 	//write to buffer
 	memcpy(buffer_h->data+sector_ofs, buffer+bytes_written, chunk_size);
 	buffer_h->dirty = true;
+
+	buffer_h->inUse = false;
 
 	lock_release(&buffer_h->lock);
 
@@ -123,15 +130,24 @@ struct buffer_head *bc_select_victim (void){
 
 	for(i=0; i<BUFFER_CACHE_ENTRY_NB; ++i){
 		target = &buffer_head_table[i];
-		if(!target->initialized || !target->accessed){	//find not accessed or initialized slot
+		lock_acquire(&target->lock);
+		if(target->inUse){
+			lock_release(&target->lock);
+			continue;
+		}
+		else if((!target->initialized || !target->accessed)){	//find not accessed or initialized slot
+			lock_release(&target->lock);
 			break;
 		}
-
-		target->accessed = false;	//mark not accessed
+		else{
+			target->accessed = false;	//mark not accessed
+			lock_release(&target->lock);	
+		}
 
 		if(i>=BUFFER_CACHE_ENTRY_NB){
 			i = 0;
 		}
+
 	}
 
 	return target;
