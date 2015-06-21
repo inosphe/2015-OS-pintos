@@ -116,12 +116,12 @@ bool bc_write (block_sector_t sector_idx, void* buffer, off_t bytes_written, int
 
 	ASSERT(sector_ofs < BLOCK_SECTOR_SIZE);
 	//write to buffer
+	lock_release(&buffer_h->lock);
 	memcpy(buffer_h->data+sector_ofs, buffer+bytes_written, chunk_size);
 	buffer_h->dirty = true;
 
 	buffer_h->inUse = false;
 
-	lock_release(&buffer_h->lock);
 
 	return true;
 }

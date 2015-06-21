@@ -7,3 +7,5 @@ sftp-config.json
 *.orig
 
 pintos/src/vm/output.txt
+
+pintos/src/filesys/output.txt
