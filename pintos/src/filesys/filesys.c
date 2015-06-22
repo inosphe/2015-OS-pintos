@@ -74,6 +74,9 @@ bool filesys_create_dir (const char *name){
   struct dir *dir = parse_path(name, filename);
   struct inode* inode;
 
+  if(strlen(filename) == 0)
+    return false;
+
   if(dir_lookup(dir, filename, &inode)==true){
     return false;
   }
@@ -136,7 +139,12 @@ filesys_remove (const char *name)
     }
     else{
       struct dir* dir2 = dir_open(inode);
-      if(!dir_haschild (dir2)){
+
+      if(inode_opened_count(dir_get_inode(dir2))>0){
+        success = false;
+      }
+
+      else if(!dir_haschild (dir2)){
         success = dir != NULL && dir_remove (dir, filename);
       }
     }
@@ -177,7 +185,7 @@ struct dir* parse_path(char* path_name, char* file_name){
   }
   memcpy(path_name_cp, path_name, strlen(path_name)+1);
 
-  // printf("parse_path : %s\n", path_name);
+  // printf("parse_path : %s\n", path_name_cp);
   // debug_backtrace();
 
   nextToken = strtok_r(path_name_cp, "/", &savePtr);
@@ -185,6 +193,13 @@ struct dir* parse_path(char* path_name, char* file_name){
     dir = dir_open_root();
     strlcpy(token, ".", NAME_MAX+1);
     length = 1;
+    nextToken = NULL;
+  }
+  else if(path_name[0]=='/'){
+    dir = dir_open_root();
+    strlcpy(token, nextToken, NAME_MAX+1);
+    length = strlen(nextToken);
+    nextToken = strtok_r(NULL, "/", &savePtr);
   }
   else{
     strlcpy(token, nextToken, NAME_MAX+1);

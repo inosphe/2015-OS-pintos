@@ -101,9 +101,9 @@ lookup (const struct dir *dir, const char *name,
   for (ofs = 0; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
        ofs += sizeof e) {
 
+    // printf("entry dir inode(%p) name(%s) sector(%u)\n", dir_get_inode(dir), e.name, e.inode_sector);
     if (e.in_use && (strcmp (name, e.name)==0)) 
       {
-        // printf("entry name(%s) sector(%u)\n", e.name, e.inode_sector);
         if (ep != NULL)
           *ep = e;
         if (ofsp != NULL)
@@ -256,4 +256,12 @@ bool dir_haschild(struct dir* dir){
         } 
     }
   return count>2;
+}
+
+void dir_setpos(struct dir* dir, off_t pos){
+  dir->pos = pos;
+}
+
+off_t dir_getpos(struct dir* dir){
+  return dir->pos;
 }

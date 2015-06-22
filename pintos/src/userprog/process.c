@@ -705,17 +705,7 @@ process_add_file (struct file *f)
     return fd;
   }
 
-  for(i=3; i<t->file_desc_size; ++i){
-    if(t->file_desc[i] == NULL){
-      fd = i;
-      break;
-    }
-
-  }
-
-  if(fd<0){
-    fd = t->file_desc_size++;
-  }
+  fd = t->file_desc_size++;
 
   //Is it need to copy memory?
   t->file_desc[fd] = f;

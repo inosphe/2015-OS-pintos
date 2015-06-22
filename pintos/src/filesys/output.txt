@@ -1726,7 +1726,7 @@ Executing 'write-normal':
 write-normal: exit(0)
 Execution of 'write-normal' complete.
 Timer: 1166 ticks
-Thread: 30 idle ticks, 936 kernel ticks, 204 user ticks
+Thread: 30 idle ticks, 935 kernel ticks, 204 user ticks
 hda2 (filesys): 300 reads, 267 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -1821,7 +1821,7 @@ Executing 'write-boundary':
 write-boundary: exit(0)
 Execution of 'write-boundary' complete.
 Timer: 1164 ticks
-Thread: 30 idle ticks, 962 kernel ticks, 176 user ticks
+Thread: 30 idle ticks, 961 kernel ticks, 176 user ticks
 hda2 (filesys): 319 reads, 285 writes
 hda3 (scratch): 96 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -1868,8 +1868,8 @@ Executing 'write-zero':
 (write-zero) end
 write-zero: exit(0)
 Execution of 'write-zero' complete.
-Timer: 1090 ticks
-Thread: 30 idle ticks, 924 kernel ticks, 139 user ticks
+Timer: 1089 ticks
+Thread: 30 idle ticks, 923 kernel ticks, 139 user ticks
 hda2 (filesys): 287 reads, 252 writes
 hda3 (scratch): 93 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -2612,7 +2612,7 @@ Executing 'rox-simple':
 rox-simple: exit(1)
 Execution of 'rox-simple' complete.
 Timer: 1062 ticks
-Thread: 30 idle ticks, 871 kernel ticks, 164 user ticks
+Thread: 30 idle ticks, 872 kernel ticks, 163 user ticks
 hda2 (filesys): 279 reads, 245 writes
 hda3 (scratch): 91 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -2667,8 +2667,8 @@ child-rox: exit(1)
 (rox-child) wait for child: FAILED
 rox-child: exit(1)
 Execution of 'rox-child' complete.
-Timer: 2068 ticks
-Thread: 30 idle ticks, 1726 kernel ticks, 315 user ticks
+Timer: 2067 ticks
+Thread: 30 idle ticks, 1727 kernel ticks, 313 user ticks
 hda2 (filesys): 667 reads, 589 writes
 hda3 (scratch): 193 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -2723,8 +2723,8 @@ child-rox: exit(1)
 (rox-multichild) wait for child: FAILED
 rox-multichild: exit(1)
 Execution of 'rox-multichild' complete.
-Timer: 2076 ticks
-Thread: 30 idle ticks, 1728 kernel ticks, 321 user ticks
+Timer: 2075 ticks
+Thread: 30 idle ticks, 1729 kernel ticks, 319 user ticks
 hda2 (filesys): 667 reads, 589 writes
 hda3 (scratch): 193 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3090,7 +3090,7 @@ Executing 'lg-full':
 lg-full: exit(0)
 Execution of 'lg-full' complete.
 Timer: 18303 ticks
-Thread: 30 idle ticks, 905 kernel ticks, 17371 user ticks
+Thread: 30 idle ticks, 906 kernel ticks, 17370 user ticks
 hda2 (filesys): 851 reads, 614 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3139,8 +3139,8 @@ Executing 'lg-random':
 (lg-random) end
 lg-random: exit(0)
 Execution of 'lg-random' complete.
-Timer: 19836 ticks
-Thread: 30 idle ticks, 910 kernel ticks, 18899 user ticks
+Timer: 19771 ticks
+Thread: 30 idle ticks, 911 kernel ticks, 18833 user ticks
 hda2 (filesys): 950 reads, 688 writes
 hda3 (scratch): 96 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3191,8 +3191,8 @@ Executing 'lg-seq-block':
 (lg-seq-block) end
 lg-seq-block: exit(0)
 Execution of 'lg-seq-block' complete.
-Timer: 18731 ticks
-Thread: 30 idle ticks, 907 kernel ticks, 17797 user ticks
+Timer: 18666 ticks
+Thread: 30 idle ticks, 907 kernel ticks, 17732 user ticks
 hda2 (filesys): 864 reads, 636 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3243,8 +3243,8 @@ Executing 'lg-seq-random':
 (lg-seq-random) end
 lg-seq-random: exit(0)
 Execution of 'lg-seq-random' complete.
-Timer: 18748 ticks
-Thread: 30 idle ticks, 907 kernel ticks, 17814 user ticks
+Timer: 18681 ticks
+Thread: 30 idle ticks, 907 kernel ticks, 17747 user ticks
 hda2 (filesys): 862 reads, 634 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3344,8 +3344,8 @@ Executing 'sm-full':
 (sm-full) end
 sm-full: exit(0)
 Execution of 'sm-full' complete.
-Timer: 1983 ticks
-Thread: 30 idle ticks, 906 kernel ticks, 1050 user ticks
+Timer: 1982 ticks
+Thread: 30 idle ticks, 906 kernel ticks, 1049 user ticks
 hda2 (filesys): 361 reads, 308 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3394,8 +3394,8 @@ Executing 'sm-random':
 (sm-random) end
 sm-random: exit(0)
 Execution of 'sm-random' complete.
-Timer: 2056 ticks
-Thread: 30 idle ticks, 912 kernel ticks, 1117 user ticks
+Timer: 2003 ticks
+Thread: 30 idle ticks, 912 kernel ticks, 1064 user ticks
 hda2 (filesys): 320 reads, 291 writes
 hda3 (scratch): 96 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3446,8 +3446,8 @@ Executing 'sm-seq-block':
 (sm-seq-block) end
 sm-seq-block: exit(0)
 Execution of 'sm-seq-block' complete.
-Timer: 2025 ticks
-Thread: 30 idle ticks, 907 kernel ticks, 1091 user ticks
+Timer: 2020 ticks
+Thread: 30 idle ticks, 907 kernel ticks, 1086 user ticks
 hda2 (filesys): 361 reads, 308 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3498,8 +3498,8 @@ Executing 'sm-seq-random':
 (sm-seq-random) end
 sm-seq-random: exit(0)
 Execution of 'sm-seq-random' complete.
-Timer: 2019 ticks
-Thread: 30 idle ticks, 908 kernel ticks, 1084 user ticks
+Timer: 2015 ticks
+Thread: 30 idle ticks, 908 kernel ticks, 1080 user ticks
 hda2 (filesys): 361 reads, 308 writes
 hda3 (scratch): 94 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -3556,22 +3556,22 @@ Executing 'syn-read':
 (syn-read) exec child 8 of 10: "child-syn-read 7"
 (syn-read) exec child 9 of 10: "child-syn-read 8"
 (syn-read) exec child 10 of 10: "child-syn-read 9"
-child-syn-read: exit(5)
 child-syn-read: exit(0)
 (syn-read) wait for child 1 of 10 returned 0 (expected 0)
-child-syn-read: exit(2)
 child-syn-read: exit(1)
 (syn-read) wait for child 2 of 10 returned 1 (expected 1)
-(syn-read) wait for child 3 of 10 returned 2 (expected 2)
-child-syn-read: exit(4)
-child-syn-read: exit(6)
+child-syn-read: exit(8)
+child-syn-read: exit(5)
 child-syn-read: exit(9)
+child-syn-read: exit(6)
+child-syn-read: exit(4)
+child-syn-read: exit(2)
+child-syn-read: exit(7)
 child-syn-read: exit(3)
+(syn-read) wait for child 3 of 10 returned 2 (expected 2)
 (syn-read) wait for child 4 of 10 returned 3 (expected 3)
 (syn-read) wait for child 5 of 10 returned 4 (expected 4)
 (syn-read) wait for child 6 of 10 returned 5 (expected 5)
-child-syn-read: exit(7)
-child-syn-read: exit(8)
 (syn-read) wait for child 7 of 10 returned 6 (expected 6)
 (syn-read) wait for child 8 of 10 returned 7 (expected 7)
 (syn-read) wait for child 9 of 10 returned 8 (expected 8)
@@ -3579,9 +3579,9 @@ child-syn-read: exit(8)
 (syn-read) end
 syn-read: exit(0)
 Execution of 'syn-read' complete.
-Timer: 25569 ticks
-Thread: 30 idle ticks, 1849 kernel ticks, 23694 user ticks
-hda2 (filesys): 1032 reads, 612 writes
+Timer: 25828 ticks
+Thread: 30 idle ticks, 1854 kernel ticks, 23947 user ticks
+hda2 (filesys): 1053 reads, 612 writes
 hda3 (scratch): 198 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
 Console: 2448 characters output
@@ -3684,24 +3684,24 @@ child-syn-wrt: exit(0)
 (syn-write) exec child 5 of 10: "child-syn-wrt 4"
 child-syn-wrt: exit(1)
 (syn-write) exec child 6 of 10: "child-syn-wrt 5"
-child-syn-wrt: exit(2)
 child-syn-wrt: exit(3)
+child-syn-wrt: exit(2)
 (syn-write) exec child 7 of 10: "child-syn-wrt 6"
 child-syn-wrt: exit(4)
 (syn-write) exec child 8 of 10: "child-syn-wrt 7"
 child-syn-wrt: exit(5)
 (syn-write) exec child 9 of 10: "child-syn-wrt 8"
-child-syn-wrt: exit(6)
 (syn-write) exec child 10 of 10: "child-syn-wrt 9"
-child-syn-wrt: exit(7)
+child-syn-wrt: exit(6)
 (syn-write) wait for child 1 of 10 returned 0 (expected 0)
+child-syn-wrt: exit(7)
 (syn-write) wait for child 2 of 10 returned 1 (expected 1)
 (syn-write) wait for child 3 of 10 returned 2 (expected 2)
 (syn-write) wait for child 4 of 10 returned 3 (expected 3)
 (syn-write) wait for child 5 of 10 returned 4 (expected 4)
 (syn-write) wait for child 6 of 10 returned 5 (expected 5)
-(syn-write) wait for child 7 of 10 returned 6 (expected 6)
 child-syn-wrt: exit(8)
+(syn-write) wait for child 7 of 10 returned 6 (expected 6)
 (syn-write) wait for child 8 of 10 returned 7 (expected 7)
 (syn-write) wait for child 9 of 10 returned 8 (expected 8)
 child-syn-wrt: exit(9)
@@ -3711,9 +3711,9 @@ child-syn-wrt: exit(9)
 (syn-write) end
 syn-write: exit(0)
 Execution of 'syn-write' complete.
-Timer: 4661 ticks
-Thread: 30 idle ticks, 1845 kernel ticks, 2790 user ticks
-hda2 (filesys): 1003 reads, 639 writes
+Timer: 4672 ticks
+Thread: 30 idle ticks, 1846 kernel ticks, 2799 user ticks
+hda2 (filesys): 1037 reads, 638 writes
 hda3 (scratch): 198 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
 Console: 2433 characters output
@@ -3797,24 +3797,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 528 ticks
-Thread: 30 idle ticks, 190 kernel ticks, 311 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-empty-name.tar out of /tmp/GNM8znUoax.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-empty-name.ck tests/filesys/extended/dir-empty-name tests/filesys/extended/dir-empty-name.result
 pass tests/filesys/extended/dir-empty-name
@@ -3855,9 +3843,9 @@ Executing 'dir-mk-tree':
 (dir-mk-tree) end
 dir-mk-tree: exit(0)
 Execution of 'dir-mk-tree' complete.
-Timer: 15028 ticks
-Thread: 30 idle ticks, 1830 kernel ticks, 13171 user ticks
-hdb1 (filesys): 2019 reads, 1409 writes
+Timer: 16008 ticks
+Thread: 30 idle ticks, 1830 kernel ticks, 14151 user ticks
+hdb1 (filesys): 2027 reads, 1357 writes
 hda2 (scratch): 208 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1222 characters output
@@ -3890,24 +3878,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 549 ticks
-Thread: 30 idle ticks, 195 kernel ticks, 327 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-mk-tree.tar out of /tmp/cI1Bd2CehJ.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-mk-tree.ck tests/filesys/extended/dir-mk-tree tests/filesys/extended/dir-mk-tree.result
 pass tests/filesys/extended/dir-mk-tree
@@ -3949,9 +3925,9 @@ Executing 'dir-mkdir':
 (dir-mkdir) end
 dir-mkdir: exit(0)
 Execution of 'dir-mkdir' complete.
-Timer: 2086 ticks
-Thread: 30 idle ticks, 1766 kernel ticks, 293 user ticks
-hdb1 (filesys): 592 reads, 550 writes
+Timer: 2106 ticks
+Thread: 30 idle ticks, 1767 kernel ticks, 312 user ticks
+hdb1 (filesys): 594 reads, 550 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1180 characters output
@@ -3984,24 +3960,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-mkdir.tar out of /tmp/L7InBZVCSc.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-mkdir.ck tests/filesys/extended/dir-mkdir tests/filesys/extended/dir-mkdir.result
 pass tests/filesys/extended/dir-mkdir
@@ -4039,16 +4003,16 @@ Executing 'dir-open':
 (dir-open) mkdir "xyzzy"
 (dir-open) open "xyzzy"
 (dir-open) write "xyzzy"
-(dir-open) write "xyzzy" (must return -1, actually -1)
-(dir-open) end
-dir-open: exit(0)
+(dir-open) write "xyzzy" (must return -1, actually 6)
+(dir-open) write "xyzzy" (must return -1, actually 6): FAILED
+dir-open: exit(1)
 Execution of 'dir-open' complete.
-Timer: 2044 ticks
-Thread: 30 idle ticks, 1767 kernel ticks, 251 user ticks
-hdb1 (filesys): 584 reads, 544 writes
+Timer: 2075 ticks
+Thread: 30 idle ticks, 1766 kernel ticks, 282 user ticks
+hdb1 (filesys): 588 reads, 546 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1212 characters output
+Console: 1258 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...
@@ -4078,27 +4042,16 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-open.tar out of /tmp/DbasHA5hSr.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-open.ck tests/filesys/extended/dir-open tests/filesys/extended/dir-open.result
-pass tests/filesys/extended/dir-open
+FAIL tests/filesys/extended/dir-open
+run: write "xyzzy" (must return -1, actually 6): FAILED
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-over-file -a dir-over-file -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-over-file < /dev/null 2> tests/filesys/extended/dir-over-file.errors |tee tests/filesys/extended/dir-over-file.output
@@ -4135,9 +4088,9 @@ Executing 'dir-over-file':
 (dir-over-file) end
 dir-over-file: exit(0)
 Execution of 'dir-over-file' complete.
-Timer: 2061 ticks
-Thread: 30 idle ticks, 1791 kernel ticks, 243 user ticks
-hdb1 (filesys): 632 reads, 589 writes
+Timer: 2081 ticks
+Thread: 30 idle ticks, 1791 kernel ticks, 264 user ticks
+hdb1 (filesys): 635 reads, 591 writes
 hda2 (scratch): 203 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1195 characters output
@@ -4170,24 +4123,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-over-file.tar out of /tmp/bfOqUlnq5q.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-over-file.ck tests/filesys/extended/dir-over-file tests/filesys/extended/dir-over-file.result
 pass tests/filesys/extended/dir-over-file
@@ -4231,16 +4172,17 @@ Executing 'dir-rm-cwd':
 (dir-rm-cwd) try to remove "/a"
 (dir-rm-cwd) remove failed
 (dir-rm-cwd) try to remove "../a" (must fail)
-dir-rm-cwd: exit(-1)
+(dir-rm-cwd) try to remove "../a" (must fail): FAILED
+dir-rm-cwd: exit(1)
 Execution of 'dir-rm-cwd' complete.
-Timer: 2175 ticks
-Thread: 30 idle ticks, 1829 kernel ticks, 319 user ticks
-hdb1 (filesys): 649 reads, 604 writes
+Timer: 2250 ticks
+Thread: 30 idle ticks, 1829 kernel ticks, 394 user ticks
+hdb1 (filesys): 649 reads, 605 writes
 hda2 (scratch): 208 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1366 characters output
+Console: 1419 characters output
 Keyboard: 0 keys pressed
-Exception: 6 page faults
+Exception: 5 page faults
 Powering off...
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -4268,113 +4210,16 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-rm-cwd.tar out of /tmp/IViQVDillp.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-rm-cwd.ck tests/filesys/extended/dir-rm-cwd tests/filesys/extended/dir-rm-cwd.result
 FAIL tests/filesys/extended/dir-rm-cwd
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (dir-rm-cwd) begin
-  (dir-rm-cwd) open "/"
-  (dir-rm-cwd) mkdir "a"
-  (dir-rm-cwd) open "/a"
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) "/" and "/a" must have different inumbers
-  (dir-rm-cwd) chdir "a"
-  (dir-rm-cwd) try to remove "/a"
-  (dir-rm-cwd) remove failed
-  (dir-rm-cwd) try to remove "../a" (must fail)
-  (dir-rm-cwd) try to remove ".././a" (must fail)
-  (dir-rm-cwd) try to remove "/./a" (must fail)
-  (dir-rm-cwd) open "/a"
-  (dir-rm-cwd) open "."
-  (dir-rm-cwd) "/a" and "." must have same inumber
-  (dir-rm-cwd) "/" and "/a" must have different inumbers
-  (dir-rm-cwd) chdir "/a"
-  (dir-rm-cwd) open "."
-  (dir-rm-cwd) "." must have same inumber as before
-  (dir-rm-cwd) chdir "/"
-  (dir-rm-cwd) try to remove "a" (must fail: still open)
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) end
-Differences in `diff -u' format:
-  (dir-rm-cwd) begin
-  (dir-rm-cwd) open "/"
-  (dir-rm-cwd) mkdir "a"
-  (dir-rm-cwd) open "/a"
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) "/" and "/a" must have different inumbers
-  (dir-rm-cwd) chdir "a"
-  (dir-rm-cwd) try to remove "/a"
-  (dir-rm-cwd) remove failed
-  (dir-rm-cwd) try to remove "../a" (must fail)
-- (dir-rm-cwd) try to remove ".././a" (must fail)
-- (dir-rm-cwd) try to remove "/./a" (must fail)
-- (dir-rm-cwd) open "/a"
-- (dir-rm-cwd) open "."
-- (dir-rm-cwd) "/a" and "." must have same inumber
-- (dir-rm-cwd) "/" and "/a" must have different inumbers
-- (dir-rm-cwd) chdir "/a"
-- (dir-rm-cwd) open "."
-- (dir-rm-cwd) "." must have same inumber as before
-- (dir-rm-cwd) chdir "/"
-- (dir-rm-cwd) try to remove "a" (must fail: still open)
-- (dir-rm-cwd) verify "/a" is empty
-- (dir-rm-cwd) end
-Acceptable output:
-  (dir-rm-cwd) begin
-  (dir-rm-cwd) open "/"
-  (dir-rm-cwd) mkdir "a"
-  (dir-rm-cwd) open "/a"
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) "/" and "/a" must have different inumbers
-  (dir-rm-cwd) chdir "a"
-  (dir-rm-cwd) try to remove "/a"
-  (dir-rm-cwd) remove successful
-  (dir-rm-cwd) open "/a" (must fail)
-  (dir-rm-cwd) open "." (must fail)
-  (dir-rm-cwd) open ".." (must fail)
-  (dir-rm-cwd) create "x" (must fail)
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) end
-Differences in `diff -u' format:
-  (dir-rm-cwd) begin
-  (dir-rm-cwd) open "/"
-  (dir-rm-cwd) mkdir "a"
-  (dir-rm-cwd) open "/a"
-  (dir-rm-cwd) verify "/a" is empty
-  (dir-rm-cwd) "/" and "/a" must have different inumbers
-  (dir-rm-cwd) chdir "a"
-  (dir-rm-cwd) try to remove "/a"
-- (dir-rm-cwd) remove successful
-- (dir-rm-cwd) open "/a" (must fail)
-- (dir-rm-cwd) open "." (must fail)
-- (dir-rm-cwd) open ".." (must fail)
-- (dir-rm-cwd) create "x" (must fail)
-- (dir-rm-cwd) verify "/a" is empty
-- (dir-rm-cwd) end
-+ (dir-rm-cwd) remove failed
-+ (dir-rm-cwd) try to remove "../a" (must fail)
-
-(Process exit codes are excluded for matching purposes.)
+run: try to remove "../a" (must fail): FAILED
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-rm-parent -a dir-rm-parent -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-rm-parent < /dev/null 2> tests/filesys/extended/dir-rm-parent.errors |tee tests/filesys/extended/dir-rm-parent.output
@@ -4414,9 +4259,9 @@ Executing 'dir-rm-parent':
 (dir-rm-parent) end
 dir-rm-parent: exit(0)
 Execution of 'dir-rm-parent' complete.
-Timer: 2159 ticks
-Thread: 30 idle ticks, 1769 kernel ticks, 364 user ticks
-hdb1 (filesys): 592 reads, 551 writes
+Timer: 2199 ticks
+Thread: 30 idle ticks, 1770 kernel ticks, 402 user ticks
+hdb1 (filesys): 594 reads, 551 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1262 characters output
@@ -4449,24 +4294,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-rm-parent.tar out of /tmp/oiwx7Ya79W.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-rm-parent.ck tests/filesys/extended/dir-rm-parent tests/filesys/extended/dir-rm-parent.result
 pass tests/filesys/extended/dir-rm-parent
@@ -4502,16 +4335,18 @@ Erasing ustar archive...
 Executing 'dir-rm-root':
 (dir-rm-root) begin
 (dir-rm-root) remove "/" (must fail)
-dir-rm-root: exit(-1)
+(dir-rm-root) create "/a"
+(dir-rm-root) end
+dir-rm-root: exit(0)
 Execution of 'dir-rm-root' complete.
-Timer: 1949 ticks
-Thread: 30 idle ticks, 1788 kernel ticks, 134 user ticks
-hdb1 (filesys): 624 reads, 580 writes
+Timer: 2019 ticks
+Thread: 30 idle ticks, 1789 kernel ticks, 203 user ticks
+hdb1 (filesys): 629 reads, 586 writes
 hda2 (scratch): 203 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1124 characters output
+Console: 1167 characters output
 Keyboard: 0 keys pressed
-Exception: 6 page faults
+Exception: 5 page faults
 Powering off...
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -4539,41 +4374,15 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 528 ticks
-Thread: 30 idle ticks, 190 kernel ticks, 311 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-rm-root.tar out of /tmp/5qg5k2cj3G.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-rm-root.ck tests/filesys/extended/dir-rm-root tests/filesys/extended/dir-rm-root.result
-FAIL tests/filesys/extended/dir-rm-root
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (dir-rm-root) begin
-  (dir-rm-root) remove "/" (must fail)
-  (dir-rm-root) create "/a"
-  (dir-rm-root) end
-Differences in `diff -u' format:
-  (dir-rm-root) begin
-  (dir-rm-root) remove "/" (must fail)
-- (dir-rm-root) create "/a"
-- (dir-rm-root) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/extended/dir-rm-root
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-rm-tree -a dir-rm-tree -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-rm-tree < /dev/null 2> tests/filesys/extended/dir-rm-tree.errors |tee tests/filesys/extended/dir-rm-tree.output
@@ -4609,15 +4418,16 @@ Executing 'dir-rm-tree':
 (dir-rm-tree) open "/0/2/0/3"
 (dir-rm-tree) close "/0/2/0/3"
 (dir-rm-tree) removing /0/0/0/0 through /3/2/2/3...
-(dir-rm-tree) remove ".": FAILED
-dir-rm-tree: exit(1)
+(dir-rm-tree) open "/3/0/2/0" (must return -1)
+(dir-rm-tree) end
+dir-rm-tree: exit(0)
 Execution of 'dir-rm-tree' complete.
-Timer: 15202 ticks
-Thread: 30 idle ticks, 1833 kernel ticks, 13342 user ticks
-hdb1 (filesys): 2031 reads, 1367 writes
+Timer: 23746 ticks
+Thread: 30 idle ticks, 1833 kernel ticks, 21886 user ticks
+hdb1 (filesys): 2965 reads, 1630 writes
 hda2 (scratch): 211 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1289 characters output
+Console: 1321 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...
@@ -4647,28 +4457,15 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 549 ticks
-Thread: 30 idle ticks, 195 kernel ticks, 327 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-rm-tree.tar out of /tmp/bc3MyxXMT0.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-rm-tree.ck tests/filesys/extended/dir-rm-tree tests/filesys/extended/dir-rm-tree.result
-FAIL tests/filesys/extended/dir-rm-tree
-run: remove ".": FAILED
+pass tests/filesys/extended/dir-rm-tree
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-rmdir -a dir-rmdir -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-rmdir < /dev/null 2> tests/filesys/extended/dir-rmdir.errors |tee tests/filesys/extended/dir-rmdir.output
@@ -4702,16 +4499,18 @@ Executing 'dir-rmdir':
 (dir-rmdir) begin
 (dir-rmdir) mkdir "a"
 (dir-rmdir) rmdir "a"
-dir-rmdir: exit(-1)
+(dir-rmdir) chdir "a" (must return false)
+(dir-rmdir) end
+dir-rmdir: exit(0)
 Execution of 'dir-rmdir' complete.
-Timer: 2042 ticks
-Thread: 30 idle ticks, 1788 kernel ticks, 227 user ticks
-hdb1 (filesys): 632 reads, 587 writes
+Timer: 2123 ticks
+Thread: 30 idle ticks, 1789 kernel ticks, 307 user ticks
+hdb1 (filesys): 636 reads, 588 writes
 hda2 (scratch): 203 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1119 characters output
+Console: 1176 characters output
 Keyboard: 0 keys pressed
-Exception: 6 page faults
+Exception: 5 page faults
 Powering off...
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -4739,43 +4538,15 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-rmdir.tar out of /tmp/T3wKdIJ03C.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-rmdir.ck tests/filesys/extended/dir-rmdir tests/filesys/extended/dir-rmdir.result
-FAIL tests/filesys/extended/dir-rmdir
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (dir-rmdir) begin
-  (dir-rmdir) mkdir "a"
-  (dir-rmdir) rmdir "a"
-  (dir-rmdir) chdir "a" (must return false)
-  (dir-rmdir) end
-Differences in `diff -u' format:
-  (dir-rmdir) begin
-  (dir-rmdir) mkdir "a"
-  (dir-rmdir) rmdir "a"
-- (dir-rmdir) chdir "a" (must return false)
-- (dir-rmdir) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/extended/dir-rmdir
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-under-file -a dir-under-file -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-under-file < /dev/null 2> tests/filesys/extended/dir-under-file.errors |tee tests/filesys/extended/dir-under-file.output
@@ -4809,15 +4580,15 @@ Executing 'dir-under-file':
 (dir-under-file) begin
 (dir-under-file) create "abc"
 (dir-under-file) mkdir "abc" (must return false)
-(dir-under-file) mkdir "abc" (must return false): FAILED
-dir-under-file: exit(1)
+(dir-under-file) end
+dir-under-file: exit(0)
 Execution of 'dir-under-file' complete.
-Timer: 2021 ticks
-Thread: 30 idle ticks, 1791 kernel ticks, 204 user ticks
-hdb1 (filesys): 632 reads, 588 writes
+Timer: 2004 ticks
+Thread: 30 idle ticks, 1791 kernel ticks, 186 user ticks
+hdb1 (filesys): 627 reads, 585 writes
 hda2 (scratch): 203 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1240 characters output
+Console: 1204 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...
@@ -4847,28 +4618,15 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-under-file.tar out of /tmp/1VPMyo9FN_.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-under-file.ck tests/filesys/extended/dir-under-file tests/filesys/extended/dir-under-file.result
-FAIL tests/filesys/extended/dir-under-file
-run: mkdir "abc" (must return false): FAILED
+pass tests/filesys/extended/dir-under-file
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 150 --bochs  --disk=tmp.dsk -p tests/filesys/extended/dir-vine -a dir-vine -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run dir-vine < /dev/null 2> tests/filesys/extended/dir-vine.errors |tee tests/filesys/extended/dir-vine.output
@@ -4901,17 +4659,16 @@ Erasing ustar archive...
 Executing 'dir-vine':
 (dir-vine) begin
 (dir-vine) creating many levels of files and directories...
-(dir-vine) readdir ".": FAILED
-dir-vine: exit(1)
+dir-vine: exit(-1)
 Execution of 'dir-vine' complete.
-Timer: 2219 ticks
-Thread: 30 idle ticks, 1830 kernel ticks, 362 user ticks
-hdb1 (filesys): 655 reads, 614 writes
+Timer: 2274 ticks
+Thread: 30 idle ticks, 1831 kernel ticks, 417 user ticks
+hdb1 (filesys): 660 reads, 614 writes
 hda2 (scratch): 208 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 1159 characters output
+Console: 1129 characters output
 Keyboard: 0 keys pressed
-Exception: 5 page faults
+Exception: 6 page faults
 Powering off...
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -4939,28 +4696,29 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/dir-vine.tar out of /tmp/RDv4hghylv.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/dir-vine.ck tests/filesys/extended/dir-vine tests/filesys/extended/dir-vine.result
 FAIL tests/filesys/extended/dir-vine
-run: readdir ".": FAILED
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (dir-vine) begin
+  (dir-vine) creating many levels of files and directories...
+  (dir-vine) removing all but top 10 levels of files and directories...
+  (dir-vine) end
+Differences in `diff -u' format:
+  (dir-vine) begin
+  (dir-vine) creating many levels of files and directories...
+- (dir-vine) removing all but top 10 levels of files and directories...
+- (dir-vine) end
+
+(Process exit codes are excluded for matching purposes.)
 rm -f tmp.dsk
 pintos-mkdisk tmp.dsk --filesys-size=2
 pintos -v -k -T 120 --bochs  --disk=tmp.dsk -p tests/filesys/extended/grow-create -a grow-create -p tests/filesys/extended/tar -a tar --swap-size=4 -- -q    -f run grow-create < /dev/null 2> tests/filesys/extended/grow-create.errors |tee tests/filesys/extended/grow-create.output
@@ -5034,24 +4792,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-create.tar out of /tmp/o8B9yuat0B.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-create.ck tests/filesys/extended/grow-create tests/filesys/extended/grow-create.result
 pass tests/filesys/extended/grow-create
@@ -5140,12 +4886,12 @@ Executing 'grow-dir-lg':
 (grow-dir-lg) end
 grow-dir-lg: exit(0)
 Execution of 'grow-dir-lg' complete.
-Timer: 14714 ticks
-Thread: 30 idle ticks, 1814 kernel ticks, 12873 user ticks
-hdb1 (filesys): 1241 reads, 909 writes
+Timer: 14632 ticks
+Thread: 30 idle ticks, 1814 kernel ticks, 12791 user ticks
+hdb1 (filesys): 978 reads, 848 writes
 hda2 (scratch): 205 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
-Console: 3521 characters output
+Console: 3520 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...
@@ -5175,24 +4921,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 535 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 316 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-dir-lg.tar out of /tmp/8Dff2XX9YD.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-dir-lg.ck tests/filesys/extended/grow-dir-lg tests/filesys/extended/grow-dir-lg.result
 pass tests/filesys/extended/grow-dir-lg
@@ -5237,8 +4971,8 @@ Executing 'grow-file-size':
 (grow-file-size) end
 grow-file-size: exit(0)
 Execution of 'grow-file-size' complete.
-Timer: 2613 ticks
-Thread: 30 idle ticks, 1814 kernel ticks, 772 user ticks
+Timer: 2588 ticks
+Thread: 30 idle ticks, 1814 kernel ticks, 747 user ticks
 hdb1 (filesys): 666 reads, 624 writes
 hda2 (scratch): 205 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5272,24 +5006,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-file-size.tar out of /tmp/cTwLrPjFFZ.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-file-size.ck tests/filesys/extended/grow-file-size tests/filesys/extended/grow-file-size.result
 pass tests/filesys/extended/grow-file-size
@@ -5377,8 +5099,8 @@ Executing 'grow-root-lg':
 (grow-root-lg) end
 grow-root-lg: exit(0)
 Execution of 'grow-root-lg' complete.
-Timer: 13952 ticks
-Thread: 30 idle ticks, 1814 kernel ticks, 12111 user ticks
+Timer: 13930 ticks
+Thread: 30 idle ticks, 1814 kernel ticks, 12089 user ticks
 hdb1 (filesys): 909 reads, 842 writes
 hda2 (scratch): 205 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5412,24 +5134,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 755 ticks
-Thread: 30 idle ticks, 251 kernel ticks, 477 user ticks
-hdb1 (filesys): 71 reads, 13 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-root-lg.tar out of /tmp/rK3XC5y7oj.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-root-lg.ck tests/filesys/extended/grow-root-lg tests/filesys/extended/grow-root-lg.result
 pass tests/filesys/extended/grow-root-lg
@@ -5487,8 +5197,8 @@ Executing 'grow-root-sm':
 (grow-root-sm) end
 grow-root-sm: exit(0)
 Execution of 'grow-root-sm' complete.
-Timer: 5374 ticks
-Thread: 30 idle ticks, 1814 kernel ticks, 3533 user ticks
+Timer: 5365 ticks
+Thread: 30 idle ticks, 1814 kernel ticks, 3524 user ticks
 hdb1 (filesys): 738 reads, 693 writes
 hda2 (scratch): 205 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5522,24 +5232,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 607 ticks
-Thread: 30 idle ticks, 213 kernel ticks, 367 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-root-sm.tar out of /tmp/kHOPK9OPN1.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-root-sm.ck tests/filesys/extended/grow-root-sm tests/filesys/extended/grow-root-sm.result
 pass tests/filesys/extended/grow-root-sm
@@ -5584,8 +5282,8 @@ Executing 'grow-seq-lg':
 (grow-seq-lg) end
 grow-seq-lg: exit(0)
 Execution of 'grow-seq-lg' complete.
-Timer: 18259 ticks
-Thread: 30 idle ticks, 1767 kernel ticks, 16465 user ticks
+Timer: 18233 ticks
+Thread: 30 idle ticks, 1767 kernel ticks, 16439 user ticks
 hdb1 (filesys): 1121 reads, 879 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5619,24 +5317,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 536 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 317 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-seq-lg.tar out of /tmp/Xltzr_UqH3.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-seq-lg.ck tests/filesys/extended/grow-seq-lg tests/filesys/extended/grow-seq-lg.result
 pass tests/filesys/extended/grow-seq-lg
@@ -5681,8 +5367,8 @@ Executing 'grow-seq-sm':
 (grow-seq-sm) end
 grow-seq-sm: exit(0)
 Execution of 'grow-seq-sm' complete.
-Timer: 2884 ticks
-Thread: 30 idle ticks, 1767 kernel ticks, 1090 user ticks
+Timer: 2882 ticks
+Thread: 30 idle ticks, 1768 kernel ticks, 1087 user ticks
 hdb1 (filesys): 626 reads, 578 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5716,24 +5402,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-seq-sm.tar out of /tmp/o7s5JXoWD9.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-seq-sm.ck tests/filesys/extended/grow-seq-sm tests/filesys/extended/grow-seq-sm.result
 pass tests/filesys/extended/grow-seq-sm
@@ -5780,7 +5454,7 @@ Executing 'grow-sparse':
 grow-sparse: exit(0)
 Execution of 'grow-sparse' complete.
 Timer: 7655 ticks
-Thread: 30 idle ticks, 1766 kernel ticks, 5862 user ticks
+Thread: 30 idle ticks, 1767 kernel ticks, 5861 user ticks
 hdb1 (filesys): 933 reads, 726 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5814,24 +5488,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 536 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 317 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-sparse.tar out of /tmp/ocHx4dqAnw.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-sparse.ck tests/filesys/extended/grow-sparse tests/filesys/extended/grow-sparse.result
 pass tests/filesys/extended/grow-sparse
@@ -5876,8 +5538,8 @@ Executing 'grow-tell':
 (grow-tell) end
 grow-tell: exit(0)
 Execution of 'grow-tell' complete.
-Timer: 2534 ticks
-Thread: 30 idle ticks, 1768 kernel ticks, 739 user ticks
+Timer: 2509 ticks
+Thread: 30 idle ticks, 1768 kernel ticks, 714 user ticks
 hdb1 (filesys): 603 reads, 558 writes
 hda2 (scratch): 204 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -5911,24 +5573,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 532 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 313 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-tell.tar out of /tmp/y7BUmeumvX.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-tell.ck tests/filesys/extended/grow-tell tests/filesys/extended/grow-tell.result
 pass tests/filesys/extended/grow-tell
@@ -5979,8 +5629,8 @@ Executing 'grow-two-files':
 (grow-two-files) end
 grow-two-files: exit(0)
 Execution of 'grow-two-files' complete.
-Timer: 4856 ticks
-Thread: 30 idle ticks, 1827 kernel ticks, 3002 user ticks
+Timer: 4841 ticks
+Thread: 30 idle ticks, 1827 kernel ticks, 2987 user ticks
 hdb1 (filesys): 815 reads, 741 writes
 hda2 (scratch): 206 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -6014,24 +5664,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 536 ticks
-Thread: 30 idle ticks, 193 kernel ticks, 316 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/grow-two-files.tar out of /tmp/HFSgOXWBNO.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/grow-two-files.ck tests/filesys/extended/grow-two-files tests/filesys/extended/grow-two-files.result
 pass tests/filesys/extended/grow-two-files
@@ -6074,10 +5712,10 @@ Executing 'syn-rw':
 (syn-rw) exec child 2 of 4: "child-syn-rw 1"
 (syn-rw) exec child 3 of 4: "child-syn-rw 2"
 (syn-rw) exec child 4 of 4: "child-syn-rw 3"
-child-syn-rw: exit(3)
-child-syn-rw: exit(1)
 child-syn-rw: exit(2)
+child-syn-rw: exit(1)
 child-syn-rw: exit(0)
+child-syn-rw: exit(3)
 (syn-rw) wait for child 1 of 4 returned 0 (expected 0)
 (syn-rw) wait for child 2 of 4 returned 1 (expected 1)
 (syn-rw) wait for child 3 of 4 returned 2 (expected 2)
@@ -6085,9 +5723,9 @@ child-syn-rw: exit(0)
 (syn-rw) end
 syn-rw: exit(0)
 Execution of 'syn-rw' complete.
-Timer: 14311 ticks
-Thread: 30 idle ticks, 2748 kernel ticks, 11536 user ticks
-hdb1 (filesys): 1105 reads, 920 writes
+Timer: 13439 ticks
+Thread: 30 idle ticks, 2748 kernel ticks, 10664 user ticks
+hdb1 (filesys): 1093 reads, 911 writes
 hda2 (scratch): 308 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1658 characters output
@@ -6120,24 +5758,12 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
-tar: exit(0)
+tar: exit(-1)
 Execution of 'tar fs.tar /' complete.
 Appending 'fs.tar' to ustar archive on scratch device...
-Timer: 538 ticks
-Thread: 30 idle ticks, 192 kernel ticks, 319 user ticks
-hdb1 (filesys): 66 reads, 15 writes
-hda2 (scratch): 0 reads, 6 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 913 characters output
-Keyboard: 0 keys pressed
-Exception: 5 page faults
-Powering off...
-========================================================================
-                       Bochs x86 Emulator 2.6.2
-                Built from SVN snapshot on May 26, 2013
-                  Compiled on Feb 20 2014 at 12:34:17
-========================================================================
-Copying tests/filesys/extended/syn-rw.tar out of /tmp/PLS_bkVpXz.dsk...
+main: exit(-1)
+
+TIMEOUT after 60 seconds of host CPU time
 rm -f tmp.dsk
 perl -I../.. ../../tests/filesys/extended/syn-rw.ck tests/filesys/extended/syn-rw tests/filesys/extended/syn-rw.result
 pass tests/filesys/extended/syn-rw
@@ -6539,7 +6165,7 @@ Executing 'pt-grow-stk-sc':
 (pt-grow-stk-sc) end
 pt-grow-stk-sc: exit(0)
 Execution of 'pt-grow-stk-sc' complete.
-Timer: 1338 ticks
+Timer: 1337 ticks
 Thread: 30 idle ticks, 909 kernel ticks, 402 user ticks
 hda2 (filesys): 328 reads, 283 writes
 hda3 (scratch): 94 reads, 2 writes
@@ -6731,8 +6357,8 @@ child-sort: exit(123)
 (page-merge-seq) end
 page-merge-seq: exit(0)
 Execution of 'page-merge-seq' complete.
-Timer: 642793 ticks
-Thread: 30 idle ticks, 1911 kernel ticks, 640855 user ticks
+Timer: 642779 ticks
+Thread: 30 idle ticks, 1912 kernel ticks, 640840 user ticks
 hda2 (filesys): 11281 reads, 4745 writes
 hda3 (scratch): 191 reads, 2 writes
 hda4 (swap): 312 reads, 1320 writes
@@ -6806,9 +6432,9 @@ child-sort: exit(123)
 (page-merge-par) end
 page-merge-par: exit(0)
 Execution of 'page-merge-par' complete.
-Timer: 473309 ticks
-Thread: 30 idle ticks, 1768 kernel ticks, 471514 user ticks
-hda2 (filesys): 16395 reads, 8516 writes
+Timer: 473473 ticks
+Thread: 30 idle ticks, 1772 kernel ticks, 471675 user ticks
+hda2 (filesys): 16756 reads, 8572 writes
 hda3 (scratch): 193 reads, 2 writes
 hda4 (swap): 352 reads, 1424 writes
 Console: 1878 characters output
@@ -6881,9 +6507,9 @@ child-qsort: exit(72)
 (page-merge-stk) end
 page-merge-stk: exit(0)
 Execution of 'page-merge-stk' complete.
-Timer: 479353 ticks
-Thread: 30 idle ticks, 1821 kernel ticks, 477505 user ticks
-hda2 (filesys): 16402 reads, 8698 writes
+Timer: 479259 ticks
+Thread: 30 idle ticks, 1824 kernel ticks, 477409 user ticks
+hda2 (filesys): 16157 reads, 8752 writes
 hda3 (scratch): 198 reads, 2 writes
 hda4 (swap): 584 reads, 1656 writes
 Console: 1879 characters output
@@ -6956,9 +6582,9 @@ child-qsort-mm: exit(80)
 (page-merge-mm) end
 page-merge-mm: exit(0)
 Execution of 'page-merge-mm' complete.
-Timer: 204873 ticks
-Thread: 30 idle ticks, 1819 kernel ticks, 203028 user ticks
-hda2 (filesys): 15311 reads, 8251 writes
+Timer: 204865 ticks
+Thread: 30 idle ticks, 1820 kernel ticks, 203018 user ticks
+hda2 (filesys): 15261 reads, 8354 writes
 hda3 (scratch): 197 reads, 2 writes
 hda4 (swap): 352 reads, 1424 writes
 Console: 1879 characters output
@@ -7527,7 +7153,7 @@ Executing 'mmap-clean':
 mmap-clean: exit(0)
 Execution of 'mmap-clean' complete.
 Timer: 1250 ticks
-Thread: 30 idle ticks, 964 kernel ticks, 260 user ticks
+Thread: 30 idle ticks, 964 kernel ticks, 259 user ticks
 hda2 (filesys): 320 reads, 271 writes
 hda3 (scratch): 98 reads, 2 writes
 hda4 (swap): 0 reads, 0 writes
@@ -7943,892 +7569,73 @@ perl -I../.. ../../tests/vm/mmap-zero.ck tests/vm/mmap-zero tests/vm/mmap-zero.r
 pass tests/vm/mmap-zero
 perl -I../.. ../../tests/filesys/extended/dir-empty-name-persistence.ck tests/filesys/extended/dir-empty-name-persistence tests/filesys/extended/dir-empty-name-persistence.result
 FAIL tests/filesys/extended/dir-empty-name-persistence
-Extracted file system contents are not correct.
-dir-empty-name is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-dir-empty-name: 46483-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-mk-tree-persistence.ck tests/filesys/extended/dir-mk-tree-persistence tests/filesys/extended/dir-mk-tree-persistence.result
 FAIL tests/filesys/extended/dir-mk-tree-persistence
-Extracted file system contents are not correct.
-0 is missing from the file system.
-0/0 is missing from the file system.
-0/0/0 is missing from the file system.
-0/0/0/0 is missing from the file system.
-0/0/0/1 is missing from the file system.
-0/0/0/2 is missing from the file system.
-0/0/0/3 is missing from the file system.
-0/0/1 is missing from the file system.
-0/0/1/0 is missing from the file system.
-0/0/1/1 is missing from the file system.
-0/0/1/2 is missing from the file system.
-0/0/1/3 is missing from the file system.
-0/0/2 is missing from the file system.
-0/0/2/0 is missing from the file system.
-0/0/2/1 is missing from the file system.
-0/0/2/2 is missing from the file system.
-0/0/2/3 is missing from the file system.
-0/1 is missing from the file system.
-0/1/0 is missing from the file system.
-0/1/0/0 is missing from the file system.
-0/1/0/1 is missing from the file system.
-0/1/0/2 is missing from the file system.
-0/1/0/3 is missing from the file system.
-0/1/1 is missing from the file system.
-0/1/1/0 is missing from the file system.
-0/1/1/1 is missing from the file system.
-0/1/1/2 is missing from the file system.
-0/1/1/3 is missing from the file system.
-0/1/2 is missing from the file system.
-0/1/2/0 is missing from the file system.
-0/1/2/1 is missing from the file system.
-0/1/2/2 is missing from the file system.
-0/1/2/3 is missing from the file system.
-0/2 is missing from the file system.
-0/2/0 is missing from the file system.
-0/2/0/0 is missing from the file system.
-0/2/0/1 is missing from the file system.
-0/2/0/2 is missing from the file system.
-0/2/0/3 is missing from the file system.
-0/2/1 is missing from the file system.
-0/2/1/0 is missing from the file system.
-0/2/1/1 is missing from the file system.
-0/2/1/2 is missing from the file system.
-0/2/1/3 is missing from the file system.
-0/2/2 is missing from the file system.
-0/2/2/0 is missing from the file system.
-0/2/2/1 is missing from the file system.
-0/2/2/2 is missing from the file system.
-0/2/2/3 is missing from the file system.
-1 is missing from the file system.
-1/0 is missing from the file system.
-1/0/0 is missing from the file system.
-1/0/0/0 is missing from the file system.
-1/0/0/1 is missing from the file system.
-1/0/0/2 is missing from the file system.
-1/0/0/3 is missing from the file system.
-1/0/1 is missing from the file system.
-1/0/1/0 is missing from the file system.
-1/0/1/1 is missing from the file system.
-1/0/1/2 is missing from the file system.
-1/0/1/3 is missing from the file system.
-1/0/2 is missing from the file system.
-1/0/2/0 is missing from the file system.
-1/0/2/1 is missing from the file system.
-1/0/2/2 is missing from the file system.
-1/0/2/3 is missing from the file system.
-1/1 is missing from the file system.
-1/1/0 is missing from the file system.
-1/1/0/0 is missing from the file system.
-1/1/0/1 is missing from the file system.
-1/1/0/2 is missing from the file system.
-1/1/0/3 is missing from the file system.
-1/1/1 is missing from the file system.
-1/1/1/0 is missing from the file system.
-1/1/1/1 is missing from the file system.
-1/1/1/2 is missing from the file system.
-1/1/1/3 is missing from the file system.
-1/1/2 is missing from the file system.
-1/1/2/0 is missing from the file system.
-1/1/2/1 is missing from the file system.
-1/1/2/2 is missing from the file system.
-1/1/2/3 is missing from the file system.
-1/2 is missing from the file system.
-1/2/0 is missing from the file system.
-1/2/0/0 is missing from the file system.
-1/2/0/1 is missing from the file system.
-1/2/0/2 is missing from the file system.
-1/2/0/3 is missing from the file system.
-1/2/1 is missing from the file system.
-1/2/1/0 is missing from the file system.
-1/2/1/1 is missing from the file system.
-1/2/1/2 is missing from the file system.
-1/2/1/3 is missing from the file system.
-1/2/2 is missing from the file system.
-1/2/2/0 is missing from the file system.
-1/2/2/1 is missing from the file system.
-1/2/2/2 is missing from the file system.
-1/2/2/3 is missing from the file system.
-2 is missing from the file system.
-2/0 is missing from the file system.
-2/0/0 is missing from the file system.
-2/0/0/0 is missing from the file system.
-2/0/0/1 is missing from the file system.
-2/0/0/2 is missing from the file system.
-2/0/0/3 is missing from the file system.
-2/0/1 is missing from the file system.
-2/0/1/0 is missing from the file system.
-2/0/1/1 is missing from the file system.
-2/0/1/2 is missing from the file system.
-2/0/1/3 is missing from the file system.
-2/0/2 is missing from the file system.
-2/0/2/0 is missing from the file system.
-2/0/2/1 is missing from the file system.
-2/0/2/2 is missing from the file system.
-2/0/2/3 is missing from the file system.
-2/1 is missing from the file system.
-2/1/0 is missing from the file system.
-2/1/0/0 is missing from the file system.
-2/1/0/1 is missing from the file system.
-2/1/0/2 is missing from the file system.
-2/1/0/3 is missing from the file system.
-2/1/1 is missing from the file system.
-2/1/1/0 is missing from the file system.
-2/1/1/1 is missing from the file system.
-2/1/1/2 is missing from the file system.
-2/1/1/3 is missing from the file system.
-2/1/2 is missing from the file system.
-2/1/2/0 is missing from the file system.
-2/1/2/1 is missing from the file system.
-2/1/2/2 is missing from the file system.
-2/1/2/3 is missing from the file system.
-2/2 is missing from the file system.
-2/2/0 is missing from the file system.
-2/2/0/0 is missing from the file system.
-2/2/0/1 is missing from the file system.
-2/2/0/2 is missing from the file system.
-2/2/0/3 is missing from the file system.
-2/2/1 is missing from the file system.
-2/2/1/0 is missing from the file system.
-2/2/1/1 is missing from the file system.
-2/2/1/2 is missing from the file system.
-2/2/1/3 is missing from the file system.
-2/2/2 is missing from the file system.
-2/2/2/0 is missing from the file system.
-2/2/2/1 is missing from the file system.
-2/2/2/2 is missing from the file system.
-2/2/2/3 is missing from the file system.
-3 is missing from the file system.
-3/0 is missing from the file system.
-3/0/0 is missing from the file system.
-3/0/0/0 is missing from the file system.
-3/0/0/1 is missing from the file system.
-3/0/0/2 is missing from the file system.
-3/0/0/3 is missing from the file system.
-3/0/1 is missing from the file system.
-3/0/1/0 is missing from the file system.
-3/0/1/1 is missing from the file system.
-3/0/1/2 is missing from the file system.
-3/0/1/3 is missing from the file system.
-3/0/2 is missing from the file system.
-3/0/2/0 is missing from the file system.
-3/0/2/1 is missing from the file system.
-3/0/2/2 is missing from the file system.
-3/0/2/3 is missing from the file system.
-3/1 is missing from the file system.
-3/1/0 is missing from the file system.
-3/1/0/0 is missing from the file system.
-3/1/0/1 is missing from the file system.
-3/1/0/2 is missing from the file system.
-3/1/0/3 is missing from the file system.
-3/1/1 is missing from the file system.
-3/1/1/0 is missing from the file system.
-3/1/1/1 is missing from the file system.
-3/1/1/2 is missing from the file system.
-3/1/1/3 is missing from the file system.
-3/1/2 is missing from the file system.
-3/1/2/0 is missing from the file system.
-3/1/2/1 is missing from the file system.
-3/1/2/2 is missing from the file system.
-3/1/2/3 is missing from the file system.
-3/2 is missing from the file system.
-3/2/0 is missing from the file system.
-3/2/0/0 is missing from the file system.
-3/2/0/1 is missing from the file system.
-3/2/0/2 is missing from the file system.
-3/2/0/3 is missing from the file system.
-3/2/1 is missing from the file system.
-3/2/1/0 is missing from the file system.
-3/2/1/1 is missing from the file system.
-3/2/1/2 is missing from the file system.
-3/2/1/3 is missing from the file system.
-3/2/2 is missing from the file system.
-3/2/2/0 is missing from the file system.
-3/2/2/1 is missing from the file system.
-3/2/2/2 is missing from the file system.
-3/2/2/3 is missing from the file system.
-dir-mk-tree is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-0: directory
-0/0: directory
-0/0/0: directory
-0/0/0/0: 0-byte file
-0/0/0/1: 0-byte file
-0/0/0/2: 0-byte file
-0/0/0/3: 0-byte file
-0/0/1: directory
-0/0/1/0: 0-byte file
-0/0/1/1: 0-byte file
-0/0/1/2: 0-byte file
-0/0/1/3: 0-byte file
-0/0/2: directory
-0/0/2/0: 0-byte file
-0/0/2/1: 0-byte file
-0/0/2/2: 0-byte file
-0/0/2/3: 0-byte file
-0/1: directory
-0/1/0: directory
-0/1/0/0: 0-byte file
-0/1/0/1: 0-byte file
-0/1/0/2: 0-byte file
-0/1/0/3: 0-byte file
-0/1/1: directory
-0/1/1/0: 0-byte file
-0/1/1/1: 0-byte file
-0/1/1/2: 0-byte file
-0/1/1/3: 0-byte file
-0/1/2: directory
-0/1/2/0: 0-byte file
-0/1/2/1: 0-byte file
-0/1/2/2: 0-byte file
-0/1/2/3: 0-byte file
-0/2: directory
-0/2/0: directory
-0/2/0/0: 0-byte file
-0/2/0/1: 0-byte file
-0/2/0/2: 0-byte file
-0/2/0/3: 0-byte file
-0/2/1: directory
-0/2/1/0: 0-byte file
-0/2/1/1: 0-byte file
-0/2/1/2: 0-byte file
-0/2/1/3: 0-byte file
-0/2/2: directory
-0/2/2/0: 0-byte file
-0/2/2/1: 0-byte file
-0/2/2/2: 0-byte file
-0/2/2/3: 0-byte file
-1: directory
-1/0: directory
-1/0/0: directory
-1/0/0/0: 0-byte file
-1/0/0/1: 0-byte file
-1/0/0/2: 0-byte file
-1/0/0/3: 0-byte file
-1/0/1: directory
-1/0/1/0: 0-byte file
-1/0/1/1: 0-byte file
-1/0/1/2: 0-byte file
-1/0/1/3: 0-byte file
-1/0/2: directory
-1/0/2/0: 0-byte file
-1/0/2/1: 0-byte file
-1/0/2/2: 0-byte file
-1/0/2/3: 0-byte file
-1/1: directory
-1/1/0: directory
-1/1/0/0: 0-byte file
-1/1/0/1: 0-byte file
-1/1/0/2: 0-byte file
-1/1/0/3: 0-byte file
-1/1/1: directory
-1/1/1/0: 0-byte file
-1/1/1/1: 0-byte file
-1/1/1/2: 0-byte file
-1/1/1/3: 0-byte file
-1/1/2: directory
-1/1/2/0: 0-byte file
-1/1/2/1: 0-byte file
-1/1/2/2: 0-byte file
-1/1/2/3: 0-byte file
-1/2: directory
-1/2/0: directory
-1/2/0/0: 0-byte file
-1/2/0/1: 0-byte file
-1/2/0/2: 0-byte file
-1/2/0/3: 0-byte file
-1/2/1: directory
-1/2/1/0: 0-byte file
-1/2/1/1: 0-byte file
-1/2/1/2: 0-byte file
-1/2/1/3: 0-byte file
-1/2/2: directory
-1/2/2/0: 0-byte file
-1/2/2/1: 0-byte file
-1/2/2/2: 0-byte file
-1/2/2/3: 0-byte file
-2: directory
-2/0: directory
-2/0/0: directory
-2/0/0/0: 0-byte file
-2/0/0/1: 0-byte file
-2/0/0/2: 0-byte file
-2/0/0/3: 0-byte file
-2/0/1: directory
-2/0/1/0: 0-byte file
-2/0/1/1: 0-byte file
-2/0/1/2: 0-byte file
-2/0/1/3: 0-byte file
-2/0/2: directory
-2/0/2/0: 0-byte file
-2/0/2/1: 0-byte file
-2/0/2/2: 0-byte file
-2/0/2/3: 0-byte file
-2/1: directory
-2/1/0: directory
-2/1/0/0: 0-byte file
-2/1/0/1: 0-byte file
-2/1/0/2: 0-byte file
-2/1/0/3: 0-byte file
-2/1/1: directory
-2/1/1/0: 0-byte file
-2/1/1/1: 0-byte file
-2/1/1/2: 0-byte file
-2/1/1/3: 0-byte file
-2/1/2: directory
-2/1/2/0: 0-byte file
-2/1/2/1: 0-byte file
-2/1/2/2: 0-byte file
-2/1/2/3: 0-byte file
-2/2: directory
-2/2/0: directory
-2/2/0/0: 0-byte file
-2/2/0/1: 0-byte file
-2/2/0/2: 0-byte file
-2/2/0/3: 0-byte file
-2/2/1: directory
-2/2/1/0: 0-byte file
-2/2/1/1: 0-byte file
-2/2/1/2: 0-byte file
-2/2/1/3: 0-byte file
-2/2/2: directory
-2/2/2/0: 0-byte file
-2/2/2/1: 0-byte file
-2/2/2/2: 0-byte file
-2/2/2/3: 0-byte file
-3: directory
-3/0: directory
-3/0/0: directory
-3/0/0/0: 0-byte file
-3/0/0/1: 0-byte file
-3/0/0/2: 0-byte file
-3/0/0/3: 0-byte file
-3/0/1: directory
-3/0/1/0: 0-byte file
-3/0/1/1: 0-byte file
-3/0/1/2: 0-byte file
-3/0/1/3: 0-byte file
-3/0/2: directory
-3/0/2/0: 0-byte file
-3/0/2/1: 0-byte file
-3/0/2/2: 0-byte file
-3/0/2/3: 0-byte file
-3/1: directory
-3/1/0: directory
-3/1/0/0: 0-byte file
-3/1/0/1: 0-byte file
-3/1/0/2: 0-byte file
-3/1/0/3: 0-byte file
-3/1/1: directory
-3/1/1/0: 0-byte file
-3/1/1/1: 0-byte file
-3/1/1/2: 0-byte file
-3/1/1/3: 0-byte file
-3/1/2: directory
-3/1/2/0: 0-byte file
-3/1/2/1: 0-byte file
-3/1/2/2: 0-byte file
-3/1/2/3: 0-byte file
-3/2: directory
-3/2/0: directory
-3/2/0/0: 0-byte file
-3/2/0/1: 0-byte file
-3/2/0/2: 0-byte file
-3/2/0/3: 0-byte file
-3/2/1: directory
-3/2/1/0: 0-byte file
-3/2/1/1: 0-byte file
-3/2/1/2: 0-byte file
-3/2/1/3: 0-byte file
-3/2/2: directory
-3/2/2/0: 0-byte file
-3/2/2/1: 0-byte file
-3/2/2/2: 0-byte file
-3/2/2/3: 0-byte file
-dir-mk-tree: 48718-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-mkdir-persistence.ck tests/filesys/extended/dir-mkdir-persistence tests/filesys/extended/dir-mkdir-persistence.result
 FAIL tests/filesys/extended/dir-mkdir-persistence
-Extracted file system contents are not correct.
-a is missing from the file system.
-a/b is missing from the file system.
-dir-mkdir is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-a: directory
-a/b: 512-byte file
-dir-mkdir: 46638-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-open-persistence.ck tests/filesys/extended/dir-open-persistence tests/filesys/extended/dir-open-persistence.result
 FAIL tests/filesys/extended/dir-open-persistence
-Extracted file system contents are not correct.
-dir-open is missing from the file system.
-tar is missing from the file system.
-xyzzy is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-dir-open: 46797-byte file
-tar: 55430-byte file
-xyzzy: directory
+Prerequisite test tests/filesys/extended/dir-open failed.
 perl -I../.. ../../tests/filesys/extended/dir-over-file-persistence.ck tests/filesys/extended/dir-over-file-persistence tests/filesys/extended/dir-over-file-persistence.result
 FAIL tests/filesys/extended/dir-over-file-persistence
-Extracted file system contents are not correct.
-abc is missing from the file system.
-dir-over-file is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-abc: directory
-dir-over-file: 46554-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-rm-cwd-persistence.ck tests/filesys/extended/dir-rm-cwd-persistence tests/filesys/extended/dir-rm-cwd-persistence.result
 FAIL tests/filesys/extended/dir-rm-cwd-persistence
 Prerequisite test tests/filesys/extended/dir-rm-cwd failed.
 perl -I../.. ../../tests/filesys/extended/dir-rm-parent-persistence.ck tests/filesys/extended/dir-rm-parent-persistence tests/filesys/extended/dir-rm-parent-persistence.result
 FAIL tests/filesys/extended/dir-rm-parent-persistence
-Extracted file system contents are not correct.
-a is missing from the file system.
-a/b is missing from the file system.
-dir-rm-parent is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-a: directory
-a/b: directory
-dir-rm-parent: 46690-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-rm-root-persistence.ck tests/filesys/extended/dir-rm-root-persistence tests/filesys/extended/dir-rm-root-persistence.result
 FAIL tests/filesys/extended/dir-rm-root-persistence
-Prerequisite test tests/filesys/extended/dir-rm-root failed.
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-rm-tree-persistence.ck tests/filesys/extended/dir-rm-tree-persistence tests/filesys/extended/dir-rm-tree-persistence.result
 FAIL tests/filesys/extended/dir-rm-tree-persistence
-Prerequisite test tests/filesys/extended/dir-rm-tree failed.
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-rmdir-persistence.ck tests/filesys/extended/dir-rmdir-persistence tests/filesys/extended/dir-rmdir-persistence.result
 FAIL tests/filesys/extended/dir-rmdir-persistence
-Prerequisite test tests/filesys/extended/dir-rmdir failed.
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-under-file-persistence.ck tests/filesys/extended/dir-under-file-persistence tests/filesys/extended/dir-under-file-persistence.result
 FAIL tests/filesys/extended/dir-under-file-persistence
-Prerequisite test tests/filesys/extended/dir-under-file failed.
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/dir-vine-persistence.ck tests/filesys/extended/dir-vine-persistence tests/filesys/extended/dir-vine-persistence.result
 FAIL tests/filesys/extended/dir-vine-persistence
 Prerequisite test tests/filesys/extended/dir-vine failed.
 perl -I../.. ../../tests/filesys/extended/grow-create-persistence.ck tests/filesys/extended/grow-create-persistence tests/filesys/extended/grow-create-persistence.result
 FAIL tests/filesys/extended/grow-create-persistence
-Extracted file system contents are not correct.
-blargle is missing from the file system.
-grow-create is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-blargle: 0-byte file
-grow-create: 46664-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-dir-lg-persistence.ck tests/filesys/extended/grow-dir-lg-persistence tests/filesys/extended/grow-dir-lg-persistence.result
 FAIL tests/filesys/extended/grow-dir-lg-persistence
-Extracted file system contents are not correct.
-grow-dir-lg is missing from the file system.
-tar is missing from the file system.
-x is missing from the file system.
-x/file0 is missing from the file system.
-x/file1 is missing from the file system.
-x/file10 is missing from the file system.
-x/file11 is missing from the file system.
-x/file12 is missing from the file system.
-x/file13 is missing from the file system.
-x/file14 is missing from the file system.
-x/file15 is missing from the file system.
-x/file16 is missing from the file system.
-x/file17 is missing from the file system.
-x/file18 is missing from the file system.
-x/file19 is missing from the file system.
-x/file2 is missing from the file system.
-x/file20 is missing from the file system.
-x/file21 is missing from the file system.
-x/file22 is missing from the file system.
-x/file23 is missing from the file system.
-x/file24 is missing from the file system.
-x/file25 is missing from the file system.
-x/file26 is missing from the file system.
-x/file27 is missing from the file system.
-x/file28 is missing from the file system.
-x/file29 is missing from the file system.
-x/file3 is missing from the file system.
-x/file30 is missing from the file system.
-x/file31 is missing from the file system.
-x/file32 is missing from the file system.
-x/file33 is missing from the file system.
-x/file34 is missing from the file system.
-x/file35 is missing from the file system.
-x/file36 is missing from the file system.
-x/file37 is missing from the file system.
-x/file38 is missing from the file system.
-x/file39 is missing from the file system.
-x/file4 is missing from the file system.
-x/file40 is missing from the file system.
-x/file41 is missing from the file system.
-x/file42 is missing from the file system.
-x/file43 is missing from the file system.
-x/file44 is missing from the file system.
-x/file45 is missing from the file system.
-x/file46 is missing from the file system.
-x/file47 is missing from the file system.
-x/file48 is missing from the file system.
-x/file49 is missing from the file system.
-x/file5 is missing from the file system.
-x/file6 is missing from the file system.
-x/file7 is missing from the file system.
-x/file8 is missing from the file system.
-x/file9 is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-grow-dir-lg: 47202-byte file
-tar: 55430-byte file
-x: directory
-x/file0: 512-byte file
-x/file1: 512-byte file
-x/file10: 512-byte file
-x/file11: 512-byte file
-x/file12: 512-byte file
-x/file13: 512-byte file
-x/file14: 512-byte file
-x/file15: 512-byte file
-x/file16: 512-byte file
-x/file17: 512-byte file
-x/file18: 512-byte file
-x/file19: 512-byte file
-x/file2: 512-byte file
-x/file20: 512-byte file
-x/file21: 512-byte file
-x/file22: 512-byte file
-x/file23: 512-byte file
-x/file24: 512-byte file
-x/file25: 512-byte file
-x/file26: 512-byte file
-x/file27: 512-byte file
-x/file28: 512-byte file
-x/file29: 512-byte file
-x/file3: 512-byte file
-x/file30: 512-byte file
-x/file31: 512-byte file
-x/file32: 512-byte file
-x/file33: 512-byte file
-x/file34: 512-byte file
-x/file35: 512-byte file
-x/file36: 512-byte file
-x/file37: 512-byte file
-x/file38: 512-byte file
-x/file39: 512-byte file
-x/file4: 512-byte file
-x/file40: 512-byte file
-x/file41: 512-byte file
-x/file42: 512-byte file
-x/file43: 512-byte file
-x/file44: 512-byte file
-x/file45: 512-byte file
-x/file46: 512-byte file
-x/file47: 512-byte file
-x/file48: 512-byte file
-x/file49: 512-byte file
-x/file5: 512-byte file
-x/file6: 512-byte file
-x/file7: 512-byte file
-x/file8: 512-byte file
-x/file9: 512-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-file-size-persistence.ck tests/filesys/extended/grow-file-size-persistence tests/filesys/extended/grow-file-size-persistence.result
 FAIL tests/filesys/extended/grow-file-size-persistence
-Extracted file system contents are not correct.
-grow-file-size is missing from the file system.
-tar is missing from the file system.
-testfile is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-grow-file-size: 47109-byte file
-tar: 55430-byte file
-testfile: 2134-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-root-lg-persistence.ck tests/filesys/extended/grow-root-lg-persistence tests/filesys/extended/grow-root-lg-persistence.result
 FAIL tests/filesys/extended/grow-root-lg-persistence
-Extracted file system contents are not correct.
-file0 is missing from the file system.
-file1 is missing from the file system.
-file10 is missing from the file system.
-file11 is missing from the file system.
-file12 is missing from the file system.
-file13 is missing from the file system.
-file14 is missing from the file system.
-file15 is missing from the file system.
-file16 is missing from the file system.
-file17 is missing from the file system.
-file18 is missing from the file system.
-file19 is missing from the file system.
-file2 is missing from the file system.
-file20 is missing from the file system.
-file21 is missing from the file system.
-file22 is missing from the file system.
-file23 is missing from the file system.
-file24 is missing from the file system.
-file25 is missing from the file system.
-file26 is missing from the file system.
-file27 is missing from the file system.
-file28 is missing from the file system.
-file29 is missing from the file system.
-file3 is missing from the file system.
-file30 is missing from the file system.
-file31 is missing from the file system.
-file32 is missing from the file system.
-file33 is missing from the file system.
-file34 is missing from the file system.
-file35 is missing from the file system.
-file36 is missing from the file system.
-file37 is missing from the file system.
-file38 is missing from the file system.
-file39 is missing from the file system.
-file4 is missing from the file system.
-file40 is missing from the file system.
-file41 is missing from the file system.
-file42 is missing from the file system.
-file43 is missing from the file system.
-file44 is missing from the file system.
-file45 is missing from the file system.
-file46 is missing from the file system.
-file47 is missing from the file system.
-file48 is missing from the file system.
-file49 is missing from the file system.
-file5 is missing from the file system.
-file6 is missing from the file system.
-file7 is missing from the file system.
-file8 is missing from the file system.
-file9 is missing from the file system.
-grow-root-lg is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-file0: 512-byte file
-file1: 512-byte file
-file10: 512-byte file
-file11: 512-byte file
-file12: 512-byte file
-file13: 512-byte file
-file14: 512-byte file
-file15: 512-byte file
-file16: 512-byte file
-file17: 512-byte file
-file18: 512-byte file
-file19: 512-byte file
-file2: 512-byte file
-file20: 512-byte file
-file21: 512-byte file
-file22: 512-byte file
-file23: 512-byte file
-file24: 512-byte file
-file25: 512-byte file
-file26: 512-byte file
-file27: 512-byte file
-file28: 512-byte file
-file29: 512-byte file
-file3: 512-byte file
-file30: 512-byte file
-file31: 512-byte file
-file32: 512-byte file
-file33: 512-byte file
-file34: 512-byte file
-file35: 512-byte file
-file36: 512-byte file
-file37: 512-byte file
-file38: 512-byte file
-file39: 512-byte file
-file4: 512-byte file
-file40: 512-byte file
-file41: 512-byte file
-file42: 512-byte file
-file43: 512-byte file
-file44: 512-byte file
-file45: 512-byte file
-file46: 512-byte file
-file47: 512-byte file
-file48: 512-byte file
-file49: 512-byte file
-file5: 512-byte file
-file6: 512-byte file
-file7: 512-byte file
-file8: 512-byte file
-file9: 512-byte file
-grow-root-lg: 47151-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-root-sm-persistence.ck tests/filesys/extended/grow-root-sm-persistence tests/filesys/extended/grow-root-sm-persistence.result
 FAIL tests/filesys/extended/grow-root-sm-persistence
-Extracted file system contents are not correct.
-file0 is missing from the file system.
-file1 is missing from the file system.
-file10 is missing from the file system.
-file11 is missing from the file system.
-file12 is missing from the file system.
-file13 is missing from the file system.
-file14 is missing from the file system.
-file15 is missing from the file system.
-file16 is missing from the file system.
-file17 is missing from the file system.
-file18 is missing from the file system.
-file19 is missing from the file system.
-file2 is missing from the file system.
-file3 is missing from the file system.
-file4 is missing from the file system.
-file5 is missing from the file system.
-file6 is missing from the file system.
-file7 is missing from the file system.
-file8 is missing from the file system.
-file9 is missing from the file system.
-grow-root-sm is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-file0: 512-byte file
-file1: 512-byte file
-file10: 512-byte file
-file11: 512-byte file
-file12: 512-byte file
-file13: 512-byte file
-file14: 512-byte file
-file15: 512-byte file
-file16: 512-byte file
-file17: 512-byte file
-file18: 512-byte file
-file19: 512-byte file
-file2: 512-byte file
-file3: 512-byte file
-file4: 512-byte file
-file5: 512-byte file
-file6: 512-byte file
-file7: 512-byte file
-file8: 512-byte file
-file9: 512-byte file
-grow-root-sm: 47151-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-seq-lg-persistence.ck tests/filesys/extended/grow-seq-lg-persistence tests/filesys/extended/grow-seq-lg-persistence.result
 FAIL tests/filesys/extended/grow-seq-lg-persistence
-Extracted file system contents are not correct.
-grow-seq-lg is missing from the file system.
-tar is missing from the file system.
-testme is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-grow-seq-lg: 46754-byte file
-tar: 55430-byte file
-testme: 72943-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-seq-sm-persistence.ck tests/filesys/extended/grow-seq-sm-persistence tests/filesys/extended/grow-seq-sm-persistence.result
 FAIL tests/filesys/extended/grow-seq-sm-persistence
-Extracted file system contents are not correct.
-grow-seq-sm is missing from the file system.
-tar is missing from the file system.
-testme is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-grow-seq-sm: 46750-byte file
-tar: 55430-byte file
-testme: 5678-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-sparse-persistence.ck tests/filesys/extended/grow-sparse-persistence tests/filesys/extended/grow-sparse-persistence.result
 FAIL tests/filesys/extended/grow-sparse-persistence
-Extracted file system contents are not correct.
-grow-sparse is missing from the file system.
-tar is missing from the file system.
-testfile is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-grow-sparse: 46996-byte file
-tar: 55430-byte file
-testfile: 76543-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-tell-persistence.ck tests/filesys/extended/grow-tell-persistence tests/filesys/extended/grow-tell-persistence.result
 FAIL tests/filesys/extended/grow-tell-persistence
-Extracted file system contents are not correct.
-foobar is missing from the file system.
-grow-tell is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-foobar: 2134-byte file
-grow-tell: 47091-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/grow-two-files-persistence.ck tests/filesys/extended/grow-two-files-persistence tests/filesys/extended/grow-two-files-persistence.result
 FAIL tests/filesys/extended/grow-two-files-persistence
-Extracted file system contents are not correct.
-a is missing from the file system.
-b is missing from the file system.
-grow-two-files is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-a: 8143-byte file
-b: 8143-byte file
-grow-two-files: 48072-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 perl -I../.. ../../tests/filesys/extended/syn-rw-persistence.ck tests/filesys/extended/syn-rw-persistence tests/filesys/extended/syn-rw-persistence.result
 FAIL tests/filesys/extended/syn-rw-persistence
-Extracted file system contents are not correct.
-child-syn-rw is missing from the file system.
-logfile is missing from the file system.
-syn-rw is missing from the file system.
-tar is missing from the file system.
-
-Actual contents of file system:
-(empty)
-
-Expected contents of file system:
-child-syn-rw: 52130-byte file
-logfile: 4096-byte file
-syn-rw: 47361-byte file
-tar: 55430-byte file
+file system extraction run: TIMEOUT after 60 seconds of host CPU time
 pass tests/userprog/args-none
 pass tests/userprog/args-single
 pass tests/userprog/args-multiple
@@ -8907,14 +7714,14 @@ pass tests/filesys/base/syn-write
 pass tests/filesys/extended/dir-empty-name
 pass tests/filesys/extended/dir-mk-tree
 pass tests/filesys/extended/dir-mkdir
-pass tests/filesys/extended/dir-open
+FAIL tests/filesys/extended/dir-open
 pass tests/filesys/extended/dir-over-file
 FAIL tests/filesys/extended/dir-rm-cwd
 pass tests/filesys/extended/dir-rm-parent
-FAIL tests/filesys/extended/dir-rm-root
-FAIL tests/filesys/extended/dir-rm-tree
-FAIL tests/filesys/extended/dir-rmdir
-FAIL tests/filesys/extended/dir-under-file
+pass tests/filesys/extended/dir-rm-root
+pass tests/filesys/extended/dir-rm-tree
+pass tests/filesys/extended/dir-rmdir
+pass tests/filesys/extended/dir-under-file
 FAIL tests/filesys/extended/dir-vine
 pass tests/filesys/extended/grow-create
 pass tests/filesys/extended/grow-dir-lg
@@ -8984,5 +7791,5 @@ FAIL tests/filesys/extended/grow-sparse-persistence
 FAIL tests/filesys/extended/grow-tell-persistence
 FAIL tests/filesys/extended/grow-two-files-persistence
 FAIL tests/filesys/extended/syn-rw-persistence
-32 of 155 tests failed.
+29 of 155 tests failed.
 make[1]: Leaving directory `/home/2009004076/homework/project8/pintos/src/filesys/build'

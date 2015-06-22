@@ -9,7 +9,7 @@
 #include "filesys/directory.h"
 
 
-#define MAX_FILE_DESC_COUNT 256
+#define MAX_FILE_DESC_COUNT 128
 struct file;
 
 /* States in a thread's life cycle. */

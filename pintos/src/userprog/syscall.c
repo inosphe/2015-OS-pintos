@@ -417,6 +417,9 @@ write(int fd, void *buffer, unsigned size)
 			return 0;
 		}
 
+    if(inode_is_dir(file_get_inode(file)))
+      return -1;
+
 		file_lock(file);
 		ret = file_write(file, buffer, size);
 		file_unlock(file);
@@ -545,16 +548,16 @@ bool sys_chdir(const char* dir_name){
 
 bool sys_mkdir(const char* dir_name){
   struct inode* inode;
+  if(dir_name == NULL || strlen(dir_name)==0)
+    return false;
   return filesys_create_dir(dir_name);
 }
 
 bool sys_readdir(int fd, char* name){
   struct file* file = process_get_file(fd);
   struct dir* dir;
-  char dir_name[NAME_MAX + 1];
   struct inode* inode;
 
-  // printf("file : %p\n", file); 
   inode = file_get_inode(file);
 
   if(!file || !inode_is_dir(inode)){
@@ -562,10 +565,21 @@ bool sys_readdir(int fd, char* name){
   }
 
   dir = dir_open(inode);
-  if(dir_readdir(dir, dir_name)){
-    printf("%s\n", dir_name);
-    return true;
+  dir_setpos(dir, file_tell(file));
+  while(dir_readdir(dir, name)){
+    // printf("readdir : %s\n", name);
+    if(strcmp(name, ".")==0 || strcmp(name, "..")==0){
+      continue;
+    }
+    else{
+      file_seek(file, dir_getpos(dir));
+      dir_close(dir);
+      return true;
+    }
   }
+
+  file_seek(file, dir_getpos(dir));
+  dir_close(dir);
   return false;
 }
 
