@@ -33,6 +33,7 @@ filesys_init (bool format)
 
   free_map_open ();
 
+  //set working directory by root
   thread_current()->dir = dir_open_root();
 
   lock_init(&lock);
@@ -68,16 +69,17 @@ filesys_create (const char *name, off_t initial_size)
   return success;
 }
 
+//create directory
 bool filesys_create_dir (const char *name){
   char filename[NAME_MAX+1];
   block_sector_t inode_sector = 0;
-  struct dir *dir = parse_path(name, filename);
+  struct dir *dir = parse_path(name, filename); //parse path
   struct inode* inode;
 
   if(strlen(filename) == 0)
     return false;
 
-  if(dir_lookup(dir, filename, &inode)==true){
+  if(dir_lookup(dir, filename, &inode)==true){  //if file or directory already exist, fail
     return false;
   }
 
@@ -88,8 +90,8 @@ bool filesys_create_dir (const char *name){
 
   if(success){
     struct dir *newdir = dir_open(inode_open(inode_sector));
-    dir_add(newdir, ".", inode_get_inumber(dir_get_inode(newdir)));
-    dir_add(newdir, "..", inode_get_inumber(dir_get_inode(dir)));
+    dir_add(newdir, ".", inode_get_inumber(dir_get_inode(newdir))); //add .
+    dir_add(newdir, "..", inode_get_inumber(dir_get_inode(dir)));   //add ..
     dir_close(newdir);
   }
   dir_close(dir);
@@ -166,14 +168,18 @@ do_format (void)
   free_map_create ();
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
-  root = dir_open(inode_open(ROOT_DIR_SECTOR));
-  dir_add(root, ".", ROOT_DIR_SECTOR);
-  dir_add(root, "..", ROOT_DIR_SECTOR);
+  root = dir_open(inode_open(ROOT_DIR_SECTOR)); //open root directory for add . ..
+  dir_add(root, ".", ROOT_DIR_SECTOR);  //add .
+  dir_add(root, "..", ROOT_DIR_SECTOR); //add ..
   free_map_close ();
   dir_close(root);
   printf ("done.\n");
 }
 
+/*
+  parse file path
+  return directory, and file_name
+*/
 struct dir* parse_path(char* path_name, char* file_name){
   struct dir* dir = NULL;
   struct inode* inode;
@@ -186,20 +192,22 @@ struct dir* parse_path(char* path_name, char* file_name){
     free(path_name_cp);
     return NULL;
   }
+
+  //copy string for tokenize
   memcpy(path_name_cp, path_name, strlen(path_name)+1);
 
   // printf("parse_path : %s\n", path_name_cp);
   // debug_backtrace();
 
-  nextToken = strtok_r(path_name_cp, "/", &savePtr);
+  nextToken = strtok_r(path_name_cp, "/", &savePtr); //get first token
   if(nextToken == NULL){
-    dir = dir_open_root();
+    dir = dir_open_root();  //if no token, set root
     strlcpy(token, ".", NAME_MAX+1);
     length = 1;
     nextToken = NULL;
     // printf("case 0\n");
   }
-  else if(path_name[0]=='/'){
+  else if(path_name[0]=='/'){ //if begin with '/', set root
     dir = dir_open_root();
     strlcpy(token, nextToken, NAME_MAX+1);
     length = strlen(nextToken);
@@ -209,28 +217,28 @@ struct dir* parse_path(char* path_name, char* file_name){
   else{
     strlcpy(token, nextToken, NAME_MAX+1);
     length = strlen(nextToken);
-    dir = dir_reopen(thread_current()->dir);
+    dir = dir_reopen(thread_current()->dir);  //set working directory
     nextToken = strtok_r(NULL, "/", &savePtr);
     // printf("case 2\n");
   }
   
-  while(nextToken!=NULL || file_name==NULL){
-    dir_lookup (dir, token, &inode);
+  while(nextToken!=NULL || file_name==NULL){    //if file_name pointer is NULL, full recursion
+    dir_lookup (dir, token, &inode);    //lookup inode by token(file or directory name)
     // printf("lookup : %s %p\n", token, inode);
 
-    if(inode == NULL || !inode_is_dir(inode)){
+    if(inode == NULL || !inode_is_dir(inode)){  //no directory found
       inode_close(inode);
-      dir_close (dir);
+      dir_close (dir);    //close inode
       free(path_name_cp);
       return NULL;
     }
     else{
       dir_close (dir);
-      dir = dir_open(inode);
+      dir = dir_open(inode);    //set next directory
     }
 
     if(nextToken){
-      strlcpy(token, nextToken, NAME_MAX+1);
+      strlcpy(token, nextToken, NAME_MAX+1);    //set next token
       length = strlen(nextToken);
       nextToken = strtok_r(NULL, "/", &savePtr);
     }
@@ -240,7 +248,7 @@ struct dir* parse_path(char* path_name, char* file_name){
   }
 
   if(file_name){
-    strlcpy(file_name, token, NAME_MAX+1);
+    strlcpy(file_name, token, NAME_MAX+1);    //output file name
     // printf("filename : %s\n", file_name);
   }
 

@@ -528,19 +528,21 @@ get_user (const uint8_t *uaddr)
 }
 
 
+//system call - is directory
 bool sys_isdir(int fd){
   struct file* file = process_get_file(fd);
   if(!file)
     return false;
-  return inode_is_dir(file_get_inode(file));
+
+  return inode_is_dir(file_get_inode(file));  //file -> inode -> is directory?
 }
 
 bool sys_chdir(const char* dir_name){
   struct dir* dir = parse_path(dir_name, NULL);
   if(dir){
       if(thread_current()->dir)
-        dir_close(thread_current()->dir);
-      thread_current()->dir = dir;
+        dir_close(thread_current()->dir);   //release prev working directory
+      thread_current()->dir = dir;          //set new working directory
     return true;
   }
   else{
@@ -550,9 +552,9 @@ bool sys_chdir(const char* dir_name){
 
 bool sys_mkdir(const char* dir_name){
   struct inode* inode;
-  if(dir_name == NULL || strlen(dir_name)==0)
+  if(dir_name == NULL || strlen(dir_name)==0)   //check directory name
     return false;
-  return filesys_create_dir(dir_name);
+  return filesys_create_dir(dir_name);    //create directory 
 }
 
 bool sys_readdir(int fd, char* name){
@@ -560,14 +562,14 @@ bool sys_readdir(int fd, char* name){
   struct dir* dir;
   struct inode* inode;
 
-  inode = inode_reopen(file_get_inode(file));
+  inode = inode_reopen(file_get_inode(file));   //reopen file inode
 
   if(!file || !inode_is_dir(inode)){
     return false;
   }
 
-  dir = dir_open(inode);
-  dir_setpos(dir, file_tell(file));
+  dir = dir_open(inode);    //open directory by file inode
+  dir_setpos(dir, file_tell(file)); //set directory iteration position by file pos
   while(dir_readdir(dir, name)){
     // printf("readdir : %s\n", name);
     if(strcmp(name, ".")==0 || strcmp(name, "..")==0){
@@ -580,7 +582,7 @@ bool sys_readdir(int fd, char* name){
     }
   }
 
-  file_seek(file, dir_getpos(dir));
+  file_seek(file, dir_getpos(dir));   //backup directory iteration position into file pos
   dir_close(dir);
   return false;
 }
@@ -589,5 +591,5 @@ int sys_inumber(int fd){
   struct file* file = process_get_file(fd);
   if(!file)
     return -1;
-  return inode_get_inumber(file_get_inode(file));
+  return inode_get_inumber(file_get_inode(file));   //file -> inode -> sector number
 }

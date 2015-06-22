@@ -223,6 +223,7 @@ process_exit (void)
   clear_opened_mmfiles();   //clear all opened memory-mapped-file
   vm_destroy (&cur->vm);
 
+  //close working directory
   if(cur->dir)
     dir_close(cur->dir);
 
@@ -696,7 +697,6 @@ process_add_file (struct file *f)
 {
   int fd = -1;
   struct thread *t = thread_current ();
-  int i;
   //printf("process_add_file %d, %d\n", t->file_desc_size, MAX_FILE_DESC_COUNT);
   if(t->file_desc_size >= MAX_FILE_DESC_COUNT)
   {

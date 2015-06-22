@@ -242,6 +242,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
+//check whether directory has child
 bool dir_haschild(struct dir* dir){
   struct dir_entry e;
   int count = 0;
@@ -255,13 +256,15 @@ bool dir_haschild(struct dir* dir){
           count++;
         } 
     }
-  return count>2;
+  return count>2; //except ., ..
 }
 
+//set readdir pos
 void dir_setpos(struct dir* dir, off_t pos){
   dir->pos = pos;
 }
 
+//get readdir pos
 off_t dir_getpos(struct dir* dir){
   return dir->pos;
 }
