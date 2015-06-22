@@ -241,3 +241,19 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
     }
   return false;
 }
+
+bool dir_haschild(struct dir* dir){
+  struct dir_entry e;
+  int count;
+  int pos = 0;
+
+  while (inode_read_at (dir->inode, &e, sizeof e, pos) == sizeof e) 
+    {
+      pos += sizeof e;
+      if (e.in_use)
+        {
+          count++;
+        } 
+    }
+  return count>2;
+}

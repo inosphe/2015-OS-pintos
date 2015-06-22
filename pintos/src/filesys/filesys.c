@@ -56,6 +56,7 @@ filesys_create (const char *name, off_t initial_size)
   block_sector_t inode_sector = 0;
   char filename[NAME_MAX+1];
   struct dir *dir = parse_path(name, filename);
+  // printf("open : filename(%s), sector(%u)\n", filename, inode_get_inumber(dir_get_inode(dir)));
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
                   && inode_create (inode_sector, initial_size, 0)
@@ -71,13 +72,19 @@ bool filesys_create_dir (const char *name){
   char filename[NAME_MAX+1];
   block_sector_t inode_sector = 0;
   struct dir *dir = parse_path(name, filename);
+  struct inode* inode;
+
+  if(dir_lookup(dir, filename, &inode)==true){
+    return false;
+  }
+
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
                   && dir_create(inode_sector, 16)
                   && dir_add (dir, filename, inode_sector));
 
   if(success){
-    struct dir *newdir = dir_open(inode_sector);
+    struct dir *newdir = dir_open(inode_open(inode_sector));
     dir_add(newdir, ".", inode_get_inumber(dir_get_inode(newdir)));
     dir_add(newdir, "..", inode_get_inumber(dir_get_inode(dir)));
   }
@@ -122,10 +129,16 @@ filesys_remove (const char *name)
   char filename[NAME_MAX+1];
   struct dir *dir = parse_path(name, filename);
   struct inode* inode;
-  bool success;
-  if(dir_lookup(dir, filename, &inode)){
-    if(!inode_is_dir(inode) || !dir_readdir (dir, name)){
+  bool success = false;
+  if(dir && dir_lookup(dir, filename, &inode)){
+    if(!inode_is_dir(inode)){
       success = dir != NULL && dir_remove (dir, filename);
+    }
+    else{
+      struct dir* dir2 = dir_open(inode);
+      if(!dir_haschild (dir2)){
+        success = dir != NULL && dir_remove (dir, filename);
+      }
     }
     dir_close (dir); 
   }
@@ -143,7 +156,6 @@ do_format (void)
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
   root = dir_open(inode_open(ROOT_DIR_SECTOR));
-  printf("root : %p\n", root);
   dir_add(root, ".", ROOT_DIR_SECTOR);
   dir_add(root, "..", ROOT_DIR_SECTOR);
   free_map_close ();
@@ -154,26 +166,34 @@ do_format (void)
 struct dir* parse_path(char* path_name, char* file_name){
   struct dir* dir = NULL;
   struct inode* inode;
-  char *token, *nextToken, *savePtr;
+  char token[NAME_MAX+1];
+  char *nextToken = NULL, *savePtr;
   char* path_name_cp;
+  int length = 0;
   path_name_cp = (char*)malloc(strlen(path_name)+1);
   if(path_name == NULL || path_name_cp == NULL || strlen(path_name) == 0){
     free(path_name_cp);
     return NULL;
   }
-  memcpy(path_name_cp, path_name, strlen(path_name));
+  memcpy(path_name_cp, path_name, strlen(path_name)+1);
 
-  token = strtok_r(path_name, "/", &savePtr);
-  if(strlen(token)==0){
+  // printf("parse_path : %s\n", path_name);
+  // debug_backtrace();
+
+  nextToken = strtok_r(path_name_cp, "/", &savePtr);
+  if(nextToken == NULL){
     dir = dir_open_root();
+    strlcpy(token, ".", NAME_MAX+1);
+    length = 1;
   }
   else{
+    strlcpy(token, nextToken, NAME_MAX+1);
+    length = strlen(nextToken);
     dir = dir_reopen(thread_current()->dir);
+    nextToken = strtok_r(NULL, "/", &savePtr);
   }
-
-  nextToken = strtok_r(NULL, "/", &savePtr);
-
-  while(token!=NULL && (nextToken!=NULL || file_name==NULL)){
+  
+  while(nextToken!=NULL || file_name==NULL){
     dir_lookup (dir, token, &inode);
 
     if(inode == NULL || !inode_is_dir(inode)){
@@ -186,19 +206,25 @@ struct dir* parse_path(char* path_name, char* file_name){
       dir = dir_open(inode);
     }
 
-    token = nextToken;
-    nextToken = strtok_r(NULL, "/", &savePtr);
-
+    if(nextToken){
+      strlcpy(token, nextToken, NAME_MAX+1);
+      length = strlen(nextToken);
+      nextToken = strtok_r(NULL, "/", &savePtr);
+    }
+    else{
+      break;
+    }
   }
 
   if(file_name){
-    strlcpy(file_name, token, NAME_MAX);
+    strlcpy(file_name, token, NAME_MAX+1);
   }
 
   ASSERT(dir);
   free(path_name_cp);
 
-  if(strlen(token)>NAME_MAX){
+  if(length>NAME_MAX){
+    dir_close(dir);
     dir = NULL;
   }
 

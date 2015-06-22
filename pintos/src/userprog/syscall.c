@@ -150,22 +150,25 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_CHDIR:
       DECL_ARGS(1);
+      check_valid_string ((const void*)arg[0], esp);
       f->eax = sys_chdir(ARG_CONST_CHAR);
       break;
 
     case SYS_MKDIR:
       DECL_ARGS(1);
+      check_valid_string ((const void*)arg[0], esp); 
       f->eax = sys_mkdir(ARG_CONST_CHAR);
       break;
 
     case SYS_READDIR:
       DECL_ARGS(2);
+      check_valid_string ((const void*)arg[1], esp);
       f->eax = sys_readdir(ARG_INT, ARG_CONST_CHAR);
       break;
 
     case SYS_INUMBER:
       DECL_ARGS(1);
-      f->eax = sys_inumber(ARG_CONST_CHAR);
+      f->eax = sys_inumber(ARG_INT);
       break;
 
   }
@@ -541,6 +544,7 @@ bool sys_chdir(const char* dir_name){
 }
 
 bool sys_mkdir(const char* dir_name){
+  struct inode* inode;
   return filesys_create_dir(dir_name);
 }
 
@@ -548,15 +552,21 @@ bool sys_readdir(int fd, char* name){
   struct file* file = process_get_file(fd);
   struct dir* dir;
   char dir_name[NAME_MAX + 1];
+  struct inode* inode;
 
-  if(!file || !inode_is_dir(file_get_inode(file)));
+  // printf("file : %p\n", file); 
+  inode = file_get_inode(file);
+
+  if(!file || !inode_is_dir(inode)){
     return false;
-
-  dir = dir_open(file_get_inode(file));
-  while(dir_readdir(dir, dir_name)){
-    strcat(name, dir_name);
   }
-  return true;
+
+  dir = dir_open(inode);
+  if(dir_readdir(dir, dir_name)){
+    printf("%s\n", dir_name);
+    return true;
+  }
+  return false;
 }
 
 int sys_inumber(int fd){
