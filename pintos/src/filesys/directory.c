@@ -244,7 +244,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 
 bool dir_haschild(struct dir* dir){
   struct dir_entry e;
-  int count;
+  int count = 0;
   int pos = 0;
 
   while (inode_read_at (dir->inode, &e, sizeof e, pos) == sizeof e) 

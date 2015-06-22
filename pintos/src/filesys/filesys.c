@@ -197,22 +197,26 @@ struct dir* parse_path(char* path_name, char* file_name){
     strlcpy(token, ".", NAME_MAX+1);
     length = 1;
     nextToken = NULL;
+    // printf("case 0\n");
   }
   else if(path_name[0]=='/'){
     dir = dir_open_root();
     strlcpy(token, nextToken, NAME_MAX+1);
     length = strlen(nextToken);
     nextToken = strtok_r(NULL, "/", &savePtr);
+    // printf("case 1\n");
   }
   else{
     strlcpy(token, nextToken, NAME_MAX+1);
     length = strlen(nextToken);
     dir = dir_reopen(thread_current()->dir);
     nextToken = strtok_r(NULL, "/", &savePtr);
+    // printf("case 2\n");
   }
   
   while(nextToken!=NULL || file_name==NULL){
     dir_lookup (dir, token, &inode);
+    // printf("lookup : %s %p\n", token, inode);
 
     if(inode == NULL || !inode_is_dir(inode)){
       inode_close(inode);
@@ -237,10 +241,12 @@ struct dir* parse_path(char* path_name, char* file_name){
 
   if(file_name){
     strlcpy(file_name, token, NAME_MAX+1);
+    // printf("filename : %s\n", file_name);
   }
 
   ASSERT(dir);
   free(path_name_cp);
+
 
   if(length>NAME_MAX){
     dir_close(dir);
