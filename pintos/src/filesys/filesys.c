@@ -90,7 +90,10 @@ bool filesys_create_dir (const char *name){
     struct dir *newdir = dir_open(inode_open(inode_sector));
     dir_add(newdir, ".", inode_get_inumber(dir_get_inode(newdir)));
     dir_add(newdir, "..", inode_get_inumber(dir_get_inode(dir)));
+    dir_close(newdir);
   }
+  dir_close(dir);
+  inode_close(inode);
 
   return true;
 }
@@ -140,7 +143,7 @@ filesys_remove (const char *name)
     else{
       struct dir* dir2 = dir_open(inode);
 
-      if(inode_opened_count(dir_get_inode(dir2))>0){
+      if(inode_opened_count(dir_get_inode(dir2))>1){
         success = false;
       }
 
@@ -212,6 +215,7 @@ struct dir* parse_path(char* path_name, char* file_name){
     dir_lookup (dir, token, &inode);
 
     if(inode == NULL || !inode_is_dir(inode)){
+      inode_close(inode);
       dir_close (dir);
       free(path_name_cp);
       return NULL;

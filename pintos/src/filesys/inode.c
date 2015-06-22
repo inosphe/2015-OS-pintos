@@ -143,6 +143,8 @@ inode_open (block_sector_t sector)
   inode->deny_write_cnt = 0;
   inode->removed = false;
   lock_init(&inode->extend_lock);
+
+  // printf("inode open %u %d\n", inode->sector, inode->open_cnt);
   return inode;
 }
 
@@ -152,6 +154,7 @@ inode_reopen (struct inode *inode)
 {
   if (inode != NULL)
     inode->open_cnt++;
+  // printf("inode reopen %u %d\n", inode->sector, inode->open_cnt);
   return inode;
 }
 
@@ -387,6 +390,10 @@ inode_close (struct inode *inode)
   if (inode == NULL)
     return;
 
+  // printf("inode close %u %d\n", inode->sector, inode->open_cnt-1);
+  if(inode->sector>10000)
+    debug_backtrace();
+
   /* Release resources if this was the last opener. */
   if (--inode->open_cnt == 0)
     {
@@ -602,6 +609,6 @@ bool inode_is_dir(const struct inode* inode){
   return inode_disk.is_dir==1;
 }
 
-bool inode_opened_count(const struct  inode* inode){
+int inode_opened_count(const struct  inode* inode){
   return inode->open_cnt;
 }

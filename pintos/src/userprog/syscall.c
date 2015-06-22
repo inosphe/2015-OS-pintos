@@ -538,7 +538,9 @@ bool sys_isdir(int fd){
 bool sys_chdir(const char* dir_name){
   struct dir* dir = parse_path(dir_name, NULL);
   if(dir){
-    thread_current()->dir = dir;
+      if(thread_current()->dir)
+        dir_close(thread_current()->dir);
+      thread_current()->dir = dir;
     return true;
   }
   else{
@@ -558,7 +560,7 @@ bool sys_readdir(int fd, char* name){
   struct dir* dir;
   struct inode* inode;
 
-  inode = file_get_inode(file);
+  inode = inode_reopen(file_get_inode(file));
 
   if(!file || !inode_is_dir(inode)){
     return false;
